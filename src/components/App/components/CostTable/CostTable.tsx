@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import inks from '$data/inks.json';
 import { ucfirst } from '$src/lib/helpers';
 import { itemImages } from '$src/lib/imageManifest';
-import styles from './CostTable.module.css';
 
 export interface CostTableProps {
   ritual: Ritual;
