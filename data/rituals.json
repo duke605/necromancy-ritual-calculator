@@ -228,8 +228,9 @@
   },
   "Powerful communion": {
     "glyphs": [
-      {"name": "Elemental I", "amount": 1},
-      {"name": "Commune I", "amount": 2}
+      {"name": "Elemental III", "amount": 4},
+      {"name": "Commune II", "amount": 2},
+      {"name": "Commune III", "amount": 2}
     ],
     "focuses": [
       {
