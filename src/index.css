@@ -1,0 +1,22 @@
+:root {
+  --primary: #00D3B1;
+  --secondary: #331652;
+  --tertiary: #121214;
+}
+
+html, body {
+  animation: ease infinite alternate 15s bg-move;
+  background: linear-gradient(45deg, var(--tertiary), var(--secondary)) fixed;
+  background-size: 400% 400%;
+  color: white;
+}
+
+@keyframes bg-move {
+  from {
+		background-position: 0% 50%;
+  }
+  
+  to {
+		background-position: 100% 50%;
+  }
+}

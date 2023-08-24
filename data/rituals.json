@@ -1,0 +1,478 @@
+{
+  "Lesser necroplasm": {
+      "glyphs": [
+        {"name": "Elemental I", "amount": 1},
+        {"name": "Reagent I", "amount": 2}
+      ],
+      "focuses": [
+        {
+          "input": {"name": "Weak necroplasm", "amount": 200},
+          "outputs": [
+            {"name": "Lesser necroplasm", "amount": 100},
+            {"name": "Ectoplasm", "amount": 3}
+          ]
+        }
+      ],
+      "durationTicks": 33,
+      "disturbanceChances": 2,
+      "experience": 175
+  },
+  "Greater necroplasm": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 1},
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Reagent II", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Lesser necroplasm","amount": 200},
+        "outputs": [
+          {"name": "Greater necroplasm", "amount": 100},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      }
+    ],
+    "durationTicks": 58,
+    "disturbanceChances": 4,
+    "experience": 740
+  },
+  "Powerful necroplasm": {
+    "glyphs": [
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Elemental III", "amount": 4},
+      {"name": "Reagent III", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Greater necroplasm", "amount": 200},
+        "outputs": [
+          {"name": "Powerful necroplasm", "amount": 100},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      }
+    ],
+    "durationTicks": 84,
+    "disturbanceChances": 6,
+    "experience": 3300
+  },
+
+  "Lesser essence": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 2},
+      {"name": "Change I", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Pure essence", "amount": 200},
+        "outputs": [
+          {"name": "Impure essence", "amount": 40},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      }
+    ],
+    "durationTicks": 39,
+    "disturbanceChances": 3,
+    "experience": 225
+  },
+  "Greater essence": {
+    "glyphs": [
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Change II", "amount": 3}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Pure essence", "amount": 400},
+        "outputs": [
+          {"name": "Impure essence", "amount": 100},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      }
+    ],
+    "durationTicks": 70,
+    "disturbanceChances": 5,
+    "experience": 1776
+  },
+  "Powerful essence": {
+    "glyphs": [
+      {"name": "Elemental III", "amount": 4},
+      {"name": "Change II", "amount": 2},
+      {"name": "Change III", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Pure essence", "amount": 800},
+        "outputs": [
+          {"name": "Impure essence", "amount": 300},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      }
+    ],
+    "durationTicks": 84,
+    "disturbanceChances": 6,
+    "experience": 4420
+  },
+
+  "Lesser communion": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 1},
+      {"name": "Commune I", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Big bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 2},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Baby dragon bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 3},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Wyvern bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 4},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Broken memento", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 6},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Fragile memento", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 8},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      }
+    ],
+    "durationTicks": 33,
+    "disturbanceChances": 2,
+    "experience": 175
+  },
+  "Greater communion": {
+    "glyphs": [
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Commune I", "amount": 1},
+      {"name": "Commune II", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Dragon bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 10},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Dagannoth bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 12},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Airut bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 14},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Ourg bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 16},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Hardened dragon bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 18},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Dragonkin bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 20},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Spirit memento", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 24},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      }
+    ],
+    "durationTicks": 58,
+    "disturbanceChances": 4,
+    "experience": 740
+  },
+  "Powerful communion": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 1},
+      {"name": "Commune I", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Dinosaur bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 30},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      },
+      {
+        "input": {"name": "Frost dragon bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 40},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      },
+      {
+        "input": {"name": "Reinforced dragon bones", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 50},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      },
+      {
+        "input": {"name": "Robust memento", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 60},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      },
+      {
+        "input": {"name": "Powerful memento", "amount": 1},
+        "outputs": [
+          {"name": "Soul", "amount": 75},
+          {"name": "Ectoplasm", "amount": 15}
+        ]
+      }
+    ],
+    "durationTicks": 84,
+    "disturbanceChances": 6,
+    "experience": 3300
+  },
+
+  "Lesser ensoul material": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 2},
+      {"name": "Change I", "amount": 1}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Lesser unensouled bar", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled bar", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Spider silk hood", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Spider silk robe top", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Spider silk robe bottom", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Spider silk gloves", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Spider silk boots", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      },
+      {
+        "input": {"name": "Thread", "amount": 1},
+        "outputs": [
+          {"name": "Lesser ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 3}
+        ]
+      }
+    ],
+    "durationTicks": 39,
+    "disturbanceChances": 3,
+    "experience": 225
+  },
+  "Ensoul material": {
+    "glyphs": [
+      {"name": "Elemental I", "amount": 1},
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Change II", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Unensouled bar", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled bar", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Mystic hat", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Mystic robe top", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Mystic robe bottom", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Mystic gloves", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Mystic boots", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Springsheared wool", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Summerdown wool", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Fallfaced wool", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Winterwold wool", "amount": 1},
+        "outputs": [
+          {"name": "Ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      }
+    ],
+    "durationTicks": 70,
+    "disturbanceChances": 5,
+    "experience": 740
+  },
+  "Greater ensoul material": {
+    "glyphs": [
+      {"name": "Elemental III", "amount": 3},
+      {"name": "Change II", "amount": 2}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Greater unensouled bar", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled bar", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Hood of subjugation", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Garb of subjugation", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Gown of subjugation", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Gloves of subjugation", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Boots of subjugation", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled cloth", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      },
+      {
+        "input": {"name": "Algarum thread", "amount": 1},
+        "outputs": [
+          {"name": "Greater ensouled thread", "amount": 1},
+          {"name": "Ectoplasm", "amount": 7}
+        ]
+      }
+    ],
+    "durationTicks": 84,
+    "disturbanceChances": 6,
+    "experience": 1776
+  }
+}
