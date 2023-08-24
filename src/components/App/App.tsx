@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Ritual, rituals } from '$src/classes';
-import { Container, Stack } from '@mui/material';
+import { Container, Grid, Stack } from '@mui/material';
 import { CostTable, RitualConfig } from './components';
 
 const App = () => {
@@ -10,25 +10,29 @@ const App = () => {
   const [ noWaste, setNoWaste ] = useState<boolean>(false);
 
   return (
-    <Container style={{paddingTop: '3rem'}}>
-      <Stack spacing={3}>
-        <RitualConfig
-          ritual={ritual}
-          ritualCount={ritualCount}
-          ironmanMode={ironmanMode}
-          noWaste={noWaste}
-          onChangeRitual={setRitual}
-          onChangeRitualCount={setRitualCount}
-          onChangeIronmanMode={setIronmanMode}
-          onChangeNoWaste={setNoWaste}
-        />
-        <CostTable
-          ritual={ritual}
-          ritualCount={ritualCount}
-          ironmanMode={ironmanMode}
-          noWaste={noWaste}
-        />
-      </Stack>
+    <Container style={{paddingTop: '3rem', paddingBottom: '3rem'}}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <RitualConfig
+            ritual={ritual}
+            ritualCount={ritualCount}
+            ironmanMode={ironmanMode}
+            noWaste={noWaste}
+            onChangeRitual={setRitual}
+            onChangeRitualCount={setRitualCount}
+            onChangeIronmanMode={setIronmanMode}
+            onChangeNoWaste={setNoWaste}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <CostTable
+            ritual={ritual}
+            ritualCount={ritualCount}
+            ironmanMode={ironmanMode}
+            noWaste={noWaste}
+          />
+        </Grid>
+      </Grid>
     </Container>
   )
 }
