@@ -1,0 +1,17 @@
+{
+  "basic": {
+    "name": "Basic ghostly ink"
+  },
+  "regular": {
+    "name": "Regular ghostly ink",
+    "necroplasmType": "lesser"
+  },
+  "greater": {
+    "name": "Greater ghostly ink",
+    "necroplasmType": "greater"
+  },
+  "powerful": {
+    "name": "Powerful ghostly ink",
+    "necroplasmType": "powerful"
+  }
+}

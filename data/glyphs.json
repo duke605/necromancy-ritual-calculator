@@ -1,0 +1,231 @@
+{
+  "Commune I": {
+    "inks": {
+      "basic": 4
+    },
+    "durability": 6,
+    "image": "https://runescape.wiki/images/Commune_I.png?3d535"
+  },
+  "Commune II": {
+    "inks": {
+      "greater": 4
+    },
+    "durability": 12,
+    "image": "https://runescape.wiki/images/Commune_II.png?a5f1e"
+  },
+  "Commune III": {
+    "inks": {
+      "powerful": 4
+    },
+    "durability": 18,
+    "image": "https://runescape.wiki/images/Commune_III.png?c2027"
+  },
+  "Elemental I": {
+    "inks": {
+      "basic": 3
+    },
+    "durability": 6,
+    "image": "https://runescape.wiki/images/Elemental_I.png?f88f6"
+  },
+  "Elemental II": {
+    "inks": {
+      "basic": 2,
+      "regular": 3
+    },
+    "durability": 12,
+    "image": "https://runescape.wiki/images/Elemental_II.png?e8637"
+  },
+  "Elemental III": {
+    "inks": {
+      "regular": 2,
+      "greater": 3
+    },
+    "durability": 18,
+    "image": "https://runescape.wiki/images/Elemental_III.png?542c9"
+  },
+  "Reagent I": {
+    "inks": {
+      "basic": 2
+    },
+    "durability": 6,
+    "image": "https://runescape.wiki/images/Reagent_I.png?e4b3a"
+  },
+  "Reagent II": {
+    "inks": {
+      "basic": 3,
+      "regular": 2
+    },
+    "durability": 12,
+    "image": "https://runescape.wiki/images/Reagent_II.png?7e95f"
+  },
+  "Reagent III": {
+    "inks": {
+      "regular": 3,
+      "greater": 2
+    },
+    "durability": 18,
+    "image": "https://runescape.wiki/images/Reagent_III.png?ac887"
+  },
+  "Change I": {
+    "inks": {
+      "basic": 1,
+      "regular": 2
+    },
+    "durability": 6,
+    "image": "https://runescape.wiki/images/Change_I.png?d0949"
+  },
+  "Change II": {
+    "inks": {
+      "regular": 1,
+      "greater": 2
+    },
+    "durability": 12,
+    "image": "https://runescape.wiki/images/Change_II.png?54e63"
+  },
+  "Change III": {
+    "inks": {
+      "greater": 1,
+      "powerful": 2
+    },
+    "durability": 18,
+    "image": "https://runescape.wiki/images/Change_III.png?9ee8a"
+  },
+  "Multiply I": {
+    "inks": {
+      "basic": 1,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": 20,
+    "multiply": 20,
+    "durability": 3,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Multiply_I.png?1b92d"
+  },
+  "Multiply II": {
+    "inks": {
+      "basic": 2,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": 40,
+    "multiply": 40,
+    "durability": 6,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Multiply_II.png?5bbc1"
+  },
+  "Multiply III": {
+    "inks": {
+      "greater": 2,
+      "powerful": 2
+    },
+    "ectoplasm": 2,
+    "soulAttraction": 60,
+    "multiply": 60,
+    "durability": 9,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Multiply_III.png?47fc8"
+  },
+  "Protection I": {
+    "inks": {
+      "basic": 1,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": -30,
+    "durability": 3,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Protection_I.png?2e907"
+  },
+  "Protection II": {
+    "inks": {
+      "basic": 2,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": -60,
+    "durability": 6,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Protection_II.png?04d24"
+  },
+  "Protection III": {
+    "inks": {
+      "greater": 2,
+      "powerful": 2
+    },
+    "ectoplasm": 2,
+    "soulAttraction": -90,
+    "durability": 9,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Protection_III.png?7cc87"
+  },
+  "Speed I": {
+    "inks": {
+      "basic": 1,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "duration": -5,
+    "soulAttraction": 30,
+    "durability": 3,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Speed_I.png?72d06"
+  },
+  "Speed II": {
+    "inks": {
+      "basic": 2,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "duration": -10,
+    "soulAttraction": 60,
+    "durability": 6,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Speed_II.png?045a2"
+  },
+  "Speed III": {
+    "inks": {
+      "greater": 2,
+      "powerful": 2
+    },
+    "ectoplasm": 2,
+    "duration": -15,
+    "soulAttraction": 90,
+    "durability": 9,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Speed_III.png?f0287"
+  },
+  "Attraction I": {
+    "inks": {
+      "basic": 2,
+      "regular": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": 50,
+    "durability": 3,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Attraction_I.png?5e35c"
+  },
+  "Attraction II": {
+    "inks": {
+      "greater": 1,
+      "powerful": 2
+    },
+    "ectoplasm": 1,
+    "soulAttraction": 100,
+    "durability": 6,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Attraction_II.png?56fef"
+  },
+  "Attraction III": {
+    "inks": {
+      "greater": 2,
+      "powerful": 2
+    },
+    "ectoplasm": 2,
+    "soulAttraction": 150,
+    "durability": 9,
+    "alteration": true,
+    "image": "https://runescape.wiki/images/Attraction_III.png?3ba76"
+  }
+}
