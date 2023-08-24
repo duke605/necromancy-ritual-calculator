@@ -31,6 +31,16 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: build
+      - name: Archive artifact
+        shell: sh
+        run: |
+          tar \
+            --dereference --hard-dereference \
+            --directory "dist" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
