@@ -45,6 +45,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: github-pages
-          path: dist/**/*
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: "1"
+          if-no-files-found: error
       - name: Deploy
         uses: actions/deploy-pages@v2
