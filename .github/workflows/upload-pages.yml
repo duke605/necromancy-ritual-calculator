@@ -34,9 +34,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: github-pages
+          path: dist/**/*
       - name: Deploy
         uses: actions/deploy-pages@v2
-        with:
-          artifact_name: dist
