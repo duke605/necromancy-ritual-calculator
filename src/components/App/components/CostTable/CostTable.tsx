@@ -1,9 +1,10 @@
-import { Ritual, RitualModifier, rituals } from '$src/classes';
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
-import inks from '$data/inks.json';
+import { Ritual, RitualModifier, rituals } from '$src/classes';
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@mui/material';
 import { ucfirst } from '$src/lib/helpers';
 import { itemImages } from '$src/lib/imageManifest';
+import inks from '$data/inks.json';
+import styles from './CostTable.module.css';
 
 export interface CostTableProps {
   ritual: Ritual;
@@ -11,6 +12,12 @@ export interface CostTableProps {
   ironmanMode: boolean;
   noWaste: boolean;
 }
+
+const necroplasmTiers = [
+  'Lesser necroplasm',
+  'Greater necroplasm',
+  'Powerful necroplasm',
+] as const;
 
 const sumInputAndOutputs = (
   ritual: Ritual,
@@ -55,11 +62,24 @@ const sumInputAndOutputs = (
   }
 }
 
-const necroplasmTiers = [
-  'Lesser necroplasm',
-  'Greater necroplasm',
-  'Powerful necroplasm',
-] as const;
+const TotalRow = ({
+  name,
+  value
+}: {
+  name: React.ReactNode,
+  value: React.ReactNode,
+}) => {
+  return (
+    <TableRow>
+      <TableCell>
+        <Typography variant="body2" fontWeight="bold">{name}</Typography>  
+      </TableCell>
+      <TableCell>
+        <Typography textAlign="right" variant="body2" fontWeight="bold">{value}</Typography>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 const CostTable: React.FC<CostTableProps> = ({
   ritual,
@@ -67,9 +87,10 @@ const CostTable: React.FC<CostTableProps> = ({
   ironmanMode,
   noWaste,
 }) => {
-  const { inputs, outputs } = useMemo(() => {
+  const { inputs, outputs, ritualsToPerform } = useMemo(() => {
     const inputs = new Map<string, number>();
     const outputs = new Map<string, number>();
+    const ritualsToPerform = [{ritual, count: ritualCount}];
 
     sumInputAndOutputs(ritual, ritualCount, inputs, outputs, ironmanMode);
 
@@ -102,6 +123,7 @@ const CostTable: React.FC<CostTableProps> = ({
           n = Math.ceil(n / cd) * cd;
         }
         
+        ritualsToPerform.push({ritual: ritualToMakeNecroplasm, count: n});
         sumInputAndOutputs(ritualToMakeNecroplasm, n, inputs, outputs, true, true);
       }      
     }
@@ -131,13 +153,80 @@ const CostTable: React.FC<CostTableProps> = ({
       amount: <Typography variant="body2" textAlign="right">{amount}</Typography>,
     }));
 
-    return {inputs: inputRows, outputs: outputRows};
+
+    return {inputs: inputRows, outputs: outputRows, ritualsToPerform: ritualsToPerform.reverse()};
   }, [ritual, ritualCount, ironmanMode, noWaste]);
+  const duration = useMemo(() => {
+    let totalSeconds = ritualsToPerform.reduce((acc, { ritual, count }) => acc + (ritual.getDuration() * count), 0);
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+
+    totalSeconds -= 3600 * (hours = Math.floor(totalSeconds / 3600));
+    totalSeconds -= 60 * (minutes = Math.floor(totalSeconds / 60));
+    seconds = Math.ceil(totalSeconds);
+    
+    return [hours, minutes, seconds].map(n => `${n}`.padStart(2, '0')).join(':');
+  }, [ritualsToPerform, ironmanMode]);
+  const totalRituals = ritualsToPerform.reduce((acc, { count }) => acc + count, 0);
+  const totalExperience = ritualsToPerform.reduce((acc, { ritual, count }) => acc + (ritual.experience * count), 0);
+  const totalDisturbanceChances = ritualsToPerform.reduce((acc, { ritual, count }) => acc + ritual.disturbanceChances * count, 0);
 
   return (
     <Grid spacing={3} container>
+      <Grid item xs={12} margin="0 auto">
+        <Typography variant="h6">
+          Rituals to Perform:
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body1">Ritual</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography textAlign="right" variant="body1">Count</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {ritualsToPerform.map(({ ritual, count }) =>
+                <TableRow key={ritual.name} className={styles.lastRow}>
+                  <TableCell>
+                    <Typography variant="body2">{ritual.name}</Typography>  
+                  </TableCell>
+                  <TableCell>
+                    <Typography textAlign="right" variant="body2">{count}</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <TotalRow
+                name="Total Rituals"
+                value={totalRituals.toLocaleString()}
+              />
+              <TotalRow
+                name="Total Duration"
+                value={duration}
+              />
+              <TotalRow
+                name="Total Experience (Excluding Disturbances)"
+                value={totalExperience.toLocaleString()}
+              />
+              <TotalRow
+                name="Total Disturbance Chances"
+                value={totalDisturbanceChances.toLocaleString()}
+              />
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      </Grid>
       <Grid item xs={6}>
-        Inputs:
+        <Typography variant="h6">
+          Inputs:
+        </Typography>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -162,7 +251,9 @@ const CostTable: React.FC<CostTableProps> = ({
         </TableContainer>
       </Grid>
       <Grid item xs={6}>
-        Outputs:
+        <Typography variant="h6">
+          Outputs:
+        </Typography>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

@@ -43,10 +43,10 @@ export interface RitualModifier {
 export class Ritual {
   private _name: string;
   private _focuses: readonly Focus[];
+  private _experience: number;
   private glyphs: readonly Glyph[];
   private durationTicks: number;
-  private disturbanceChances: number;
-  private experience: number;
+  private _disturbanceChances: number;
 
   private modifiers: Map<string, RitualModifier> = new Map();
   private focusName: string;
@@ -61,10 +61,10 @@ export class Ritual {
   ) {
     this._name = name;
     this._focuses = focuses;
+    this._disturbanceChances = disturbanceChances;
+    this._experience = experience;
     this.glyphs = glyphs;
     this.durationTicks = durationTicks;
-    this.disturbanceChances = disturbanceChances;
-    this.experience = experience;
 
     this.focusName = this._focuses[0].input.name;
   }
@@ -95,6 +95,14 @@ export class Ritual {
 
   get focuses() {
     return this._focuses;
+  }
+
+  get experience() {
+    return this._experience;
+  }
+
+  get disturbanceChances() {
+    return this._disturbanceChances;
   }
 
   /**
