@@ -1,5 +1,5 @@
 import { ChangeEvent, useId, useState } from 'react';
-import { Glyph, Ritual, rituals } from '$src/classes';
+import { Glyph, GlyphName, Ritual, rituals } from '$src/classes';
 import { Avatar, Button, Checkbox, Chip, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, TextField, useEventCallback } from '@mui/material';
 import { MAX_GLYPHS } from '$constants';
 import { itemImages } from '$src/lib/imageManifest';
@@ -7,19 +7,20 @@ import glyphData from '$data/glyphs.json';
 import styles from './RitualConfig.module.css';
 import imgSoulInactive from '$assets/soul_inactive.png';
 import imgSoulActive from '$assets/soul_active.webp';
+import { MultiplyGlyphNames } from '../..';
 
 export interface RitualConfigProps {
   ritual: Ritual;
   ritualCount: number;
   ironmanMode: boolean;
   noWaste: boolean;
+  prerequisiteCapeGlyph: MultiplyGlyphNames | 'none';
   onChangeRitual: (ritual: Ritual) => void;
   onChangeRitualCount: (ritualCount: number) => void;
   onChangeIronmanMode: (ironmanMode: boolean) => void;
   onChangeNoWaste: (noWaste: boolean) => void;
+  onChangePrerequisiteCapeGlyph: (gn: MultiplyGlyphNames | 'none') => void;
 }
-
-type GlyphName = keyof typeof glyphData;
 
 const sortedGlyphes = Object.entries(glyphData).map(([name, data]) => ({
   ...data,
@@ -66,12 +67,14 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
   ritualCount,
   ironmanMode,
   noWaste,
+  prerequisiteCapeGlyph,
   onChangeRitual,
   onChangeRitualCount,
   onChangeIronmanMode,
   onChangeNoWaste,
+  onChangePrerequisiteCapeGlyph,
 }) => {
-  const [ selectedAlteractionGlyph, setSelectedAlterationGlyph ] = useState(sortedAlterationGlyphs[0].name as GlyphName);
+  const [ selectedAlterationGlyph, setSelectedAlterationGlyph ] = useState(sortedAlterationGlyphs[0].name as GlyphName);
 
   const goldenRatio = ritual.getGoldenRatio();
   const openGlyphSlots = MAX_GLYPHS - ritual.getGlyphCount();
@@ -85,6 +88,7 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
   const capeAlterationGlyphLabelId = useId();
   const alterationGlyphsLabelId = useId();
   const settingsLabelId = useId();
+  const prerequisiteCapeGlyphLabelId = useId();
 
   /**
    * Changes the ritual
@@ -119,10 +123,10 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
   });
 
   /**
-   * Adds a alteraction glyph to the ritual
+   * Adds a alteration glyph to the ritual
    */
   const handleAddAlterationGlyph = useEventCallback(() => {
-    onChangeRitual(ritual.addAlterationGlyph(selectedAlteractionGlyph, 1));
+    onChangeRitual(ritual.addAlterationGlyph(selectedAlterationGlyph, 1));
   });
 
   /**
@@ -199,7 +203,7 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
         <FormControl fullWidth>
           <InputLabel id={alterationGlyphsLabelId}>Alteration Glyphs</InputLabel>
           <Select
-            value={selectedAlteractionGlyph}
+            value={selectedAlterationGlyph}
             onChange={(e) => setSelectedAlterationGlyph(e.target.value as GlyphName)}
             fullWidth
             label="Alteration Glyphs"
@@ -251,7 +255,7 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
               .map(s => s.name)
               .join(', ')
             }
-            input={<OutlinedInput label="Settings" />}
+            input={<OutlinedInput label="Additional Settings" />}
             labelId={settingsLabelId}
           >
             {settings.filter(s => !s.hide).map(s =>
@@ -263,6 +267,30 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
           </Select>
         </FormControl>
       </Grid>
+      {ironmanMode && <>
+        <Grid item xs={4} />
+        <Grid item xs={4} />
+        <Grid item xs={4}>
+          <FormControl fullWidth>
+            <InputLabel id={prerequisiteCapeGlyphLabelId}>Cape Alteration Glyph (For prerequisite rituals)</InputLabel>
+            <Select
+              value={prerequisiteCapeGlyph}
+              onChange={e => onChangePrerequisiteCapeGlyph(e.target.value as MultiplyGlyphNames)}
+              fullWidth
+              label="Cape Alteration Glyph (For prerequisite rituals)"
+              labelId={prerequisiteCapeGlyphLabelId}
+            >
+              <MenuItem value="none">None</MenuItem>
+              {sortedAlterationGlyphs.filter(g => g.alteration && g.name.toLowerCase().startsWith('multiply')).map(g =>
+                <MenuItem key={g.name} value={g.name}>
+                  <img src={g.image} width="20" height="20" style={{marginRight: '0.5rem', verticalAlign: 'middle', objectFit: 'contain'}}/>
+                  {g.name}
+                </MenuItem>
+              )}
+            </Select>
+          </FormControl>
+        </Grid>
+      </>}
       <Grid item xs={12}>
         <Stack direction="row" spacing={1}>
           {ritual.getAlterationGlyphs().map((glyph, i) =>

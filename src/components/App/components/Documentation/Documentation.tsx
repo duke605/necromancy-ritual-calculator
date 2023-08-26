@@ -78,12 +78,15 @@ const Documentation = () => {
             needing to be performed to create the number of necroplasm required. The materials needed to perform the "prerequisite" rituals will then be added to the inputs list,{' '}
             and the calculator move down on tier of necroplasm and do the same calculation for that tier until reaching the lowest tier necroplasm.
             <br /><br />
-            <strong>Note:</strong> When calculating the number of prerequisite rituals needing to be performed, the Tome of Um will be taken into account and the 99 Necromancy cape{' '}
-            (Only for the prerequisite rituals) will be set to Multiply III. There are plans to allow you to selected which cape alteration glyph you want to use for the prerequisite rituals.
+            <strong>Note:</strong> When calculating the number of prerequisite rituals needing to be performed, the selected alteration glyphs are ignored due them creating a feedback loop.{' '}
+            the Tome of Um and glyph set for the "Prerequisite Cape Glyph" will be taken into account however.
           </Section>
           <Section title="Additional Settings - Ironman Mode - No Waste">
             When checked, the prerequisite rituals will use the their Golden Ratio to make sure all glyphs are completely used up before moving onto the next prerequisite or selected ritual.{' '}
             at the current time, the excess necroplasm made from the prerequisite rituals will not appear in the outputs.
+          </Section>
+          <Section title="Prerequisite Cape Glyph">
+            Selects the 99 Necromancy alteration glyphs you wish to use for prerequisite rituals (The rituals used to make the necroplasm that makes the ink for the selected ritual).
           </Section>
         </Stack>
       </AccordionDetails>
