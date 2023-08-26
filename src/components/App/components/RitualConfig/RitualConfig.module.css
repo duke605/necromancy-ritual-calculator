@@ -1,3 +1,10 @@
 .goldenRatioMet input {
   color: gold;
 }
+
+.alterationGlyphChips {
+  display: flex;
+  gap: 8px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
