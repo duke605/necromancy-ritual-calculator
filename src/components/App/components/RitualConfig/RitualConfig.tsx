@@ -241,7 +241,7 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
       </Grid>
       <Grid item xs={4} alignSelf="center">
         <FormControl fullWidth>
-          <InputLabel id={settingsLabelId}>Settings</InputLabel>
+          <InputLabel id={settingsLabelId}>Additional Settings</InputLabel>
           <Select
             multiple
             fullWidth
