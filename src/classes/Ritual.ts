@@ -13,6 +13,8 @@ export interface Focus {
   }[];
 }
 
+export type GlyphName = keyof typeof glyphData;
+
 export interface Glyph {
   name: keyof typeof glyphData;
   inks: {

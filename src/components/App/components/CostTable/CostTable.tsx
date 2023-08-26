@@ -1,16 +1,19 @@
 import React, { useMemo } from 'react';
-import { Ritual, RitualModifier, rituals } from '$src/classes';
+import { Glyph, Ritual, RitualModifier, rituals } from '$src/classes';
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@mui/material';
 import { ucfirst } from '$src/lib/helpers';
 import { itemImages } from '$src/lib/imageManifest';
 import inks from '$data/inks.json';
+import glyphData from '$data/glyphs.json';
 import styles from './CostTable.module.css';
+import { MultiplyGlyphNames } from '../..';
 
 export interface CostTableProps {
   ritual: Ritual;
   ritualCount: number;
   ironmanMode: boolean;
   noWaste: boolean;
+  prerequisiteCapeGlyph: MultiplyGlyphNames | 'none';
 }
 
 const necroplasmTiers = [
@@ -86,6 +89,7 @@ const CostTable: React.FC<CostTableProps> = ({
   ritualCount,
   ironmanMode,
   noWaste,
+  prerequisiteCapeGlyph,
 }) => {
   const { inputs, outputs, ritualsToPerform } = useMemo(() => {
     const inputs = new Map<string, number>();
@@ -102,10 +106,20 @@ const CostTable: React.FC<CostTableProps> = ({
         if (!ritualToMakeNecroplasm || necroplasmNeeded === 0) continue;
 
         // Adding tome to the ritual if it's on the ritual we're preforming
-        const modifiersToAdd: RitualModifier[] = [{
-          id: 'cape',
-          multiplier: 60,        
-        }];
+        const modifiersToAdd: RitualModifier[] = [];
+
+        // Adding cape if not none
+        if (prerequisiteCapeGlyph !== 'none') {
+          const capeGlyph = glyphData[prerequisiteCapeGlyph] as Omit<Glyph, 'name' | 'amount'>;
+          capeGlyph && modifiersToAdd.push({
+            id: 'cape',
+            duration: capeGlyph.duration,
+            soulAttraction: capeGlyph.soulAttraction,
+            multiplier: capeGlyph.multiply,
+          });
+        }
+
+        // Adding tome if enabled
         const tomeModifier = ritual.getModifier('tomeOfUm');
         if (tomeModifier) modifiersToAdd.push(tomeModifier);
         ritualToMakeNecroplasm = ritualToMakeNecroplasm.putModifiers(...modifiersToAdd);
@@ -161,9 +175,8 @@ const CostTable: React.FC<CostTableProps> = ({
       amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
     }));
 
-
     return {inputs: inputRows, outputs: outputRows, ritualsToPerform: ritualsToPerform.reverse()};
-  }, [ritual, ritualCount, ironmanMode, noWaste]);
+  }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph]);
   const duration = useMemo(() => {
     let totalSeconds = ritualsToPerform.reduce((acc, { ritual, count }) => acc + (ritual.getDuration() * count), 0);
     let hours = 0;
