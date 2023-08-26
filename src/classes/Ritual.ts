@@ -134,7 +134,7 @@ export class Ritual {
    * @returns the cost to preform n rituals
    */
   getCost = (n: number) => {
-    const items = {
+    const inputs = {
       items: {
         [this.getFocus().input.name]: this.getFocus().input.amount * n,
       },
@@ -148,13 +148,20 @@ export class Ritual {
 
     for (const glyph of this.glyphs) {
       const glyphDraws = Math.ceil(n / glyph.durability);
+      
+      // Adding ectoplasm if the glyph uses it
+      if (glyph.ectoplasm) {
+        inputs.items.Ectoplasm = 0;
+        inputs.items.Ectoplasm += glyphDraws * glyph.ectoplasm * n;
+      }
+
       for (const [inkType, amount] of Object.entries(glyph.inks)) {
 
-        items.inks[inkType as keyof typeof inkData] += glyphDraws * amount * glyph.amount;
+        inputs.inks[inkType as keyof typeof inkData] += glyphDraws * amount * glyph.amount;
       }
     }
 
-    return items;
+    return inputs;
   }
 
   /**
