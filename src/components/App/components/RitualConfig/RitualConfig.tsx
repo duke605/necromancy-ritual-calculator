@@ -3,11 +3,11 @@ import { Glyph, GlyphName, Ritual, rituals } from '$src/classes';
 import { Avatar, Button, Checkbox, Chip, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, TextField, useEventCallback } from '@mui/material';
 import { MAX_GLYPHS } from '$constants';
 import { itemImages } from '$src/lib/imageManifest';
+import { MultiplyGlyphNames } from '../..';
 import glyphData from '$data/glyphs.json';
 import styles from './RitualConfig.module.css';
 import imgSoulInactive from '$assets/soul_inactive.png';
 import imgSoulActive from '$assets/soul_active.webp';
-import { MultiplyGlyphNames } from '../..';
 
 export interface RitualConfigProps {
   ritual: Ritual;
@@ -157,6 +157,20 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
     {name: 'Tome of Um', value: !!ritual.getModifier('tomeOfUm'), onChange: handleChangeTomeOfUm},
   ];
 
+  const alterationGlyphChips = (
+    <div className={styles.alterationGlyphChips}>
+      {ritual.getAlterationGlyphs().map((glyph, i) =>
+        <Chip
+          avatar={<Avatar src={glyph.image} />}
+          key={`${glyph.name}-${i}`}
+          label={glyph.name}
+          style={{height: '100%'}}
+          onDelete={() => onChangeRitual(ritual.removeAlterationGlyph(glyph.name))}
+        />
+      )}
+    </div>
+  );
+
   return (
     <Grid container spacing={3}>
       {}
@@ -268,8 +282,9 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
         </FormControl>
       </Grid>
       {ironmanMode && <>
-        <Grid item xs={4} />
-        <Grid item xs={4} />
+        <Grid item xs={8}>
+          {alterationGlyphChips}
+        </Grid>
         <Grid item xs={4}>
           <FormControl fullWidth>
             <InputLabel id={prerequisiteCapeGlyphLabelId}>Cape Alteration Glyph (For prerequisite rituals)</InputLabel>
@@ -291,19 +306,11 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
           </FormControl>
         </Grid>
       </>}
-      <Grid item xs={12}>
-        <Stack direction="row" spacing={1}>
-          {ritual.getAlterationGlyphs().map((glyph, i) =>
-            <Chip
-              avatar={<Avatar src={glyph.image} />}
-              key={`${glyph.name}-${i}`}
-              label={glyph.name}
-              style={{height: '100%'}}
-              onDelete={() => onChangeRitual(ritual.removeAlterationGlyph(glyph.name))}
-            />
-          )}
-        </Stack>
-      </Grid>
+      {!ironmanMode && (
+        <Grid item xs={12}>
+          {alterationGlyphChips}
+        </Grid>
+      )}
       <Grid item xs={12} textAlign="center">
         <Stack spacing={1}>
           <Stack>

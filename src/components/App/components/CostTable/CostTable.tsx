@@ -30,7 +30,7 @@ const sumInputAndOutputs = (
   ironmanMode: boolean,
   omitNecroplasmFromOutput: boolean = false,
 ) => {
-  const cost = ritual.getCost(ritualCount);
+  const cost = ritual.getInputs(ritualCount);
 
   // Tallying item inputs
   for (const [ name, amount ] of Object.entries(cost.items)) {
