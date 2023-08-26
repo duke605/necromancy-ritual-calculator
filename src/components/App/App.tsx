@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Ritual, rituals } from '$src/classes';
 import { Container, Grid } from '@mui/material';
-import { CostTable, Documentation, Pricing, RitualConfig } from './components';
+import { CostTable, Documentation, Inventory, Pricing, RitualConfig } from './components';
 import { useMap } from '$src/lib/hooks';
 import { mapFromJson, mapToJson } from '$src/lib/helpers';
 
@@ -19,6 +19,12 @@ const App = () => {
     return mapFromJson(mapData);
   }, (map) => {
     localStorage.setItem('itemCostLookup', mapToJson(map));
+  });
+  const itemInventoryLookup = useMap<string, number>(() => {
+    const mapData = localStorage.getItem('itemInventoryLookup') ?? '{}';
+    return mapFromJson(mapData);
+  }, (map) => {
+    localStorage.setItem('itemInventoryLookup', mapToJson(map));
   });
 
   return (
@@ -46,10 +52,14 @@ const App = () => {
             ironmanMode={ironmanMode}
             noWaste={noWaste}
             prerequisiteCapeGlyph={prerequisiteCapeGlyph}
+            itemCostLookup={itemCostLookup}
+            itemInventoryLookup={itemInventoryLookup}
           />
         </Grid>
         <Grid item xs={12}>
           <Documentation />
+          <Pricing itemCostLookup={itemCostLookup} />
+          <Inventory itemInventoryLookup={itemInventoryLookup} />
         </Grid>
         <Grid item xs={12}>
           <Pricing

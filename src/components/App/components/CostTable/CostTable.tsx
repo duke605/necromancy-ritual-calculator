@@ -15,6 +15,7 @@ export interface CostTableProps {
   noWaste: boolean;
   prerequisiteCapeGlyph: MultiplyGlyphNames | 'none';
   itemCostLookup: Map<string, number>;
+  itemInventoryLookup: Map<string, number>;
 }
 
 const necroplasmTiers = [
@@ -29,16 +30,27 @@ const sumInputAndOutputs = (
   inputs: Map<string, number>,
   outputs: Map<string, number>,
   ironmanMode: boolean,
+  inventory: Map<string, number>,
   omitNecroplasmFromOutput: boolean = false,
 ) => {
   const cost = ritual.getInputs(ritualCount);
+  const takeFromInventory = (name: string, amount: number) => {
+    const amountInInventory = inventory.get(name) ?? 0;
+    const outstandingAmount = Math.max(amount - amountInInventory, 0);
+    const inventoryLeft = Math.max(amountInInventory - amount, 0);
+
+    const currentAmount = inputs.get(name) ?? 0;
+    inventory.set(name, inventoryLeft);
+    inputs.set(name, currentAmount + outstandingAmount);
+
+    return outstandingAmount;
+  }
 
   // Tallying item inputs
   for (const [ name, amount ] of Object.entries(cost.items)) {
     if (amount === 0) continue;
 
-    const n = inputs.get(name) ?? 0;
-    inputs.set(name, n + amount);
+    takeFromInventory(name, amount);
   }
 
   // Tallying ink (and direct necroplasm inputs if ironman mode)
@@ -46,14 +58,11 @@ const sumInputAndOutputs = (
     if (amount === 0) continue;
     
     const { name, necroplasmType } = inks[ink as keyof typeof inks] as {name: string, necroplasmType?: string};
-    
-    let n = inputs.get(name) ?? 0;
-    inputs.set(name, n + amount);
+    const outstandingAmount = takeFromInventory(name, amount);
 
     if (!ironmanMode || !necroplasmType) continue;
     const necroplasm = ucfirst(necroplasmType) + ' necroplasm';
-    n = inputs.get(necroplasm) ?? 0;
-    inputs.set(necroplasm, n + (amount * 20));
+    takeFromInventory(necroplasm, outstandingAmount);
   }
 
   // Tallying outputs
@@ -92,13 +101,15 @@ const CostTable: React.FC<CostTableProps> = ({
   noWaste,
   prerequisiteCapeGlyph,
   itemCostLookup,
+  itemInventoryLookup,
 }) => {
   const { inputs, outputs, ritualsToPerform, totalInputPrice, totalOutputPrice } = useMemo(() => {
     const inputs = new Map<string, number>();
     const outputs = new Map<string, number>();
     const ritualsToPerform = [{ritual, count: ritualCount}];
+    const inventory = new Map(itemInventoryLookup);
 
-    sumInputAndOutputs(ritual, ritualCount, inputs, outputs, ironmanMode);
+    sumInputAndOutputs(ritual, ritualCount, inputs, outputs, ironmanMode, inventory);
 
     // Calculating cost to make necroplasm if ironman mode
     if (ironmanMode) {
@@ -148,12 +159,13 @@ const CostTable: React.FC<CostTableProps> = ({
         }
 
         ritualsToPerform.push({ritual: ritualToMakeNecroplasm, count: n});
-        sumInputAndOutputs(ritualToMakeNecroplasm, n, inputs, outputs, true, true);
+        sumInputAndOutputs(ritualToMakeNecroplasm, n, inputs, outputs, true, inventory, true);
       }      
     }
 
     const inputRows = Array.from(inputs.entries())
       .sort((a, b) => a[0].localeCompare(b[0]))
+      .filter(([, amount ]) => amount > 0)
       .map(([ name, amount ]) => ({
         id: name,
         name: (
@@ -167,6 +179,7 @@ const CostTable: React.FC<CostTableProps> = ({
       }));
     const outputRows = Array.from(outputs.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
+    .filter(([, amount ]) => amount > 0)
     .map(([ name, amount ]) => ({
       id: name,
       name: (
@@ -187,7 +200,7 @@ const CostTable: React.FC<CostTableProps> = ({
       totalInputPrice: Array.from(inputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
       totalOutputPrice: Array.from(outputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
     };
-  }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph, itemCostLookup]);
+  }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph, itemCostLookup, itemInventoryLookup]);
   const duration = useMemo(() => {
     let totalSeconds = ritualsToPerform.reduce((acc, { ritual, count }) => acc + (ritual.getDuration() * count), 0);
     let hours = 0;

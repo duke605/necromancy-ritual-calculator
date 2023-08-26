@@ -1,19 +1,17 @@
 import { Accordion, AccordionSummary } from '$src/lib/components';
 import { AccordionDetails, Grid, Stack, TextField, Typography, useEventCallback } from '@mui/material';
+import { ChangeEvent, useDeferredValue, useState } from 'react';
 import { itemImages } from '$src/lib/imageManifest';
-import React, { ChangeEvent, useDeferredValue, useMemo, useState } from 'react';
 
-interface PricingProps {
-  itemCostLookup: Map<string, number>;
+export interface InventoryProps {
+  itemInventoryLookup: Map<string, number>;
 }
 
-const coinIncrements = [1, 2, 3, 4, 5, 25, 100, 250, 1000, 10000];
-
 export const Input = ({
-    label,
-    map,
-    search,
-    onChange,
+  label,
+  map,
+  search,
+  onChange,
 }: {
   label: string;
   map: Map<string, number>;
@@ -22,19 +20,6 @@ export const Input = ({
 }) => {
   const muted = label.toLowerCase().includes(search.toLowerCase().trim());
   const value = map.get(label) ?? 0;
-  const coinImage = useMemo(() => {
-    let highest = 0;
-    for (const coinIncrement of coinIncrements) {
-      if (value >= coinIncrement) {
-        highest = coinIncrement;
-        continue;
-      }
-
-      break;
-    }
-
-    return itemImages[highest === 0 ? 'Volcanic ash' : `Coins_${highest}`];
-  }, [value]);
   const [ localValue, setLocalValue ] = useState(`${value}`);
 
   /**
@@ -68,9 +53,6 @@ export const Input = ({
           pointerEvents: muted ? undefined : 'none',
         }}
         type="number"
-        InputProps={{
-          startAdornment: <img src={coinImage} style={{width: '1rem', marginRight: '14px', objectFit: 'scale-down'}} />,
-        }}
         label={
           <Stack direction="row" spacing={1}>
             {label}
@@ -78,8 +60,8 @@ export const Input = ({
           </Stack>
         }
         value={localValue}
-        onBlur={zeroBlankFieldsOnBlur}
         onChange={handleInputChange}
+        onBlur={zeroBlankFieldsOnBlur}
       />
     </Grid>
   );
@@ -90,56 +72,15 @@ const items = [
   'Regular ghostly ink',
   'Greater ghostly ink',
   'Powerful ghostly ink',
-  'Pure essence',
-  'Impure essence',
-  'Bones',
-  'Big bones',
-  'Baby dragon bones',
-  'Wyvern bones',
-  'Broken memento',
-  'Fragile memento',
-  'Dragon bones',
-  'Dagannoth bones',
-  'Airut bones',
-  'Ourg bones',
-  'Hardened dragon bones',
-  'Dragonkin bones',
-  'Spirit memento',
-  'Dinosaur bones',
-  'Frost dragon bones',
-  'Reinforced dragon bones',
-  'Robust memento',
-  'Powerful memento',
-  'Spider silk hood',
-  'Spider silk robe top',
-  'Spider silk robe bottom',
-  'Spider silk gloves',
-  'Spider silk boots',
-  'Thread',
-  'Mystic hat',
-  'Mystic robe top',
-  'Mystic robe bottom',
-  'Mystic gloves',
-  'Mystic boots',
-  'Springsheared wool',
-  'Summerdown wool',
-  'Fallfaced wool',
-  'Winterwold wool',
-  'Hood of subjugation',
-  'Garb of subjugation',
-  'Gown of subjugation',
-  'Gloves of subjugation',
-  'Boots of subjugation',
-  'Algarum thread',
-  'Greater unensouled bar',
-  'Unensouled bar',
-  'Lesser unensouled bar',
   'Weak necroplasm',
+  'Lesser necroplasm',
+  'Greater necroplasm',
+  'Powerful necroplasm',
   'Ectoplasm',
 ];
 
-const Pricing: React.FC<PricingProps> = ({
-  itemCostLookup,
+const Inventory: React.FC<InventoryProps> = ({
+  itemInventoryLookup,
 }) => {
   const [ search, setSearch ] = useState('');
   const deferredSearch = useDeferredValue(search);
@@ -149,18 +90,18 @@ const Pricing: React.FC<PricingProps> = ({
     
     // Checking if value is an integer
     if (value.match(/^[0-9]+$/) === null) {
-      itemCostLookup.set(key, 0); 
+      itemInventoryLookup.set(key, 0); 
       return;
     }
     
     const intValue = parseInt(value);
-    itemCostLookup.set(key, intValue);    
+    itemInventoryLookup.set(key, intValue);    
   });
 
   return (
     <Accordion>
       <AccordionSummary>
-        <Typography variant="h6">Pricing</Typography>
+        <Typography variant="h6">Inventory</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Grid container spacing={2}>
@@ -178,7 +119,7 @@ const Pricing: React.FC<PricingProps> = ({
             <Input
               key={item}
               label={item}
-              map={itemCostLookup}
+              map={itemInventoryLookup}
               search={deferredSearch}
               onChange={handleInputChange}
             />
@@ -189,4 +130,4 @@ const Pricing: React.FC<PricingProps> = ({
   );
 }
 
-export default Pricing;
+export default Inventory;
