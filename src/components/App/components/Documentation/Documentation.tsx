@@ -56,11 +56,6 @@ const Documentation = () => {
             Selects the focus you want to use for the ritual. Some rituals only have one focus in which this setting will become disabled and the focus will{' '}
             be selected automatically.
           </Section>
-          <Section title="Ritual Focus">
-            The number of times you wish to perform the selected ritual. The title of the setting features a number refered to as the "Golden Ratio." This{' '}
-            number is the amount of rituals you need to perform to completely degrade all the glyphs at the same time. When the number entered in this setting is{' '}
-            a multiple of the Golden Ratio, the the number will turn gold.
-          </Section>
           <Section title="Ritual Count">
             The number of times you wish to perform the selected ritual. The title of the setting features a number refered to as the "Golden Ratio." This{' '}
             number is the amount of rituals you need to perform to completely degrade all the glyphs at the same time. When the number entered in this setting is{' '}
