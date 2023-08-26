@@ -14,6 +14,7 @@ export interface CostTableProps {
   ironmanMode: boolean;
   noWaste: boolean;
   prerequisiteCapeGlyph: MultiplyGlyphNames | 'none';
+  itemCostLookup: Map<string, number>;
 }
 
 const necroplasmTiers = [
@@ -90,8 +91,9 @@ const CostTable: React.FC<CostTableProps> = ({
   ironmanMode,
   noWaste,
   prerequisiteCapeGlyph,
+  itemCostLookup,
 }) => {
-  const { inputs, outputs, ritualsToPerform } = useMemo(() => {
+  const { inputs, outputs, ritualsToPerform, totalInputPrice, totalOutputPrice } = useMemo(() => {
     const inputs = new Map<string, number>();
     const outputs = new Map<string, number>();
     const ritualsToPerform = [{ritual, count: ritualCount}];
@@ -161,6 +163,7 @@ const CostTable: React.FC<CostTableProps> = ({
           </Typography>
         ),
         amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
+        price: <Typography variant="body2" textAlign="right">{((itemCostLookup.get(name) ?? 0) * amount).toLocaleString()}</Typography>,
       }));
     const outputRows = Array.from(outputs.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
@@ -173,10 +176,18 @@ const CostTable: React.FC<CostTableProps> = ({
         </Typography>
       ),
       amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
+      price: <Typography variant="body2" textAlign="right">{((itemCostLookup.get(name) ?? 0) * amount).toLocaleString()}</Typography>,
+
     }));
 
-    return {inputs: inputRows, outputs: outputRows, ritualsToPerform: ritualsToPerform.reverse()};
-  }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph]);
+    return {
+      inputs: inputRows,
+      outputs: outputRows,
+      ritualsToPerform: ritualsToPerform.reverse(),
+      totalInputPrice: Array.from(inputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
+      totalOutputPrice: Array.from(outputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
+    };
+  }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph, itemCostLookup]);
   const duration = useMemo(() => {
     let totalSeconds = ritualsToPerform.reduce((acc, { ritual, count }) => acc + (ritual.getDuration() * count), 0);
     let hours = 0;
@@ -240,6 +251,10 @@ const CostTable: React.FC<CostTableProps> = ({
                 name="Total Disturbance Chances"
                 value={totalDisturbanceChances.toLocaleString()}
               />
+              <TotalRow
+                name="Total Profit & Loss"
+                value={(totalOutputPrice - totalInputPrice).toLocaleString()}
+              />
             </TableFooter>
           </Table>
         </TableContainer>
@@ -252,11 +267,14 @@ const CostTable: React.FC<CostTableProps> = ({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell width="100%">
                   <Typography variant="body1">Item</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography textAlign="right" variant="body1">Quantity</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography textAlign="right" variant="body1">Price</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -265,6 +283,7 @@ const CostTable: React.FC<CostTableProps> = ({
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.amount}</TableCell>
+                  <TableCell>{row.price}</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -279,11 +298,14 @@ const CostTable: React.FC<CostTableProps> = ({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell width="100%">
                   <Typography variant="body1">Item</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography textAlign="right" variant="body1">Quantity</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography textAlign="right" variant="body1">Price</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -292,6 +314,7 @@ const CostTable: React.FC<CostTableProps> = ({
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.amount}</TableCell>
+                  <TableCell>{row.price}</TableCell>
                 </TableRow>
               )}
             </TableBody>
