@@ -13,7 +13,7 @@ const Documentation = () => {
   return <>
     <Accordion>
       <AccordionSummary>
-        <Typography variant="h6">Settings</Typography>
+        <Typography variant="h6">Help</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={3}>
