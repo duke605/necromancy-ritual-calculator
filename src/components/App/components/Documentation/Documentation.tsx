@@ -1,49 +1,17 @@
-import { Accordion as MuiAccordion, AccordionDetails, AccordionSummary as MuiAccordionSummary, Typography, AccordionSummaryProps, AccordionProps, styled, Stack } from "@mui/material";
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import React from "react";
-
-const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&:before': {
-    display: 'none',
-  },
-}));
-
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
-  },
-}));
+import { Accordion, AccordionSummary } from '$src/lib/components';
+import { AccordionDetails, Typography, Stack } from '@mui/material';
+import React from 'react';
 
 const Section = ({title, children}: {title: string, children: React.ReactNode}) => {
   return <section>
     <Typography variant="body1" fontWeight="bold">{title}</Typography>
     <Typography variant="body2">{children}</Typography>
   </section>;
-
 }
 
 const Documentation = () => {
   return <>
-    <Accordion style={{fontFamily: 'RuneScape'}}>
+    <Accordion>
       <AccordionSummary>
         <Typography variant="h6">Settings</Typography>
       </AccordionSummary>
