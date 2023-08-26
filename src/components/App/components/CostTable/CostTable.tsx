@@ -138,7 +138,7 @@ const CostTable: React.FC<CostTableProps> = ({
             {name}
           </Typography>
         ),
-        amount: <Typography variant="body2" textAlign="right">{amount}</Typography>,
+        amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
       }));
     const outputRows = Array.from(outputs.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
@@ -150,7 +150,7 @@ const CostTable: React.FC<CostTableProps> = ({
           {name}
         </Typography>
       ),
-      amount: <Typography variant="body2" textAlign="right">{amount}</Typography>,
+      amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
     }));
 
 
