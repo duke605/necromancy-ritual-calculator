@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Ritual, rituals } from '$src/classes';
 import { Container, Grid } from '@mui/material';
-import { CostTable, RitualConfig } from './components';
+import { CostTable, Documentation, RitualConfig } from './components';
 
 const App = () => {
   const [ ritual, setRitual ] = useState<Ritual>(rituals[0]);
@@ -31,6 +31,9 @@ const App = () => {
             ironmanMode={ironmanMode}
             noWaste={noWaste}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Documentation />
         </Grid>
       </Grid>
     </Container>
