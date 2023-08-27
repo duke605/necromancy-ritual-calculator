@@ -62,7 +62,7 @@ const sumInputAndOutputs = (
 
     if (!ironmanMode || !necroplasmType) continue;
     const necroplasm = ucfirst(necroplasmType) + ' necroplasm';
-    takeFromInventory(necroplasm, outstandingAmount);
+    takeFromInventory(necroplasm, outstandingAmount * 20);
   }
 
   // Tallying outputs
