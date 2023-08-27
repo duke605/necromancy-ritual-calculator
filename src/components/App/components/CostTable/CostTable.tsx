@@ -3,10 +3,10 @@ import { Glyph, Ritual, RitualModifier, rituals } from '$src/classes';
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@mui/material';
 import { ucfirst } from '$src/lib/helpers';
 import { itemImages } from '$src/lib/imageManifest';
+import { MultiplyGlyphNames } from '../..';
 import inks from '$data/inks.json';
 import glyphData from '$data/glyphs.json';
 import styles from './CostTable.module.css';
-import { MultiplyGlyphNames } from '../..';
 
 export interface CostTableProps {
   ritual: Ritual;
@@ -77,17 +77,19 @@ const sumInputAndOutputs = (
 
 const TotalRow = ({
   name,
-  value
+  value,
+  colSpan = 1,
 }: {
   name: React.ReactNode,
   value: React.ReactNode,
+  colSpan?: number,
 }) => {
   return (
     <TableRow>
       <TableCell>
         <Typography variant="body2" fontWeight="bold">{name}</Typography>  
       </TableCell>
-      <TableCell>
+      <TableCell colSpan={colSpan}>
         <Typography textAlign="right" variant="body2" fontWeight="bold">{value}</Typography>
       </TableCell>
     </TableRow>
@@ -190,15 +192,14 @@ const CostTable: React.FC<CostTableProps> = ({
       ),
       amount: <Typography variant="body2" textAlign="right">{amount.toLocaleString()}</Typography>,
       price: <Typography variant="body2" textAlign="right">{((itemCostLookup.get(name) ?? 0) * amount).toLocaleString()}</Typography>,
-
     }));
 
     return {
       inputs: inputRows,
       outputs: outputRows,
       ritualsToPerform: ritualsToPerform.reverse(),
-      totalInputPrice: Array.from(inputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
-      totalOutputPrice: Array.from(outputs.entries()).reduce((acc, [ item, amount ]) => acc + (itemCostLookup.get(item) ?? 0) * amount, 0),
+      totalInputPrice: Array.from(inputs.entries()).reduce((acc, [ item, amount ]) => acc + ((itemCostLookup.get(item) ?? 0) * amount), 0),
+      totalOutputPrice: Array.from(outputs.entries()).reduce((acc, [ item, amount ]) => acc + ((itemCostLookup.get(item) ?? 0) * amount), 0),
     };
   }, [ritual, ritualCount, ironmanMode, noWaste, prerequisiteCapeGlyph, itemCostLookup, itemInventoryLookup]);
   const duration = useMemo(() => {
@@ -293,13 +294,20 @@ const CostTable: React.FC<CostTableProps> = ({
             </TableHead>
             <TableBody>
               {inputs.map((row) =>
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className={styles.lastRow}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.amount}</TableCell>
                   <TableCell>{row.price}</TableCell>
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              <TotalRow
+                name="Total Input Price"
+                value={totalInputPrice.toLocaleString()}
+                colSpan={2}
+              />
+            </TableFooter>
           </Table>
         </TableContainer>
       </Grid>
@@ -324,13 +332,20 @@ const CostTable: React.FC<CostTableProps> = ({
             </TableHead>
             <TableBody>
               {outputs.map((row) =>
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className={styles.lastRow}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.amount}</TableCell>
                   <TableCell>{row.price}</TableCell>
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              <TotalRow
+                name="Total Output Price"
+                value={totalOutputPrice.toLocaleString()}
+                colSpan={2}
+              />
+            </TableFooter>
           </Table>
         </TableContainer>
       </Grid>
