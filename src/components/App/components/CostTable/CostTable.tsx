@@ -151,7 +151,7 @@ const CostTable: React.FC<CostTableProps> = ({
         }
 
         // Calculating excess necroplasm
-        const necroplasmMade = ritualToMakeNecroplasm.getOutputs(++n).find(({ name }) => name === necroplasm)!.amount;
+        const necroplasmMade = ritualToMakeNecroplasm.getOutputs(n).find(({ name }) => name === necroplasm)!.amount;
         const excessNecroplasm = necroplasmMade - necroplasmNeeded;
         if (excessNecroplasm > 0) {
           const currentNecroplasmOutput = outputs.get(necroplasm) ?? 0;
