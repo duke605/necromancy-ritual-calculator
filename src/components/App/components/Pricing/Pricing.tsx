@@ -86,6 +86,10 @@ const Input = ({
 }
 
 const items = [
+  'Weak necroplasm',
+  'Lesser necroplasm',
+  'Greater necroplasm',
+  'Powerful necroplasm',
   'Basic ghostly ink',
   'Regular ghostly ink',
   'Greater ghostly ink',
@@ -134,7 +138,6 @@ const items = [
   'Greater unensouled bar',
   'Unensouled bar',
   'Lesser unensouled bar',
-  'Weak necroplasm',
   'Ectoplasm',
 ];
 
