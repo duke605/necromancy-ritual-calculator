@@ -154,7 +154,7 @@ export class Ritual {
       // Adding ectoplasm if the glyph uses it
       if (glyph.ectoplasm) {
         inputs.items.Ectoplasm ??= 0;
-        inputs.items.Ectoplasm += glyphDraws * glyph.ectoplasm * n;
+        inputs.items.Ectoplasm += glyphDraws * glyph.ectoplasm * glyph.amount;
       }
 
       for (const [inkType, amount] of Object.entries(glyph.inks)) {
