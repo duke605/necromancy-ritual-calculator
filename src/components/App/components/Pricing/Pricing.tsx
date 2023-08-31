@@ -139,6 +139,8 @@ const items = [
   'Unensouled bar',
   'Lesser unensouled bar',
   'Ectoplasm',
+  'Vial of water',
+  'Ashes',
 ];
 
 const Pricing: React.FC<PricingProps> = ({
