@@ -61,6 +61,12 @@ const sumInputAndOutputs = (
     const outstandingAmount = takeFromInventory(name, amount);
 
     if (!ironmanMode || !necroplasmType) continue;
+
+    // Adding ashes and vials of water to inputs
+    takeFromInventory('Vial of water', outstandingAmount);
+    takeFromInventory('Ashes', outstandingAmount);
+
+    // Adding necroplasm to inputs
     const necroplasm = ucfirst(necroplasmType) + ' necroplasm';
     takeFromInventory(necroplasm, outstandingAmount * 20);
   }

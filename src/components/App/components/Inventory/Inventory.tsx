@@ -77,6 +77,8 @@ const items = [
   'Greater necroplasm',
   'Powerful necroplasm',
   'Ectoplasm',
+  'Vial of water',
+  'Ashes',
 ];
 
 const Inventory: React.FC<InventoryProps> = ({
