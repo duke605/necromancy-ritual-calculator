@@ -15,7 +15,7 @@
       ],
       "durationTicks": 33,
       "disturbanceChances": 2,
-      "experience": 175
+      "experience": 200
   },
   "Greater necroplasm": {
     "glyphs": [
@@ -34,7 +34,7 @@
     ],
     "durationTicks": 58,
     "disturbanceChances": 4,
-    "experience": 740
+    "experience": 1480
   },
   "Powerful necroplasm": {
     "glyphs": [
@@ -53,7 +53,7 @@
     ],
     "durationTicks": 84,
     "disturbanceChances": 6,
-    "experience": 3300
+    "experience": 6600
   },
 
   "Lesser essence": {
@@ -72,7 +72,7 @@
     ],
     "durationTicks": 39,
     "disturbanceChances": 3,
-    "experience": 225
+    "experience": 310
   },
   "Greater essence": {
     "glyphs": [
@@ -90,7 +90,7 @@
     ],
     "durationTicks": 70,
     "disturbanceChances": 5,
-    "experience": 1776
+    "experience": 3600
   },
   "Powerful essence": {
     "glyphs": [
@@ -109,7 +109,7 @@
     ],
     "durationTicks": 84,
     "disturbanceChances": 6,
-    "experience": 4420
+    "experience": 8840
   },
 
   "Lesser communion": {
@@ -163,7 +163,7 @@
     ],
     "durationTicks": 33,
     "disturbanceChances": 2,
-    "experience": 175
+    "experience": 200
   },
   "Greater communion": {
     "glyphs": [
@@ -224,7 +224,7 @@
     ],
     "durationTicks": 58,
     "disturbanceChances": 4,
-    "experience": 740
+    "experience": 1480
   },
   "Powerful communion": {
     "glyphs": [
@@ -271,7 +271,7 @@
     ],
     "durationTicks": 84,
     "disturbanceChances": 6,
-    "experience": 3300
+    "experience": 6600
   },
 
   "Lesser ensoul material": {
@@ -332,7 +332,7 @@
     ],
     "durationTicks": 39,
     "disturbanceChances": 3,
-    "experience": 225
+    "experience": 310
   },
   "Ensoul material": {
     "glyphs": [
@@ -414,7 +414,7 @@
     ],
     "durationTicks": 70,
     "disturbanceChances": 5,
-    "experience": 740
+    "experience": 1480
   },
   "Greater ensoul material": {
     "glyphs": [
@@ -474,6 +474,6 @@
     ],
     "durationTicks": 84,
     "disturbanceChances": 6,
-    "experience": 1776
+    "experience": 3600
   }
 }
