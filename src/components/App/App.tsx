@@ -4,6 +4,7 @@ import { Container, Grid } from '@mui/material';
 import { CostTable, Documentation, Inventory, Pricing, RitualConfig } from './components';
 import { useMap } from '$src/lib/hooks';
 import { mapFromJson, mapToJson } from '$src/lib/helpers';
+import { Rasial } from './components/Rasial';
 
 export type MultiplyGlyphNames = 'Multiply I' | 'Multiply II' | 'Multiply III';
 
@@ -29,6 +30,7 @@ const App = () => {
 
   return (
     <Container style={{paddingTop: '3rem', paddingBottom: '3rem'}}>
+      <Rasial />
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <RitualConfig

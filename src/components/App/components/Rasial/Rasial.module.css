@@ -1,0 +1,30 @@
+.rasial {
+  position: fixed;
+  bottom: 3rem;
+  left: 3rem;
+  cursor: pointer;
+}
+
+.message {
+  padding: 0.5rem;
+  color: lightgreen;
+  background: grey;
+  border-radius: 3px;
+  max-width: 200px;
+  position: relative;
+  font-size: 16px;
+}
+
+.message::before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  bottom: -10px;
+  right: 10px;
+  border: 10px solid grey;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-top: 10px solid transparent;
+  width: 18px;
+  height: 18px;
+}
