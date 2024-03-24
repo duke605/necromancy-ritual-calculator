@@ -47,7 +47,7 @@ const applyGlyphAsModifierToRitual = (
 ) => {
   const glyph = glyphData[glyphName] as Omit<Glyph, 'name' | 'amount'>;
   
-  if (glyph && glyph.alteration) {
+  if (glyph?.alteration) {
     ritual = ritual.putModifiers({
       id: modifierId,
       duration: glyph.duration,
@@ -150,11 +150,16 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
       onChangeRitual(ritual.removeModifier('tomeOfUm'));
     }
   });
+
+  const handleChangeAlterationNecklace = useEventCallback((e: boolean) => {
+    onChangeRitual(ritual.setAlterationBuff(e));
+  });
   
   const settings = [
     {name: 'Ironman Mode', value: ironmanMode, onChange: onChangeIronmanMode},
     {name: 'No Waste', value: noWaste, onChange: onChangeNoWaste, hide: !ironmanMode, indent: true},
     {name: 'Tome of Um', value: !!ritual.getModifier('tomeOfUm'), onChange: handleChangeTomeOfUm},
+    {name: 'Alteration Necklace', value: ritual.alterationBuff, onChange: handleChangeAlterationNecklace},
   ];
 
   const alterationGlyphChips = (

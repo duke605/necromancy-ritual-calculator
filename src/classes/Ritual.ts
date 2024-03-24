@@ -46,10 +46,11 @@ export class Ritual {
   private _name: string;
   private _focuses: readonly Focus[];
   private _experience: number;
+  private _disturbanceChances: number;
+  private _alterationBuff: boolean = false;
   private glyphs: readonly Glyph[];
   private durationTicks: number;
-  private _disturbanceChances: number;
-
+  
   private modifiers: Map<string, RitualModifier> = new Map();
   private focusName: string;
 
@@ -83,6 +84,7 @@ export class Ritual {
 
     r.focusName = this.focusName;
     r.modifiers = this.modifiers;
+    r._alterationBuff = this._alterationBuff;
 
     return r;
   }
@@ -105,6 +107,24 @@ export class Ritual {
 
   get disturbanceChances() {
     return this._disturbanceChances;
+  }
+
+  get alterationBuff() {
+    return this._alterationBuff;
+  }
+
+  /**
+   * Sets the state of the alteration buff on the ritual
+   * 
+   * @param f The state of the alteration buff
+   * @returns 
+   */
+  setAlterationBuff(f: boolean) {
+    if (this.alterationBuff === f) return this;
+    const newRitual = this.copy();
+    newRitual._alterationBuff = f;
+
+    return newRitual;
   }
 
   /**
@@ -169,7 +189,7 @@ export class Ritual {
    * Adds a modifier to the ritual
    * 
    * @param modifier the modifier to add to the ritual
-   * @returns a new RitualFocus with the modifier added
+   * @returns a new Ritual with the modifier added
    */
   putModifiers = (...modifiers: RitualModifier[]) => {
     const newRitual = this.copy();
@@ -252,7 +272,7 @@ export class Ritual {
   }
 
   /**
-   * Removes an alteraction glyph from the ritual. If multiple alteraction glyphs with the name given,
+   * Removes an alteration glyph from the ritual. If multiple alteration glyphs with the name given,
    * only one of them will be removed.
    * 
    * @param glyphName the name of the glyph to remove from the ritual (must be a key of glyphData)
@@ -286,7 +306,7 @@ export class Ritual {
   }
 
   /**
-   * @returns the alteraction glyphs in the ritual, if any
+   * @returns the altercation glyphs in the ritual, if any
    */
   getAlterationGlyphs = () => {
     return this.glyphs.filter(g => g.alteration);
@@ -374,16 +394,19 @@ export class Ritual {
       necroplasmMultiplier: 0,
     };
 
+    const alterationBuff = this._alterationBuff ? 1.2 : 1;
     for (const glyph of this.glyphs) {
-      attributes.soulAttraction += glyph.soulAttraction ?? 0;
-      attributes.multiplier += glyph.multiply ?? 0;
-      attributes.duration += glyph.duration ?? 0;
+      attributes.soulAttraction += (glyph.soulAttraction ?? 0) * alterationBuff;
+      attributes.multiplier += (glyph.multiply ?? 0) * alterationBuff;
+      attributes.duration += (glyph.duration ?? 0) * alterationBuff;
     }
 
-    for (const [, modifier ] of this.modifiers) {      
-      attributes.soulAttraction += modifier.soulAttraction ?? 0;
-      attributes.multiplier += modifier.multiplier ?? 0;
-      attributes.duration += modifier.duration ?? 0;
+    for (const [ name, modifier ] of this.modifiers) {
+      const altBuf = name === 'cape' ? alterationBuff : 1;
+
+      attributes.soulAttraction += (modifier.soulAttraction ?? 0) * altBuf;
+      attributes.multiplier += (modifier.multiplier ?? 0) * altBuf;
+      attributes.duration += (modifier.duration ?? 0) * altBuf;
       attributes.necroplasmMultiplier += modifier.necroplasmMultiplier ?? 0;
     }
   
