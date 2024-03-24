@@ -132,7 +132,7 @@
       "regular": 2
     },
     "ectoplasm": 1,
-    "soulAttraction": -30,
+    "soulAttraction": 20,
     "durability": 3,
     "alteration": true,
     "image": "https://runescape.wiki/images/Protection_I.png?2e907"
@@ -143,7 +143,7 @@
       "regular": 2
     },
     "ectoplasm": 1,
-    "soulAttraction": -60,
+    "soulAttraction": 40,
     "durability": 6,
     "alteration": true,
     "image": "https://runescape.wiki/images/Protection_II.png?04d24"
@@ -154,7 +154,7 @@
       "powerful": 2
     },
     "ectoplasm": 2,
-    "soulAttraction": -90,
+    "soulAttraction": 60,
     "durability": 9,
     "alteration": true,
     "image": "https://runescape.wiki/images/Protection_III.png?7cc87"
