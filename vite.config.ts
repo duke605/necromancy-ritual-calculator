@@ -8,6 +8,9 @@ import path from 'node:path';
 export default defineConfig({
   plugins: [react()],
   base: '/necromancy-ritual-calculator',
+  build: {
+    assetsInlineLimit: 0,
+  },
   resolve: {
     alias: {
       '$data': path.resolve(__dirname, './data'),

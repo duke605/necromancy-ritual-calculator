@@ -40,6 +40,10 @@ const Documentation = () => {
             When checked, the calculator will increase the necroplasm output of rituals by 5%. This 5% increase will not appear in the multiplier as it only affects necroplasm,{' '}
             not all outputs.
           </Section>
+          <Section title="Additional Settings - Alteration Necklace">
+            When checked, the calculator  will increases the power of alteration glyphs by 20% multiplicatively during (e.g. Attraction III's 150% soul attraction increase becomes{' '}
+            180% instead). The alteration glyph attuned to the player's Necromancy cape or any variant of it is also affected by this setting.
+          </Section>
           <Section title="Additional Settings - Ironman Mode">
             When checked, all materials needed to perform the selected ritual the number of times specified in the "Ritual Count" setting, including the necroplasm needed{' '}
             to make the inks, will be added to the inputs. The calculator will then, starting from the highest tier necroplasm, calculate how many "prerequisite" rituals are{' '}
