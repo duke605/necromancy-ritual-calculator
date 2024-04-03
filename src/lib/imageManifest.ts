@@ -33,8 +33,10 @@ import imgSpiritMemento from '$assets/spirit_memento.webp';
 import imgDinosaurBones from '$assets/dinosaur_bones.webp';
 import imgFrostDragonBones from '$assets/frost_dragon_bones.webp';
 import imgReinforcedDragonBones  from '$assets/reinforced_dragon_bones.webp';
-import imgRobustMemnento  from '$assets/robust_memento.webp';
-import imgPowerfulMemnento from '$assets/powerful_memento.webp';
+import imgRobustMemento  from '$assets/robust_memento.webp';
+import imgPowerfulMemento from '$assets/powerful_memento.webp';
+
+import imgBucketOfSlime from '$assets/Bucket_of_slime.webp';
 
 export const itemImages: Record<string, string> = new Proxy({
   'algarum_thread': imgAlgarumThread,
@@ -72,8 +74,9 @@ export const itemImages: Record<string, string> = new Proxy({
   'dinosaur_bones': imgDinosaurBones,
   'frost_dragon_bones': imgFrostDragonBones,
   'reinforced_dragon_bones': imgReinforcedDragonBones,
-  'robust_memento': imgRobustMemnento,
-  'powerful_memento': imgPowerfulMemnento,
+  'robust_memento': imgRobustMemento,
+  'powerful_memento': imgPowerfulMemento,
+  'bucket_of_slime': imgBucketOfSlime,
 }, {
   get(target, prop): string {
     if (typeof prop !== 'string') return '';

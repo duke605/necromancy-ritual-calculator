@@ -475,5 +475,23 @@
     "durationTicks": 84,
     "disturbanceChances": 6,
     "experience": 3600
+  },
+  "Manifest ectoplasm": {
+    "glyphs": [
+      {"name": "Elemental II", "amount": 2},
+      {"name": "Change III", "amount": 2},
+      {"name": "Reagent III", "amount": 4}
+    ],
+    "focuses": [
+      {
+        "input": {"name": "Bucket of slime", "amount": 20},
+        "outputs": [
+          {"name": "Ectoplasm", "amount": 55}
+        ]
+      }
+    ],
+    "durationTicks": 84,
+    "disturbanceChances": 6,
+    "experience": 6600
   }
 }
