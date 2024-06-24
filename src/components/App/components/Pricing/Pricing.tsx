@@ -1,13 +1,12 @@
 import { Accordion, AccordionSummary } from '$src/lib/components';
-import { AccordionDetails, Grid, Stack, TextField, Typography, useEventCallback } from '@mui/material';
+import { AccordionDetails, Button, Grid, Stack, TextField, Typography, useEventCallback } from '@mui/material';
 import { itemImages } from '$src/lib/imageManifest';
-import React, { ChangeEvent, useDeferredValue, useMemo, useState } from 'react';
+import React, { ChangeEvent, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { getPriceForItems } from '$src/lib/wiki';
 
 interface PricingProps {
   itemCostLookup: Map<string, number>;
 }
-
-const coinIncrements = [1, 2, 3, 4, 5, 25, 100, 250, 1000, 10000];
 
 const Input = ({
     label,
@@ -22,20 +21,11 @@ const Input = ({
 }) => {
   const muted = label.toLowerCase().includes(search.toLowerCase().trim());
   const value = map.get(label) ?? 0;
-  const coinImage = useMemo(() => {
-    let highest = 0;
-    for (const coinIncrement of coinIncrements) {
-      if (value >= coinIncrement) {
-        highest = coinIncrement;
-        continue;
-      }
-
-      break;
-    }
-
-    return itemImages[highest === 0 ? 'Volcanic ash' : `Coins_${highest}`];
-  }, [value]);
   const [ localValue, setLocalValue ] = useState(`${value}`);
+
+  useEffect(() => {
+    setLocalValue(`${value}`);
+  }, [value]);
 
   /**
    * Zeros the value when the field is blurred and is blank
@@ -68,9 +58,6 @@ const Input = ({
           pointerEvents: muted ? undefined : 'none',
         }}
         type="number"
-        InputProps={{
-          startAdornment: <img src={coinImage} style={{width: '1rem', marginRight: '14px', objectFit: 'scale-down'}} />,
-        }}
         label={
           <Stack direction="row" spacing={1}>
             {label}
@@ -147,6 +134,7 @@ const Pricing: React.FC<PricingProps> = ({
   itemCostLookup,
 }) => {
   const [ search, setSearch ] = useState('');
+  const [ gettingPrices, setGettingPrices ] = useState(false);
   const deferredSearch = useDeferredValue(search);
 
   const handleInputChange = useEventCallback((key: string, e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -162,6 +150,19 @@ const Pricing: React.FC<PricingProps> = ({
     itemCostLookup.set(key, intValue);    
   });
 
+  const getItemPrices = async () => {
+    try {
+      setGettingPrices(true);
+      const prices = await getPriceForItems(...items);
+
+      for (const [ key, value ] of prices) {
+        itemCostLookup.set(key, value);
+      }
+    } finally {
+      setGettingPrices(false);
+    }
+  }
+
   return (
     <Accordion>
       <AccordionSummary>
@@ -172,13 +173,16 @@ const Pricing: React.FC<PricingProps> = ({
           <Grid item xs={4}>
             <TextField
               fullWidth
-              style={{margin: '1rem 0 2rem'}}
+              style={{margin: '1rem 0 1rem'}}
               label="Search items"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </Grid>
-          <Grid item xs={8} />
+          <Grid item xs={4} alignContent="center" justifyItems="center">
+            <Button disabled={gettingPrices} variant="contained" onClick={getItemPrices}>Get Prices</Button>
+          </Grid>
+          <Grid item xs={12} />
           {items.map(item => (
             <Input
               key={item}
