@@ -1,7 +1,7 @@
 import { Accordion, AccordionSummary } from '$src/lib/components';
 import { AccordionDetails, Button, Grid, Stack, TextField, Typography, useEventCallback } from '@mui/material';
 import { itemImages } from '$src/lib/imageManifest';
-import React, { ChangeEvent, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useDeferredValue, useEffect, useState } from 'react';
 import { getPriceForItems } from '$src/lib/wiki';
 
 interface PricingProps {
