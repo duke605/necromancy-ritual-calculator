@@ -15,9 +15,13 @@ const App = () => {
   const [ noWaste, setNoWaste ] = useState<boolean>(false);
   const [ prerequisiteCapeGlyph, setPrerequisiteCapeGlyph ] = useState<MultiplyGlyphNames | 'none'>('none');
 
-  const itemCostLookup = useMap<string, number>(() => {
+  const itemCostLookup = useMap(() => {
     const mapData = localStorage.getItem('itemCostLookup') ?? '{}';
-    return mapFromJson(mapData);
+    const map = mapFromJson<number>(mapData);
+    map.set('Basic ghostly ink', 3);
+    map.set('Weak necroplasm', 3);
+
+    return map;
   }, (map) => {
     localStorage.setItem('itemCostLookup', mapToJson(map));
   });
