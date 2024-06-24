@@ -73,11 +73,9 @@ const Input = ({
 }
 
 const items = [
-  'Weak necroplasm',
   'Lesser necroplasm',
   'Greater necroplasm',
   'Powerful necroplasm',
-  'Basic ghostly ink',
   'Regular ghostly ink',
   'Greater ghostly ink',
   'Powerful ghostly ink',
@@ -122,9 +120,6 @@ const items = [
   'Gloves of subjugation',
   'Boots of subjugation',
   'Algarum thread',
-  'Greater unensouled bar',
-  'Unensouled bar',
-  'Lesser unensouled bar',
   'Ectoplasm',
   'Vial of water',
   'Ashes',
