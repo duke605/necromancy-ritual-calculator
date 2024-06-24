@@ -41,8 +41,11 @@ const Documentation = () => {
             not all outputs.
           </Section>
           <Section title="Additional Settings - Alteration Necklace">
-            When checked, the calculator  will increases the power of alteration glyphs by 20% multiplicatively during (e.g. Attraction III's 150% soul attraction increase becomes{' '}
+            When checked, the calculator will increases the power of alteration glyphs by 20% multiplicatively during (e.g. Attraction III's 150% soul attraction increase becomes{' '}
             180% instead). The alteration glyph attuned to the player's Necromancy cape or any variant of it is also affected by this setting.
+          </Section>
+          <Section title="Additional Settings - ungael Ritual Site">
+            When checked, the calculator will add 20% extra durability to the glyphs (rounded down) and reduce experience gained by completing rituals by 20%.
           </Section>
           <Section title="Additional Settings - Ironman Mode">
             When checked, all materials needed to perform the selected ritual the number of times specified in the "Ritual Count" setting, including the necroplasm needed{' '}

@@ -42,12 +42,15 @@ export interface RitualModifier {
   extra?: Record<string, any>;
 }
 
+export type RitualSite = 'um' | 'ungael';
+
 export class Ritual {
   private _name: string;
   private _focuses: readonly Focus[];
   private _experience: number;
   private _disturbanceChances: number;
   private _alterationBuff: boolean = false;
+  private _ritualSite: RitualSite;
   private glyphs: readonly Glyph[];
   private durationTicks: number;
   
@@ -61,11 +64,13 @@ export class Ritual {
     disturbanceChances: number,
     focuses: readonly Focus[],
     experience: number,
+    site: RitualSite,
   ) {
     this._name = name;
     this._focuses = focuses;
     this._disturbanceChances = disturbanceChances;
     this._experience = experience;
+    this._ritualSite = site;
     this.glyphs = glyphs;
     this.durationTicks = durationTicks;
 
@@ -74,12 +79,13 @@ export class Ritual {
 
   copy = () => {
     const r = new Ritual(
-      this.name,
+      this._name,
       this.glyphs,
       this.durationTicks,
-      this.disturbanceChances,
-      this.focuses,
-      this.experience,
+      this._disturbanceChances,
+      this._focuses,
+      this._experience,
+      this._ritualSite,
     );
 
     r.focusName = this.focusName;
@@ -101,8 +107,12 @@ export class Ritual {
     return this._focuses;
   }
 
+  get ritualSite() {
+    return this._ritualSite;
+  }
+
   get experience() {
-    return this._experience;
+    return this._experience * (this.ritualSite === 'ungael' ? 0.80 : 1);
   }
 
   get disturbanceChances() {
@@ -114,12 +124,25 @@ export class Ritual {
   }
 
   /**
+   * Sets the site of the ritual
+   * 
+   * @param site The site of the ritual
+   * @returns 
+   */
+  setRitualSite = (site: RitualSite) => {
+    const newRitual = this.copy();
+    newRitual._ritualSite = site;
+
+    return newRitual;
+  }
+
+  /**
    * Sets the state of the alteration buff on the ritual
    * 
    * @param f The state of the alteration buff
    * @returns 
    */
-  setAlterationBuff(f: boolean) {
+  setAlterationBuff = (f: boolean) => {
     if (this.alterationBuff === f) return this;
     const newRitual = this.copy();
     newRitual._alterationBuff = f;
@@ -360,7 +383,8 @@ export class Ritual {
       return arr.reduce((a, b) => _lcm(a, b));
     };
 
-    return lcm(...this.glyphs.map(g => g.durability));
+    const multiplier = this.ritualSite === 'ungael' ? 1.20 : 1;
+    return lcm(...this.glyphs.map(g => Math.floor(g.durability * multiplier)));
   }
 
   /**
@@ -441,5 +465,6 @@ export const rituals = Object.entries(ritualData).map(([name, data]) => {
     data.disturbanceChances,
     data.focuses,
     data.experience,
+    'um',
   );
 });

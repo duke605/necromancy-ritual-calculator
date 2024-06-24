@@ -97,7 +97,8 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
     let newRitual = rituals.find(r => r.name === e.target.value)!;
 
     // Adding the modifiers from the old ritual to the new one
-    newRitual = newRitual.putModifiers(...ritual.getModifiers().values());
+    newRitual = newRitual.putModifiers(...ritual.getModifiers().values())
+      .setRitualSite(ritual.ritualSite);
 
     onChangeRitual(newRitual);
   });
@@ -154,12 +155,17 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
   const handleChangeAlterationNecklace = useEventCallback((e: boolean) => {
     onChangeRitual(ritual.setAlterationBuff(e));
   });
+
+  const handleRitualSiteChange = useEventCallback((e: boolean) => {
+    onChangeRitual(ritual.setRitualSite(e ? 'ungael' : 'um'));
+  });
   
   const settings = [
     {name: 'Ironman Mode', value: ironmanMode, onChange: onChangeIronmanMode},
     {name: 'No Waste', value: noWaste, onChange: onChangeNoWaste, hide: !ironmanMode, indent: true},
     {name: 'Tome of Um', value: !!ritual.getModifier('tomeOfUm'), onChange: handleChangeTomeOfUm},
     {name: 'Alteration Necklace', value: ritual.alterationBuff, onChange: handleChangeAlterationNecklace},
+    {name: 'Ungael Ritual Site', value: ritual.ritualSite === 'ungael', onChange: handleRitualSiteChange},
   ];
 
   const alterationGlyphChips = (
