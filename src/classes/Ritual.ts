@@ -179,6 +179,7 @@ export class Ritual {
    * @returns the cost to preform n rituals
    */
   getInputs = (n: number) => {
+    const multiplier = this.ritualSite === 'ungael' ? 1.20 : 1;
     const inputs = {
       items: {
         [this.getFocus().input.name]: this.getFocus().input.amount * n,
@@ -192,7 +193,7 @@ export class Ritual {
     };
 
     for (const glyph of this.glyphs) {
-      const glyphDraws = Math.ceil(n / glyph.durability);
+      const glyphDraws = Math.ceil(n / Math.floor(glyph.durability * multiplier));
       
       // Adding ectoplasm if the glyph uses it
       if (glyph.ectoplasm) {
