@@ -125,8 +125,6 @@ const CostTable: React.FC<CostTableProps> = ({
         let ritualToMakeNecroplasm = rituals.find(r => r.name === necroplasm);
         const necroplasmNeeded = inputs.get(necroplasm) ?? 0;
         if (!ritualToMakeNecroplasm || necroplasmNeeded === 0) continue;
-
-        // Adding tome to the ritual if it's on the ritual we're preforming
         const modifiersToAdd: RitualModifier[] = [];
 
         // Adding cape if not none
@@ -140,9 +138,9 @@ const CostTable: React.FC<CostTableProps> = ({
           });
         }
 
-        // Adding tome if enabled
-        const tomeModifier = ritual.getModifier('tomeOfUm');
-        if (tomeModifier) modifiersToAdd.push(tomeModifier);
+        // Adding grimoire if enabled
+        const grimoireModifier = ritual.getModifier('underworldGrimoire');
+        if (grimoireModifier) modifiersToAdd.push(grimoireModifier);
         ritualToMakeNecroplasm = ritualToMakeNecroplasm.putModifiers(...modifiersToAdd);
 
         // Looping until will find the number of rituals we need to perform
