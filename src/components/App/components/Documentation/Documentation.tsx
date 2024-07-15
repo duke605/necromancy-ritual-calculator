@@ -36,9 +36,9 @@ const Documentation = () => {
           <Section title="Cape Alteration Glyph">
             Selects the 99 Necromancy alteration glyphs you wish to use.
           </Section>
-          <Section title="Additional Settings - Tome of Um">
-            When checked, the calculator will increase the necroplasm output of rituals by 5%. This 5% increase will not appear in the multiplier as it only affects necroplasm,{' '}
-            not all outputs.
+          <Section title="Additional Settings - Underworld Grimoire">
+            When 2, 3, or 4 is checked, the calculator will increase the necroplasm output of rituals by 5%, 10%, or 12% respectively. This 5%/10%/12{' '}
+            increase will not appear in the multiplier as it only affects necroplasm, not all outputs.
           </Section>
           <Section title="Additional Settings - Alteration Necklace">
             When checked, the calculator will increases the power of alteration glyphs by 20% multiplicatively during (e.g. Attraction III's 150% soul attraction increase becomes{' '}
@@ -54,7 +54,7 @@ const Documentation = () => {
             and the calculator move down on tier of necroplasm and do the same calculation for that tier until reaching the lowest tier necroplasm.
             <br /><br />
             <strong>Note:</strong> When calculating the number of prerequisite rituals needing to be performed, the selected alteration glyphs are ignored due them creating a feedback loop.{' '}
-            the Tome of Um and glyph set for the "Prerequisite Cape Glyph" will be taken into account however.
+            the Underworld Grimoire and glyph set for the "Prerequisite Cape Glyph" will be taken into account however.
           </Section>
           <Section title="Additional Settings - Ironman Mode - No Waste">
             When checked, the prerequisite rituals will use the their Golden Ratio to make sure all glyphs are completely used up before moving onto the next prerequisite or selected ritual.{' '}

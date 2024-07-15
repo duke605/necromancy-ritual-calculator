@@ -1,6 +1,6 @@
 import { ChangeEvent, useId, useState } from 'react';
 import { Glyph, GlyphName, Ritual, rituals } from '$src/classes';
-import { Avatar, Button, Checkbox, Chip, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, TextField, useEventCallback } from '@mui/material';
+import { Avatar, Button, Checkbox, Chip, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Radio, Select, SelectChangeEvent, Stack, TextField, useEventCallback } from '@mui/material';
 import { MAX_GLYPHS } from '$constants';
 import { itemImages } from '$src/lib/imageManifest';
 import { MultiplyGlyphNames } from '../..';
@@ -141,14 +141,14 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
     onChangeRitual(newRitual);
   });
 
-  const handleChangeTomeOfUm = useEventCallback((e: boolean) => {
+  const handleChangeUnderworldGrimoire = useEventCallback((multiplier: number) => (e: boolean) => {
     if (e) {
       onChangeRitual(ritual.putModifiers({
-        id: 'tomeOfUm',
-        necroplasmMultiplier: 5,
+        id: 'underworldGrimoire',
+        necroplasmMultiplier: multiplier,
       }));
     } else {
-      onChangeRitual(ritual.removeModifier('tomeOfUm'));
+      onChangeRitual(ritual.removeModifier('underworldGrimoire'));
     }
   });
 
@@ -163,9 +163,11 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
   const settings = [
     {name: 'Ironman Mode', value: ironmanMode, onChange: onChangeIronmanMode},
     {name: 'No Waste', value: noWaste, onChange: onChangeNoWaste, hide: !ironmanMode, indent: true},
-    {name: 'Tome of Um', value: !!ritual.getModifier('tomeOfUm'), onChange: handleChangeTomeOfUm},
     {name: 'Alteration Necklace', value: ritual.alterationBuff, onChange: handleChangeAlterationNecklace},
     {name: 'Ungael Ritual Site', value: ritual.ritualSite === 'ungael', onChange: handleRitualSiteChange},
+    {name: 'Underworld Grimoire 2', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 5, onChange: handleChangeUnderworldGrimoire(5), type: 'radio'},
+    {name: 'Underworld Grimoire 3', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 10, onChange: handleChangeUnderworldGrimoire(10), type: 'radio'},
+    {name: 'Underworld Grimoire 4', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 12, onChange: handleChangeUnderworldGrimoire(12), type: 'radio'},
   ];
 
   const alterationGlyphChips = (
@@ -285,7 +287,11 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
           >
             {settings.filter(s => !s.hide).map(s =>
               <MenuItem key={s.name} value={s.name} onClick={() => s.onChange(!s.value)} style={{paddingLeft: s.indent ? '1rem' : '0rem'}}>
-                <Checkbox checked={s.value} />
+                {s.type === 'radio' ?
+                  <Radio checked={s.value} />
+                : (
+                  <Checkbox checked={s.value} />
+                )}
                 <ListItemText primary={s.name} />
               </MenuItem>
             )}
