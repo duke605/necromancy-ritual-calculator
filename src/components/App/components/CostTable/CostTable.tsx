@@ -138,6 +138,9 @@ const CostTable: React.FC<CostTableProps> = ({
           });
         }
 
+        // Adding alteration necklace
+        ritualToMakeNecroplasm = ritualToMakeNecroplasm.setAlterationBuff(ritual.alterationBuff);
+
         // Adding grimoire if enabled
         const grimoireModifier = ritual.getModifier('underworldGrimoire');
         if (grimoireModifier) modifiersToAdd.push(grimoireModifier);
