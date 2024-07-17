@@ -98,7 +98,8 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
 
     // Adding the modifiers from the old ritual to the new one
     newRitual = newRitual.putModifiers(...ritual.getModifiers().values())
-      .setRitualSite(ritual.ritualSite);
+      .setRitualSite(ritual.ritualSite)
+      .setAlterationBuff(ritual.alterationBuff);
 
     onChangeRitual(newRitual);
   });
@@ -141,18 +142,23 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
     onChangeRitual(newRitual);
   });
 
-  const handleChangeUnderworldGrimoire = useEventCallback((multiplier: number) => (e: boolean) => {
+  const handleChangeUnderworldGrimoire = useEventCallback((e: boolean, multiplier: number) => {
     if (e) {
-      onChangeRitual(ritual.putModifiers({
+      const r = ritual.putModifiers({
         id: 'underworldGrimoire',
         necroplasmMultiplier: multiplier,
-      }));
+      });
+
+      console.log(r);
+
+      onChangeRitual(r);
     } else {
       onChangeRitual(ritual.removeModifier('underworldGrimoire'));
     }
   });
 
   const handleChangeAlterationNecklace = useEventCallback((e: boolean) => {
+    console.log('hello');
     onChangeRitual(ritual.setAlterationBuff(e));
   });
 
@@ -165,9 +171,9 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
     {name: 'No Waste', value: noWaste, onChange: onChangeNoWaste, hide: !ironmanMode, indent: true},
     {name: 'Alteration Necklace', value: ritual.alterationBuff, onChange: handleChangeAlterationNecklace},
     {name: 'Ungael Ritual Site', value: ritual.ritualSite === 'ungael', onChange: handleRitualSiteChange},
-    {name: 'Underworld Grimoire 2', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 5, onChange: handleChangeUnderworldGrimoire(5), type: 'radio'},
-    {name: 'Underworld Grimoire 3', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 10, onChange: handleChangeUnderworldGrimoire(10), type: 'radio'},
-    {name: 'Underworld Grimoire 4', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 12, onChange: handleChangeUnderworldGrimoire(12), type: 'radio'},
+    {name: 'Underworld Grimoire 2', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 5, onChange: handleChangeUnderworldGrimoire, type: 'radio', params: [5]},
+    {name: 'Underworld Grimoire 3', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 10, onChange: handleChangeUnderworldGrimoire, type: 'radio', params: [10]},
+    {name: 'Underworld Grimoire 4', value: ritual.getModifier('underworldGrimoire')?.necroplasmMultiplier === 15, onChange: handleChangeUnderworldGrimoire, type: 'radio', params: [15]},
   ];
 
   const alterationGlyphChips = (
@@ -286,7 +292,7 @@ const RitualConfig: React.FC<RitualConfigProps> = ({
             labelId={settingsLabelId}
           >
             {settings.filter(s => !s.hide).map(s =>
-              <MenuItem key={s.name} value={s.name} onClick={() => s.onChange(!s.value)} style={{paddingLeft: s.indent ? '1rem' : '0rem'}}>
+              <MenuItem key={s.name} value={s.name} onClick={() => (s.onChange as any)(!s.value, ...(s.params ?? []))} style={{paddingLeft: s.indent ? '1rem' : '0rem'}}>
                 {s.type === 'radio' ?
                   <Radio checked={s.value} />
                 : (
