@@ -26,12 +26,18 @@ jobs:
           cache: npm
       - name: Run install
         run: npm ci
+      # The Pages site's address (its custom domain, if it has one), for the build's SITE_URL.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - name: Build production bundle
         run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: out
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

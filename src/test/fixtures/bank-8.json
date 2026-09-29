@@ -1,0 +1,23 @@
+{
+  "items": [
+    { "id": 55667, "name": "Impure essence", "count": 208000, "slot": { "row": 1, "column": 1 } },
+    { "id": 55631, "name": "Powerful memento", "count": 515, "slot": { "row": 3, "column": 5 } },
+    { "id": 526, "name": "Bones", "count": 2160, "slot": { "row": 3, "column": 6 } },
+    { "id": 55629, "name": "Robust memento", "count": 1220, "slot": { "row": 3, "column": 7 } },
+    { "id": 4286, "name": "Bucket of slime", "count": 4058, "slot": { "row": 3, "column": 8 } },
+    { "id": 55623, "name": "Broken memento", "count": 36, "slot": { "row": 3, "column": 9 } },
+    { "id": 534, "name": "Baby dragon bones", "count": 720, "slot": { "row": 3, "column": 10 } },
+    { "id": 536, "name": "Dragon bones", "count": 1279, "slot": { "row": 3, "column": 11 } },
+    { "id": 55627, "name": "Spirit memento", "count": 47, "slot": { "row": 3, "column": 12 } },
+    { "id": 55625, "name": "Fragile memento", "count": 56, "slot": { "row": 3, "column": 13 } },
+    { "id": 55616, "name": "Ensouled cloth", "count": 9 },
+    { "id": 55621, "name": "Ensouled thread", "count": 4 },
+    { "id": 55620, "name": "Lesser ensouled thread", "count": 3 },
+    { "id": 55608, "name": "Lesser ensouled bar", "count": 33 },
+    { "id": 55610, "name": "Ensouled bar", "count": 37 },
+    { "id": 4089, "name": "Mystic hat", "count": 1 },
+    { "id": 25843, "name": "Spider silk gloves", "count": 18 },
+    { "id": 4095, "name": "Mystic gloves", "count": 4 },
+    { "id": 55606, "name": "Greater unensouled bar", "count": 8 }
+  ]
+}

@@ -1,0 +1,150 @@
+# Necromancy Ritual Calculator
+
+> A free web calculator for Necromancy rituals in RuneScape 3 (RS3). Players choose a ritual, its focus item,
+> a ritual site, alteration glyphs and ritual gear, and see what the rituals use and make, what they cost, how
+> long they take, the XP they give and their soul attraction. An Ironman mode adds the rituals that make the
+> necroplasm for ink. Players can also keep a list of the ritual items they own, read from a screenshot of
+> their bank, with live Grand Exchange prices.
+
+This file is for AI assistants answering players' questions about using the site: the full guide. A
+summary is at [llms.txt](https://rituals.duke605.ca/llms.txt). Game data (rituals, glyphs, inks, items,
+gear, examine text) comes from the RuneScape Wiki. Prices come from the RuneScape Wiki's real-time prices.
+
+## Pages
+
+- [Rituals](https://rituals.duke605.ca/): the calculator. The site's home page.
+- [Inventory](https://rituals.duke605.ca/inventory): the ritual items the player owns, with prices.
+- [Help](https://rituals.duke605.ca/help): the site's own guide:
+  [Getting started](https://rituals.duke605.ca/help/getting-started),
+  [Glyphs and gear](https://rituals.duke605.ca/help/glyphs-and-gear),
+  [Results](https://rituals.duke605.ca/help/results),
+  [Ironman mode](https://rituals.duke605.ca/help/ironman-mode) and
+  [Inventory and prices](https://rituals.duke605.ca/help/inventory-and-prices).
+
+## Calculating a ritual
+
+The Rituals page shows a ritual site from above: square slates for glyphs, five-sided slates for light
+sources, and a round plinth (the focus) in the middle. The ritual's glyphs and its focus item are placed on
+it automatically.
+
+1. Choose the site from the **Site** dropdown above it: **The Underworld** or **Ungael**. Both have 11 glyph
+   spots and 10 light sources.
+2. Choose the ritual: click the item on the plinth, or the **Select focus** button beside the **Site**
+   dropdown. In the **Choose ritual** dialog, pick the ritual from **Ritual** (each shows its Necromancy
+   level) and the item to use from **Focus item** (some rituals accept several, e.g. different bones), then
+   press **Choose**.
+3. Add alteration glyphs in the **Alteration glyphs** panel, left of the site (under it on phones and
+   tablets): use − and + beside Multiply, Speed, Protection or Attraction, tiers I to III. The × before a
+   count sets it back to 0. They go in the glyph spots the ritual's own glyphs leave free; the panel says how
+   many are left. Alteration glyphs are kept for each ritual separately.
+4. Choose ritual gear in the **Equipment** panel, under **Results**: click a slot (head, back, neck, pocket,
+   torso, legs, hands, feet or ring), pick an item and press **Choose**. **Unequip** takes it off. The
+   ritualist's outfit slots also offer **Entire Ritualist's Outfit**, with the plain or the modified mask,
+   to wear all five pieces at once.
+5. Read the **Results** panel, right of the site. Its lists fold away by their titles.
+   - **Rituals**: how many rituals the results are for. It starts at the golden ratio, shown under the
+     field: the fewest rituals that wear every glyph out at once, so no glyph is redrawn early. The number
+     shimmers gold on any multiple of it; the < and > arrows jump to the previous or next multiple. Empty the
+     field to go back to the golden ratio.
+   - The settings: **Take from inventory**, **Ironman Mode** and **No waste** (see below).
+   - **Rituals to perform**: each ritual and how many times. Hover one for its time each and in total.
+   - **Input**: the focus items, and the ink (and ectoplasm, for alteration glyphs) to draw the glyphs as
+     often as they wear out. In Ironman mode, what the ink is made from instead.
+   - **Output**: everything the rituals make (products, ectoplasm and, for communion rituals, souls), with
+     Multiply glyphs and gear counted. Hover an item in Input or Output for its prices; click it to set its
+     price.
+   - **Totals**: the input's cost and the output's value at the item prices, the profit or loss, the number
+     of rituals, the disturbance chances, the duration and the XP (without disturbances).
+   - **Soul attraction**: five faces, one lit per level reached (Low, Medium, High, Extreme, Dangerous).
+   - **Multiplier**: how much each output is multiplied, and for necroplasm with the Underworld Grimoire.
+
+Each panel has a red reset button in its top right corner that clears only that panel. **Reset all**, beside
+the **Site** dropdown, clears the ritual, site, glyphs, gear and count, but keeps settings, inventory and
+prices. Everything chosen is saved and comes back on the next visit.
+
+Hovering any glyph, the focus item or worn gear shows its tooltip: what it is, its stats or effects, and its
+examine text.
+
+## Settings
+
+- **Take from inventory** (off to begin with): items in the inventory are taken off the inputs first.
+- **Ironman Mode**: ink is made, not bought, and the rituals that make its necroplasm are added (below).
+- **No waste**: rounds the added rituals up to a multiple of their golden ratio. Only in Ironman mode.
+- **On added rituals** (in **Alteration glyphs**, on to begin with): puts the ritual's alteration glyphs on
+  the added rituals too, as many as fit. Only in Ironman mode.
+- **Cape on added rituals** (in **Alteration glyphs**): the Necromancy cape glyph for the added rituals:
+  **Same as worn**, **None**, or any alteration glyph. Only in Ironman mode, with a Necromancy cape worn.
+
+Disabled settings show what they need on hover.
+
+## Ironman mode and added rituals
+
+- Regular, greater and powerful ghostly ink are made from 20 necroplasm of their tier, 1 ashes and 1 vial
+  of water each. Basic ghostly ink can't be made (it's sold at Lupe's shop in the City of Um), and weak
+  necroplasm isn't made by any ritual, so both stay inputs.
+- The Lesser, Greater and Powerful necroplasm rituals are added as needed ("added rituals"). Each is done
+  as few times as makes enough necroplasm for the ink, the added rituals' own ink and focus items included.
+  Since more of one can mean more ink for another, the counts are worked out again until none changes.
+- Added rituals are done in the Underworld, whatever site is chosen, with the same gear. Necroplasm they
+  make for the ink is taken off the inputs; any left over is listed in Output.
+- If putting the alteration glyphs on the added rituals never settles (they'd cost more necroplasm than
+  they make), they're left off and Results says "Not self-sustaining".
+
+## How the numbers are worked out
+
+- **Duration**: a ritual's length is in ritual ticks of 1.2 seconds (two game ticks). Speed glyphs shorten
+  it by 5%, 10% or 15% (tiers I to III). They add up, to at most 50% shorter, and the result rounds up to a
+  whole ritual tick.
+- **Output**: Multiply glyphs add 20%, 40% or 60% each to every output. Each amount is multiplied and rounded
+  down for each ritual, so 1 item at +90% is still 1, and at +100% is 2.
+- **Input**: each glyph lasts its durability in rituals (a fifth longer at Ungael, rounded down) and is
+  redrawn when it wears out, a whole draw's ink at a time.
+- **XP**: the ritual's own, a fifth less at Ungael, plus the ritualist's outfit.
+- **Soul attraction**: every ritual starts at 100%. Each alteration glyph adds its own amount. Levels: Low up
+  to 100%, Medium to 200%, High to 300%, Extreme to 500%, Dangerous over 500%.
+- **Disturbance chances**: each ritual's number of chances, times how many. Which disturbances appear is
+  random, so only the chances are counted.
+- **Gear** that changes the results:
+  - Ritualist's outfit: +1% XP a piece, and 1% more for all five (6%). The modified mask counts as the mask.
+  - Necromancy cape or Necromancy master cape: one alteration glyph, chosen in the **Back** slot's dialog
+    (each shows its level), works as if drawn: no spot, ink or ectoplasm.
+  - Alteration necklace: alteration glyphs' effects are 20% stronger, the cape's too (e.g. Multiply I
+    gives 24%).
+  - Underworld Grimoire 2, 3 or 4: +5%, 10% or 15% necroplasm, on top of Multiply (not ectoplasm).
+  - Ring of Kayazu: +80% soul attraction.
+- Gear whose effects are shown in its tooltip but not counted: the modified ritualist's mask's 5% chance to
+  keep the focus, the pumpkin masks (light sources don't wear out), the Underworld Grimoire's disturbance XP
+  and the Ring of Kayazu's chance to double disturbance rewards.
+
+## Prices
+
+- Prices are the Grand Exchange's, fetched when the site opens (at most once an hour) and with the refresh
+  button on the Inventory page.
+- Basic ghostly ink and weak necroplasm can't be traded; they start at 3 coins each, their shop price. Other
+  untradeable items count as 0 until priced.
+- To set any item's price, owned or not: click it in **Input** or **Output** on the Rituals page (or in the
+  inventory), type the price and press **Save**. The padlock keeps price updates from replacing it.
+
+## Inventory
+
+- **Import from bank**: paste a screenshot of the RS3 bank (hover the box and press Ctrl+V, or ⌘V on a Mac),
+  drop it on the box, choose the file, or press **Paste from clipboard**. Every ritual item found is boxed:
+  green when it's sure, yellow when it's unsure (several items look alike, or the amount is shortened, e.g.
+  "12K") and red when it doesn't know the item. Click a box to correct its item or amount. Then choose
+  **Sync** (set the inventory's amounts to the screenshot's) or **Add** (add them to what's there) and press
+  the button to import. **Cancel** discards the screenshot.
+- **Your items**: everything owned, by name, 200 to a page. Type in the search box to find an item (it
+  tolerates typos). The + button adds an item by hand. The refresh button fetches live Grand Exchange prices
+  for everything.
+- Hovering an item shows its amount, GE price and high alch value. Clicking it opens **Edit item**: change
+  the amount, type a price (e.g. a cheaper source than the GE), lock the price with the padlock so price
+  updates leave it alone, fetch the live GE price for just that item, or **Delete** it.
+- An item's slot flashes green when its amount or price goes up and red when it goes down.
+
+## Limits
+
+- Everything is saved in the player's browser only (it's not an account): it stays on that device and
+  browser, and clearing site data erases it.
+- Light sources aren't counted as inputs, and the focus-saving chance isn't taken off the focus items.
+- The calculator doesn't show how many rituals the owned items cover.
+- Bank screenshots must show the items' icons clearly; very small or scaled screenshots may not be read.

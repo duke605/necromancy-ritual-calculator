@@ -1,0 +1,30 @@
+# Necromancy Ritual Calculator
+
+> A free web calculator for Necromancy rituals in RuneScape 3 (RS3): what a ritual uses and makes, what it
+> costs, how long it takes, the XP it gives and its soul attraction, with alteration glyphs and ritual gear.
+> It has an Ironman mode that adds the rituals that make the necroplasm for ink. Players can also keep a list
+> of the ritual items they own, read from a screenshot of their bank, with live Grand Exchange prices.
+
+For AI assistants answering players' questions about using the site. The full guide, with every step, how
+the numbers are worked out and what isn't supported yet, is [llms-full.txt](https://rituals.duke605.ca/llms-full.txt).
+
+## Pages
+
+- [Rituals](https://rituals.duke605.ca/): the calculator, on the home page. Choose the site from **Site**,
+  then click the item on the plinth (or **Select focus**) to choose the ritual and its focus item. Add
+  alteration glyphs in **Alteration glyphs** and gear in **Equipment**. **Results** lists the rituals to
+  perform, the input, the output and totals (cost, value, profit or loss, time, XP) for a number of rituals,
+  the golden ratio to begin with.
+- [Inventory](https://rituals.duke605.ca/inventory): import ritual items from a bank screenshot (paste, drop
+  or choose it), add or edit items by hand, and fetch live GE prices.
+- [Help](https://rituals.duke605.ca/help): the site's own guide, in five pages: getting started, glyphs and
+  gear, results, Ironman mode, and inventory and prices.
+
+## Key facts
+
+- Duration: ritual ticks of 1.2s. Speed glyphs shorten it 5/10/15% each, at most 50%, rounded up to a tick.
+- Output: Multiply glyphs add 20/40/60% each to every output, rounded down.
+- Soul attraction starts at 100%: Low to 100%, Medium to 200%, High to 300%, Extreme to 500%, then Dangerous.
+- Ironman mode makes regular, greater and powerful ink from necroplasm, ashes and vials of water, and adds
+  the necroplasm rituals needed. Basic ink and weak necroplasm are still bought.
+- Everything chosen, the inventory and prices are saved in the player's browser only.

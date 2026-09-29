@@ -1,0 +1,68 @@
+{
+  "basic": {
+    "id": 55594
+  },
+  "regular": {
+    "id": 55595,
+    "makes": 1,
+    "materials": [
+      {
+        "id": 55599,
+        "_displayName": "Lesser necroplasm",
+        "amount": 20
+      },
+      {
+        "id": 227,
+        "_displayName": "Vial of water",
+        "amount": 1
+      },
+      {
+        "id": 592,
+        "_displayName": "Ashes",
+        "amount": 1
+      }
+    ]
+  },
+  "greater": {
+    "id": 55596,
+    "makes": 1,
+    "materials": [
+      {
+        "id": 55600,
+        "_displayName": "Greater necroplasm",
+        "amount": 20
+      },
+      {
+        "id": 227,
+        "_displayName": "Vial of water",
+        "amount": 1
+      },
+      {
+        "id": 592,
+        "_displayName": "Ashes",
+        "amount": 1
+      }
+    ]
+  },
+  "powerful": {
+    "id": 55597,
+    "makes": 1,
+    "materials": [
+      {
+        "id": 55601,
+        "_displayName": "Powerful necroplasm",
+        "amount": 20
+      },
+      {
+        "id": 227,
+        "_displayName": "Vial of water",
+        "amount": 1
+      },
+      {
+        "id": 592,
+        "_displayName": "Ashes",
+        "amount": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "id": 55597, "name": "Powerful ghostly ink", "count": 300, "slot": { "row": 1, "column": 1 } },
+    { "id": 55598, "name": "Weak necroplasm", "count": 25, "slot": { "row": 1, "column": 2 } },
+    { "id": 55618, "name": "Greater ensouled cloth", "count": 4 },
+    { "id": 55612, "name": "Greater ensouled bar", "count": 4 }
+  ]
+}

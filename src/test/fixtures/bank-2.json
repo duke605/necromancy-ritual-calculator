@@ -1,0 +1,22 @@
+{
+  "items": [
+    { "id": 55594, "name": "Basic ghostly ink", "count": 73079, "slot": { "row": 1, "column": 1 } },
+    { "id": 55595, "name": "Regular ghostly ink", "count": 757, "slot": { "row": 1, "column": 2 } },
+    { "id": 55596, "name": "Greater ghostly ink", "count": 418, "slot": { "row": 1, "column": 3 } },
+    { "id": 55597, "name": "Powerful ghostly ink", "count": 300, "slot": { "row": 1, "column": 4 } },
+    { "id": 55598, "name": "Weak necroplasm", "count": 25, "slot": { "row": 1, "column": 5 } },
+    { "id": 55599, "name": "Lesser necroplasm", "count": 109000, "slot": { "row": 1, "column": 6 } },
+    { "id": 55600, "name": "Greater necroplasm", "count": 940, "slot": { "row": 1, "column": 7 } },
+    { "id": 55601, "name": "Powerful necroplasm", "count": 13631, "slot": { "row": 1, "column": 8 } },
+    { "id": 55667, "name": "Impure essence", "count": 208000, "slot": { "row": 1, "column": 11 } },
+    { "id": 55614, "name": "Lesser ensouled cloth", "count": 1 },
+    { "id": 55616, "name": "Ensouled cloth", "count": 9 },
+    { "id": 55621, "name": "Ensouled thread", "count": 4 },
+    { "id": 55620, "name": "Lesser ensouled thread", "count": 3 },
+    { "id": 55608, "name": "Lesser ensouled bar", "count": 33 },
+    { "id": 55610, "name": "Ensouled bar", "count": 37 },
+    { "id": 55618, "name": "Greater ensouled cloth", "count": 4 },
+    { "id": 55622, "name": "Greater ensouled thread", "count": 3 },
+    { "id": 55612, "name": "Greater ensouled bar", "count": 4 }
+  ]
+}

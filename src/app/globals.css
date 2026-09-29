@@ -1,0 +1,2471 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Design tokens. Colours were sampled from the RS3 interface screenshots on
+ * https://runescape.wiki/w/Interface. The default palette, type scale
+ * and fonts are wiped so only these tokens exist, e.g. `bg-ink-900`,
+ * `text-gold-400`, `text-lg`, `font-heading`. `static` emits every variable,
+ * even ones no class uses, so they can be read with var() anywhere.
+ */
+@theme static {
+  --color-*: initial;
+  --color-black: #000;
+  --color-white: #fff;
+
+  /* Window backgrounds, darkest first */
+  --color-ink-950: #110f0d; /* outlines, dividers */
+  --color-ink-900: #1d1814; /* window background */
+  --color-bank: #332e29; /* the bank's flat background, behind its items */
+  --color-ink-800: #251c16; /* inactive tab */
+  --color-ink-700: #322e28; /* list row */
+  --color-ink-600: #3f372e; /* inset panel */
+
+  /* Stone buttons */
+  --color-stone-700: #2f2c2a;
+  --color-stone-600: #3b3835;
+  --color-stone-500: #534f4a;
+  --color-stone-400: #5a5450;
+
+  /* Frames and title bars */
+  --color-bronze-950: #2c231a; /* window frame, outer edge */
+  --color-bronze-900: #32281c; /* window frame, inner edge */
+  --color-bronze-800: #3d3120; /* window frame */
+  --color-bronze-700: #432c1a; /* title bar, active tab */
+  --color-leather: #27241f; /* the leather bar's (leather-2.png) middle, for carrying it on */
+  --color-bronze-650: #473926; /* window frame, middle ring */
+  --color-bronze-600: #574930; /* window frame, highlight */
+  --color-bronze-500: #937644; /* selected outline */
+  --color-bronze-400: #ae9770; /* NPC dialogue, the game's parchment beige */
+  --color-bronze-300: #cab896; /* selected highlight */
+
+  /* Headings and the gold button */
+  --color-gold-200: #f6d694;
+  --color-gold-300: #eebc78; /* window title */
+  --color-gold-400: #dfb171; /* section heading */
+  --color-gold-500: #f8a402; /* gold button */
+  --color-gold-600: #db9835;
+  --color-gold-800: #855d1d;
+  --color-gold-950: #3a2708; /* text on gold */
+
+  /* Body text */
+  --color-parchment-100: #e0d4cc;
+  --color-parchment-200: #dacfc7; /* body copy */
+  --color-parchment-400: #b7ada6;
+  --color-ash-400: #919190; /* muted text */
+
+  /* Accents */
+  --color-orange-500: #de901f; /* labels, highlights */
+  --color-green-500: #03dc03; /* success, completed */
+  --color-steel-100: #e6f8ff;
+  --color-steel-400: #567f8a; /* game's blue button */
+  --color-steel-500: #4a6d77; /* steel-400 darkened 14% so text passes AA */
+  --color-blood-300: #e0685a; /* error text: blood-500 is too dark to read on the window background */
+  --color-blood-100: #dcb58d; /* text on blood-600 */
+  --color-blood-500: #833b31;
+  --color-blood-600: #553434; /* game's quit button */
+  --color-blood-700: #4b201f;
+
+  /* Type. rem so browser zoom and font-size settings apply. */
+  --font-*: initial;
+  --font-heading: var(--font-cinzel), "Times New Roman", serif;
+  --font-sans: var(--font-noto-sans), system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.5rem;
+  --text-3xl--line-height: 1.15;
+
+  --radius-sm: 0.125rem;
+  --radius-md: 0.1875rem;
+  --radius-lg: 0.25rem;
+}
+
+/* Semantic tokens that the UI components read. The game UI is dark only. */
+:root {
+  color-scheme: dark;
+  --background: var(--color-ink-900);
+  --foreground: var(--color-parchment-200);
+  --card: var(--color-ink-700);
+  --card-foreground: var(--color-parchment-200);
+  --popover: var(--color-ink-800);
+  --popover-foreground: var(--color-parchment-200);
+  --primary: var(--color-gold-500);
+  --primary-foreground: var(--color-gold-950);
+  --secondary: var(--color-steel-500);
+  --secondary-foreground: var(--color-steel-100);
+  --muted: var(--color-ink-700);
+  --muted-foreground: var(--color-ash-400);
+  --accent: var(--color-stone-500);
+  --accent-foreground: var(--color-parchment-100);
+  --destructive: var(--color-blood-500);
+  --border: var(--color-bronze-800);
+  --input: var(--color-stone-400);
+  --ring: var(--color-gold-300);
+  --radius: var(--radius-md);
+  --sidebar: var(--color-ink-900);
+  --sidebar-foreground: var(--color-parchment-200);
+  --sidebar-primary: var(--color-gold-500);
+  --sidebar-primary-foreground: var(--color-gold-950);
+  --sidebar-accent: var(--color-bronze-700);
+  --sidebar-accent-foreground: var(--color-gold-300);
+  --sidebar-border: var(--color-bronze-800);
+  --sidebar-ring: var(--color-gold-300);
+
+  /* The game's window background, cut from a screenshot and mirrored to tile. */
+  --texture-panel: url("/textures/panel.webp");
+
+  /* Stone-like mottling: mid-grey SVG noise, blotchy at low frequency with
+     fine detail from the extra octaves. Use with background-blend-mode:
+     overlay so it textures any colour without shifting it. The .08/.46 pair
+     sets strength (keep the second at half of 1 minus the first). */
+  --texture-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.12' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.08 0 0 0 .46 .08 0 0 0 .46 .08 0 0 0 .46 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply text-foreground;
+    background: var(--texture-panel), var(--color-ink-900);
+  }
+  ::selection {
+    background: var(--color-gold-800);
+    color: var(--color-white);
+  }
+}
+
+/*
+ * Typography. These are classes, not tag styles: pick the element for the
+ * document outline (SEO, screen readers) and the class for the look,
+ * e.g. <h2 className="h1">. Headings tags are unstyled by the CSS reset.
+ */
+@utility h1 {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: 700;
+  color: var(--color-gold-300);
+  text-shadow: 0 2px 0 var(--color-black);
+}
+@utility h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: 700;
+  color: var(--color-gold-400);
+  text-shadow: 0 1px 0 var(--color-black);
+}
+@utility h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 600;
+  color: var(--color-gold-400);
+}
+@utility h4 {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 600;
+  color: var(--color-orange-500);
+}
+@utility body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  color: var(--color-parchment-200);
+}
+@utility body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  color: var(--color-parchment-200);
+}
+/* Over a group of fields (a <fieldset>'s <legend>) or a section of a card, e.g. "Additional settings". */
+@utility subheading {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gold-600);
+}
+
+/* Buttons. src/lib/components/ui/button.tsx maps its variant and size props to these. */
+@layer components {
+  /*
+   * Every button is a flat fill with a bevel on all four sides (width set
+   * per size), shaded
+   * from the fill like the game's buttons: light top, dark bottom, slightly
+   * darker sides. Variants only set --btn-bg and text colour.
+   *
+   * The bevel strips are background layers, not inset box-shadows, so they
+   * stay straight-edged when corner-shape cuts the outer corners.
+   */
+  .btn {
+    --btn-fill: var(--btn-bg);
+    /* Bevel strength, measured per button in the game. Variants override. */
+    --btn-top-mix: 50%;
+    --btn-bottom-mix: 44%;
+    --btn-side-mix: 16%;
+    --btn-hover-mix: 12%;
+    --btn-top: color-mix(in srgb, var(--btn-fill), white var(--btn-top-mix));
+    --btn-bottom: color-mix(in srgb, var(--btn-fill), black var(--btn-bottom-mix));
+    --btn-side: color-mix(in srgb, var(--btn-fill), black var(--btn-side-mix));
+
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: --spacing(2);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    /* Diagonal corners like the game. Browsers without corner-shape fall
+       back to slightly rounded ones. */
+    border-radius: var(--btn-bevel);
+    corner-shape: bevel;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    /* Grain on top, then top and bottom bevels so they paint over the side
+       corners, then the sides and the fill. */
+    background:
+      var(--texture-grain),
+      linear-gradient(var(--btn-top) 0 0) top / 100% var(--btn-bevel) no-repeat,
+      linear-gradient(var(--btn-bottom) 0 0) bottom / 100% var(--btn-bevel) no-repeat,
+      linear-gradient(var(--btn-side) 0 0) left / var(--btn-bevel) 100% no-repeat,
+      linear-gradient(var(--btn-side) 0 0) right / var(--btn-bevel) 100% no-repeat,
+      var(--btn-fill);
+    /* One mode per layer; a shorter list would repeat and blend the bevels. */
+    background-blend-mode: overlay, normal, normal, normal, normal;
+
+    /* data-hover forces the look, for the style guide. */
+    &:hover:not(:disabled, [aria-disabled="true"]),
+    &[data-hover] {
+      --btn-fill: color-mix(in srgb, var(--btn-bg), white var(--btn-hover-mix));
+    }
+    &:active:not(:disabled, [aria-disabled="true"]) {
+      translate: 0 1px;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 2px;
+    }
+    &:disabled,
+    &[aria-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    & svg {
+      pointer-events: none;
+      flex-shrink: 0;
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  /* Primary: gold call to action, e.g. "View Selected". */
+  .btn-primary {
+    --btn-bg: var(--color-gold-500);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--color-gold-950);
+  }
+
+  /* Secondary: steel blue, e.g. "View Hiscores Webpage". Softer bevel than
+     gold. Hover lifts less so the text keeps AA contrast. */
+  .btn-secondary {
+    --btn-bg: var(--color-steel-500);
+    --btn-top-mix: 15%;
+    --btn-bottom-mix: 28%;
+    --btn-side-mix: 22%;
+    --btn-hover-mix: 5%;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--color-steel-100);
+  }
+
+  /* Danger: dull red, e.g. "Quit". Its tan text keeps AA contrast on it (5.7:1, 5:1 hovered). */
+  .btn-danger {
+    --btn-bg: var(--color-blood-600);
+    --btn-top-mix: 12%;
+    --btn-bottom-mix: 20%;
+    --btn-side-mix: 16%;
+    --btn-hover-mix: 6%;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--color-blood-100);
+  }
+
+  /* Sizes. The bevel is about 11% of the height, like the game's buttons.
+     lg meets the 44px touch target. */
+  /* Extra small, for a button tucked into something, such as NPC dialogue. */
+  .btn-xs {
+    --btn-bevel: 2px;
+    height: --spacing(6);
+    padding-inline: --spacing(2.5);
+    font-size: var(--text-xs);
+  }
+  .btn-sm {
+    --btn-bevel: 3px;
+    height: --spacing(7);
+    padding-inline: --spacing(3);
+    font-size: var(--text-xs);
+  }
+  .btn-md {
+    --btn-bevel: 4px;
+    height: --spacing(9);
+    padding-inline: --spacing(4.5);
+    font-size: var(--text-sm);
+  }
+  /* As tall as the row it's in (stretched, as beside a field), with a small button's text and padding. */
+  .btn-fill {
+    --btn-bevel: 4px;
+    align-self: stretch;
+    height: auto;
+    padding-inline: --spacing(3);
+    font-size: var(--text-xs);
+  }
+  .btn-lg {
+    --btn-bevel: 5px;
+    height: --spacing(11);
+    padding-inline: --spacing(6.5);
+    font-size: var(--text-base);
+  }
+  .btn-icon {
+    --btn-bevel: 4px;
+    width: --spacing(9);
+    height: --spacing(9);
+    font-size: var(--text-base);
+  }
+
+  .btn-icon-sm {
+    --btn-bevel: 3px;
+    width: --spacing(7);
+    height: --spacing(7);
+    font-size: var(--text-sm);
+  }
+
+  /* An icon drawn from a token, e.g. in an icon button. */
+  .icon-lock,
+  .icon-lock-open,
+  .icon-refresh {
+    width: --spacing(5);
+    height: --spacing(5);
+    background: center / contain no-repeat;
+  }
+  .icon-lock {
+    background-image: var(--lock);
+  }
+  .icon-lock-open {
+    background-image: var(--lock-open);
+  }
+  .icon-refresh {
+    background-image: var(--refresh);
+  }
+
+  /* No bevel or fill until hovered, for toolbar buttons like the sidebar's. The hover is the sidebar
+     links' (--sidebar-accent), so quiet buttons all light up alike. */
+  .btn-ghost {
+    background: none;
+    color: var(--color-parchment-200);
+
+    &:hover:not(:disabled, [aria-disabled="true"]),
+    &[data-hover] {
+      background: var(--color-bronze-700);
+      color: var(--color-gold-300);
+    }
+  }
+}
+
+/*
+ * Icons. Built from HTML and CSS so they scale with font-size and use the
+ * tokens. Give them role="img" and an aria-label when they carry meaning, or
+ * aria-hidden when a visible label sits next to them.
+ */
+@layer components {
+  /* Info: a gold-edged diamond with an italic "i", e.g. <span class="icon-info">i</span>. */
+  .icon-info {
+    position: relative;
+    isolation: isolate;
+    display: inline-grid;
+    place-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    font: italic 700 1em / 1 Georgia, "Times New Roman", serif;
+    color: var(--color-gold-600);
+    user-select: none;
+    /* The italic "i" leans right; nudge it left 1px, half a pixel when small
+       and 2px when large. Padding shifts the centre by half its width. */
+    padding-right: 2px;
+    &.text-sm {
+      padding-right: 1px;
+    }
+    &.text-3xl {
+      padding-right: 4px;
+    }
+
+    /* The diamond: a square turned 45deg, sized so its corners touch the box. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 14.6%;
+      z-index: -1;
+      rotate: 45deg;
+      background: var(--color-gold-950);
+      border: 0.1em solid var(--color-gold-400);
+      box-shadow: inset 0 0 0 0.06em var(--color-gold-800);
+    }
+  }
+}
+
+@layer components {
+  /*
+   * An item slot (slot.tsx): the game's 2px slot frame, lighter along the bottom, around what's in it.
+   */
+  .slot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: --spacing(10.5);
+    height: --spacing(10.5);
+    border: 2px solid;
+    border-image: url("/textures/slot-frame.png") 2;
+    background: rgb(0 0 0 / 20%);
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 40%);
+
+    /* A box that pulses around a slot whose count changed, green up or red down, fainter each time. */
+    & .slot-flash {
+      position: absolute;
+      inset: -3px;
+      border: 2px solid var(--slot-flash);
+      pointer-events: none;
+      animation: slot-flash 3s ease-in-out forwards;
+      &[data-change="up"] {
+        --slot-flash: rgb(30 255 0);
+      }
+      &[data-change="down"] {
+        --slot-flash: rgb(255 60 60);
+      }
+    }
+
+    &[data-invisible] {
+      /* The shorthand clears the frame image too. */
+      border: 2px solid transparent;
+      background: none;
+      box-shadow: none;
+    }
+
+    & img {
+      width: --spacing(8);
+      height: --spacing(8);
+      object-fit: scale-down;
+    }
+  }
+  /*
+   * An item's icon with its stack count (item-image.tsx), the count in the top-left corner in the game's
+   * colours: yellow, then by suffix (the RuneScape Wiki's "Stackable items" has them).
+   */
+  .item-image {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    /* Off the text baseline, or whatever it's in leaves room under it for descenders, and it sits high. */
+    vertical-align: top;
+  }
+  .item-image-count {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: var(--text-xs);
+    line-height: 1;
+    color: #ffff00;
+    text-shadow: 1px 1px 0 var(--color-black);
+    pointer-events: none;
+
+    &[data-suffix="K"] {
+      color: #ffffff;
+    }
+    &[data-suffix="M"] {
+      color: #1eff00;
+    }
+    &[data-suffix="B"] {
+      color: #6698ff;
+    }
+    &[data-suffix="T"] {
+      color: #a335ee;
+    }
+    &[data-suffix="Q"] {
+      color: #ff8000;
+    }
+  }
+
+  /* Worn Equipment: slots on a grid of half-slot columns, joined by double rails. */
+  .equipment {
+    --equipment-pitch: --spacing(12);
+    /* A slot's size (.slot), for the rails between them. */
+    --equipment-slot: --spacing(10.5);
+    display: grid;
+    grid-template-columns: repeat(8, calc(var(--equipment-pitch) / 2));
+    grid-template-rows: repeat(5, var(--equipment-pitch));
+    justify-content: center;
+    padding: --spacing(3);
+    /* The panel texture in grayscale: luminosity keeps its lightness and takes black's (zero) saturation. */
+    background: var(--texture-panel), black;
+    background-blend-mode: luminosity, normal;
+
+    & .slot {
+      place-self: center;
+    }
+  }
+
+  /* A ritual site (ritual-site.tsx) from above: two-tone slates on a grid of empty cells. */
+  .ritual-site-frame {
+    container-type: inline-size;
+    /* All the room there is, as a container can't size itself to what's in it, up to 750px: the site and its
+       ground, at most. */
+    width: 100%;
+    max-width: 750px;
+    margin-inline: auto;
+  }
+  /*
+   * Slots' size (.slot) 20px apart where there's room. Where there isn't, the gaps shrink to 4px, then the
+   * slates do. Room's left for the site's ground (data-site), as far as it reaches past the tiles on each
+   * side, as a share of their width (--reach): the furthest any site's does (the Underworld's), for every
+   * site, so switching sites changes only the ground, not the layout.
+   */
+  .ritual-site {
+    --reach: 0.42;
+    /* Less the tiles' edges, half a gap past the spots each side, and the ground's. */
+    --room: calc((100cqi - --spacing(5)) / (1 + 2 * var(--reach)));
+    --cell: min(--spacing(10.5), (var(--room) - (var(--columns) - 1) * --spacing(1)) / var(--columns));
+    --gap: clamp(--spacing(1), (var(--room) - var(--columns) * var(--cell)) / (var(--columns) - 1), --spacing(5));
+    /* The tiles' width: the grid's, spots and gaps. */
+    --size: calc(var(--columns) * var(--cell) + (var(--columns) - 1) * var(--gap));
+    display: grid;
+    grid-template-columns: repeat(var(--columns), var(--cell));
+    grid-template-rows: repeat(var(--rows), var(--cell));
+    gap: var(--gap);
+    width: var(--size);
+    margin: calc(var(--size) * var(--reach)) auto;
+    /* Pale slate tiles. */
+    --tile: #4f5d72;
+    --tile-line: rgb(0 0 0 / 25%);
+    --tile-edge: #2e3a4c;
+
+    /* Icy: a little brighter and bluer than the Underworld's. */
+    &[data-site="ungael"] {
+      --tile: #5a6c85;
+      --tile-edge: #354457;
+    }
+    /* No ground on tablets and phones: it would leave the tiles too little room. */
+    @media (width < 64rem) {
+      --reach: 0;
+      & .ritual-site-ground {
+        display: none;
+      }
+    }
+
+    /* Behind the spots, over every cell, and past them. */
+    & .ritual-site-ground {
+      grid-area: 1 / 1 / -1 / -1;
+      & .ritual-ground-slate {
+        fill: #2b3a52;
+        stroke: #1a2232;
+        stroke-width: 1;
+      }
+      & .ritual-ground-socket {
+        fill: #121821;
+      }
+      & .ritual-ground-stone {
+        fill: #5a6270;
+        stroke: #353b46;
+        stroke-width: 0.8;
+      }
+      & .ritual-ground-edge-outer {
+        fill: #3c4a5a;
+        stroke: #121a24;
+        stroke-width: 0.5;
+      }
+      & .ritual-ground-edge {
+        fill: #1f2934;
+      }
+      & .ritual-ground-rim {
+        fill: var(--tile);
+      }
+      & .ritual-ground-block {
+        fill: #2c3846;
+        stroke: #121a24;
+        stroke-width: 0.5;
+      }
+      & .ritual-ground-deep {
+        fill: #172338;
+      }
+      & .ritual-ground-marble {
+        fill: #2e9e68;
+        /* The worn gold edge. */
+        stroke: #c9b257;
+        stroke-width: 2;
+      }
+    }
+    /* The tiles the spots stand on, edged halfway between spots. */
+    & .ritual-site-tiles {
+      --pitch: calc(var(--cell) + var(--gap));
+      grid-area: 1 / 1 / -1 / -1;
+      margin: calc(var(--gap) / -2);
+      border: 2px solid var(--tile-edge);
+      background:
+        linear-gradient(to right, var(--tile-line) 1px, transparent 1px) -1px 0 / var(--pitch) var(--pitch),
+        linear-gradient(to bottom, var(--tile-line) 1px, transparent 1px) 0 -1px / var(--pitch) var(--pitch),
+        var(--tile);
+      /* From the border's outside, where the tiles start, a gap's half before the first spot. */
+      background-origin: border-box;
+    }
+    & [data-spot] {
+      display: grid;
+      place-items: center;
+      /* No line box: a tooltip's trigger is inline, and a line would make it taller than a shrunk slate. */
+      line-height: 0;
+      /* The slate and what's on it, stacked. */
+      & > * {
+        grid-area: 1 / 1;
+      }
+    }
+    & svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    /* 28px, or a little under the slate where slates shrink. */
+    & [data-spot] img {
+      /* Off the text baseline, or there's room under it for descenders, and the spot's that much taller. */
+      display: block;
+      width: min(--spacing(7), var(--cell) - 4px);
+      height: min(--spacing(7), var(--cell) - 4px);
+      object-fit: scale-down;
+    }
+    /*
+     * A glyph on its spot: a 3px tie-dye border, swirling neon green and yellow-green, cut to a ring around
+     * the slate. Still where motion's reduced: SVG animations in images don't heed it themselves.
+     */
+    & [data-filled] {
+      --ring: var(--tie-dye-neon-spin) 0 0 / 100% 100%;
+      @media (prefers-reduced-motion: reduce) {
+        --ring: var(--tie-dye-neon);
+      }
+    }
+    /* An alteration glyph, the player's choice: neon purple and magenta instead. */
+    & [data-filled][data-alteration] {
+      --ring: var(--tie-dye-violet-spin) 0 0 / 100% 100%;
+      @media (prefers-reduced-motion: reduce) {
+        --ring: var(--tie-dye-violet);
+      }
+    }
+    & [data-filled]::before {
+      content: "";
+      grid-area: 1 / 1;
+      place-self: stretch;
+      margin: -3px;
+      border-radius: 5px;
+      padding: 3px;
+      background: var(--ring);
+      /* Its mask puts it over the glyph, which it would otherwise keep from being hovered. */
+      pointer-events: none;
+      mask:
+        linear-gradient(#000 0 0) content-box exclude,
+        linear-gradient(#000 0 0);
+    }
+    & .slate-edge {
+      fill: #6e7088;
+      stroke: #3f4155;
+      stroke-width: 1.5;
+    }
+    & .slate-face {
+      fill: #8a8ca6;
+    }
+    & .slate-mark {
+      fill: none;
+      stroke: #55576e;
+      stroke-width: 1.5;
+    }
+  }
+
+  /* Rails span both slots' cells and are shortened to fill only the gap between them. */
+  .equipment-rail-v,
+  .equipment-rail-h {
+    place-self: center;
+    background: var(--color-ink-950);
+    border: 0 solid var(--color-stone-600);
+  }
+
+  .equipment-rail-v {
+    width: 6px;
+    height: calc(100% - var(--equipment-pitch) - var(--equipment-slot));
+    border-inline-width: 1px;
+  }
+
+  .equipment-rail-h {
+    width: calc(100% - var(--equipment-pitch) - var(--equipment-slot));
+    height: 6px;
+    border-block-width: 1px;
+  }
+}
+
+@layer components {
+  /* Game window: a frame, a bronze title bar and a textured body. Use with .frame. */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    background: var(--texture-panel), var(--color-ink-900);
+  }
+
+  /* The game's window frame: five bronze rings, brightest along the top, with its corners cut off.
+     The background stops inside it, so the cut corners show what's behind. After .panel, whose
+     background shorthand would reset the clip. */
+  .frame {
+    border: 5px solid;
+    border-image: url("/textures/panel-frame.png") 5;
+    background-clip: padding-box;
+  }
+
+  /* A thin frame: two 1px rings, a grey-brown outer and a brown inner. */
+  .frame-thin {
+    border: 2px solid;
+    border-image: url("/textures/thin-frame.svg") 2;
+  }
+
+  .panel-title {
+    padding: --spacing(1.5) --spacing(3) --spacing(1.75);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-gold-400);
+    text-shadow: 1px 1px 0 var(--color-ink-950);
+    background: var(--color-bronze-700);
+    /* A leather bar: its 2px edged ends kept whole, the middle (the leather, then the same mirrored, so it
+       joins itself) tiled between them, and stretched to the bar's height. Repeat, not round: round would
+       squash the 1170px tile to fit a narrow bar. The border image covers the whole box, borders included,
+       without taking up any room. */
+    border-image: url("/textures/leather-2.png") 0 2 fill / 0 2px / 0 repeat stretch;
+  }  /* A title bar holding a control (Panel's `header`), e.g. a search field across its whole length, in
+     place of the title: less padding, and none of the title's lettering on what's typed. */
+  .panel-header {
+    padding: --spacing(1);
+
+    & .input {
+      font-weight: 400;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+  }
+
+  /* The thin frame's top edge divides the title from the body. The side borders are zero
+     width, so the corners aren't drawn. */
+  .panel-body {
+    border-top: 2px solid;
+    border-image: url("/textures/thin-frame.svg") 2;
+  }
+
+  /* Without the frame (.panel-borderless, not .frame): the same height, the frame's top and bottom left
+     clear, and the title bar's part of them filled in bronze. No sides, so the bar doesn't overhang the body. */
+  .panel-borderless {
+    border-block: 5px solid transparent;
+
+    & .panel-title {
+      margin-top: -5px;
+      border-block: 5px solid var(--color-bronze-700);
+    }
+    & .panel-body {
+      border-top: 0;
+    }
+  }
+
+  /* A 1px black outline around a game icon's shape, as the game draws item icons, for one that would
+     blend into what's behind it. */
+  .icon-outline {
+    filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000)
+      drop-shadow(0 -1px 0 #000);
+  }
+
+  /*
+   * Drop zones (drop-zone.tsx): a flat brown box with a dashed edge and a gold plus, for an image to be
+   * dropped, pasted or chosen. Brighter while hovered or dragged over; the image fills it once given.
+   */
+  .drop-zone {
+    display: grid;
+    width: 100%;
+    place-items: center;
+    align-content: center;
+    gap: --spacing(2);
+    min-height: --spacing(40);
+    padding: --spacing(4);
+    border: 2px dashed rgb(from var(--color-gold-600) r g b / 60%);
+    background: var(--color-bronze-700);
+    color: var(--color-parchment-200);
+    font-size: var(--text-sm);
+    text-align: center;
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      width: --spacing(8);
+      height: --spacing(8);
+      background: var(--plus) center / contain no-repeat;
+    }
+    &:hover,
+    &[data-dragging] {
+      border-color: var(--color-gold-400);
+      background: color-mix(in srgb, var(--color-bronze-700), white 6%);
+    }
+    &:has(input:focus-visible) {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 2px;
+    }
+    &[data-filled]::before {
+      display: none;
+    }
+    & img {
+      max-width: 100%;
+      max-height: --spacing(96);
+    }
+  }
+
+  /*
+   * A bank screenshot being read (inventory/bank-import.tsx): at its own size, but never wider than the
+   * page or taller than most of the screen, so a tall or square one fits too. The wrapper shrinks to the
+   * image, so the item boxes, placed in percentages of it, line up at any size.
+   */
+  .bank-preview {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+
+    & img {
+      display: block;
+      max-width: 100%;
+      max-height: 70svh;
+    }
+  }
+  /*
+   * Keyboard keys (<kbd class="kbd">): a small raised key cap, bronze, lit along the top with a dark lip
+   * under it, sized to the text around it.
+   */
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.6em;
+    height: 1.6em;
+    padding-inline: 0.35em;
+    border: 1px solid var(--color-bronze-950);
+    border-top-color: var(--color-bronze-600);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    background: var(--color-bronze-800);
+    font-family: var(--font-sans);
+    font-size: 0.8em;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-parchment-100);
+    text-shadow: 1px 1px 0 var(--color-black);
+    vertical-align: 0.1em;
+  }
+
+  /*
+   * Progress bars (<progress class="progress">): a round gold bar, lit from above, with a rounded nose,
+   * set a little into a sunken track. The track's drawn like the radio buttons: rounded, so a ring in the
+   * slot frame's colours (dark at the top to its lighter bottom edge) rather than a frame image, under
+   * the same sunken fill.
+   */
+  .progress {
+    --progress-fill: linear-gradient(var(--color-gold-200), var(--color-gold-500) 40%, var(--color-gold-800));
+    appearance: none;
+    width: 100%;
+    height: --spacing(4);
+    padding: 2px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background:
+      linear-gradient(color-mix(in srgb, var(--color-ink-900), black 35%) 0 0) padding-box,
+      linear-gradient(#2c2924, #504c47) border-box;
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 40%);
+    overflow: hidden;
+
+    &::-webkit-progress-bar {
+      background: none;
+    }
+    &::-webkit-progress-value {
+      border-radius: 999px;
+      background: var(--progress-fill);
+      transition: inline-size 150ms;
+    }
+    &::-moz-progress-bar {
+      border-radius: 999px;
+      background: var(--progress-fill);
+    }
+    /* Indeterminate (no value, e.g. <progress className="progress" />): a third of the fill sliding through
+       the track, start to end, over and over; held in the middle with reduced motion. The browsers' own
+       bar is hidden. */
+    &:indeterminate {
+      background:
+        var(--progress-fill) content-box 50% 0 / 33% 100% no-repeat,
+        linear-gradient(color-mix(in srgb, var(--color-ink-900), black 35%) 0 0) padding-box,
+        linear-gradient(#2c2924, #504c47) border-box;
+
+      &::-moz-progress-bar {
+        background: none;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        animation: progress-indeterminate 1.2s ease-in-out infinite;
+      }
+    }
+    /* Small: thinner, and set in by 1px. */
+    &.progress-sm {
+      height: --spacing(2.5);
+      padding: 1px;
+    }
+    /* Textured (either size): molten gold, or a tie-dye, moving (the --*-spin textures), under the same
+       light-to-dark shading, made translucent, so it still looks round. Still with reduced motion. */
+    &.progress-molten {
+      --progress-texture: var(--gold-shimmer-spin);
+      --progress-still: var(--gold-shimmer);
+    }
+    &.progress-eyes {
+      --progress-texture: var(--tie-dye-eyes-spin);
+      --progress-still: var(--tie-dye-eyes);
+    }
+    &.progress-trans {
+      --progress-texture: var(--tie-dye-trans-spin);
+      --progress-still: var(--tie-dye-trans);
+    }
+    &.progress-bi {
+      --progress-texture: var(--tie-dye-bi-spin);
+      --progress-still: var(--tie-dye-bi);
+    }
+    &.progress-gay {
+      --progress-texture: var(--tie-dye-gay-spin);
+      --progress-still: var(--tie-dye-gay);
+    }
+    &.progress-purple {
+      --progress-texture: var(--tie-dye-purple-spin);
+      --progress-still: var(--tie-dye-purple);
+    }
+    &:is(.progress-molten, .progress-eyes, .progress-trans, .progress-bi, .progress-gay, .progress-purple) {
+      --progress-fill:
+        linear-gradient(rgb(255 255 255 / 45%), transparent 45%, rgb(0 0 0 / 40%)),
+        var(--progress-texture) 0 0 / 100% 100%;
+
+      @media (prefers-reduced-motion: reduce) {
+        --progress-fill:
+          linear-gradient(rgb(255 255 255 / 45%), transparent 45%, rgb(0 0 0 / 40%)),
+          var(--progress-still) 0 0 / 80px 80px;
+      }
+    }
+  }
+
+  /*
+   * A slot's icon found on it (bank-import.tsx), in a 2px square ring 1px out from it, at half opacity (full
+   * under the pointer), coloured by how sure the scan is of it: green found, yellow several close matches or
+   * its amount shortened, red no match.
+   */
+  .bank-box {
+    --bank-box-colour: rgb(30 255 0);
+    position: absolute;
+    cursor: pointer;
+
+    &[data-state="close"],
+    &[data-state="truncated"] {
+      --bank-box-colour: rgb(255 255 0);
+    }
+    &[data-state="unknown"] {
+      --bank-box-colour: rgb(255 60 60);
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border: 2px solid rgb(from var(--bank-box-colour) r g b / 50%);
+      pointer-events: none;
+    }
+    /* Its ring at full colour, not a thicker ring, so nothing about the box changes size under the pointer. */
+    &:hover::before,
+    &:focus-visible::before {
+      border-color: var(--bank-box-colour);
+    }
+  }
+
+  /* A changed slot's box: pulsing, each pulse fainter, until it's gone, as the game's trade window flashes
+     a changed offer. */
+  @keyframes slot-flash {
+    from {
+      opacity: 1;
+    }
+    12.5% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 0.75;
+    }
+    37.5% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    62.5% {
+      opacity: 0;
+    }
+    75% {
+      opacity: 0.25;
+    }
+    87.5%,
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* The indeterminate bar's slide: from just off the start to just off the end (a 33% layer at -50% and
+     150% sits wholly outside). */
+  @keyframes progress-indeterminate {
+    from {
+      background-position: -50% 0, 0 0, 0 0;
+    }
+    to {
+      background-position: 150% 0, 0 0, 0 0;
+    }
+  }
+
+  /*
+   * Dialogs (dialog.tsx): a panel over the dimmed page, centred by the browser, no taller than most of the
+   * screen. It fades in, growing from a little smaller and lower, as the page behind dims; closing plays it
+   * backwards (display and overlay transition too, so it stays until it's faded out). With reduced motion it
+   * only fades.
+   */
+  .dialog {
+    --dialog-width: min(--spacing(112), 100vw - --spacing(8));
+    width: var(--dialog-width);
+    max-width: none;
+    max-height: min(85svh, --spacing(192));
+    margin: auto;
+    /* Centred on a whole pixel across (a margin's percentage is of the window's width here): on a half one,
+       text in it sits half a pixel off until something's hovered and redrawn, then jumps. */
+    margin-inline-start: round(down, (100% - var(--dialog-width)) / 2, 1px);
+    padding: 0;
+    /* The page's text, whatever it's put inside: text styles still inherit through the top layer, so a
+       dialog opened from a panel's title bar would otherwise take its heading lettering. */
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-transform: none;
+    text-shadow: none;
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 --spacing(2);
+    transition:
+      opacity 150ms,
+      scale 150ms,
+      translate 150ms,
+      display 150ms allow-discrete,
+      overlay 150ms allow-discrete;
+
+    /* .panel's flex would show it closed too. */
+    &:not([open]) {
+      display: none;
+    }
+    &[open] {
+      opacity: 1;
+      scale: 1;
+      translate: 0;
+    }
+    @starting-style {
+      &[open] {
+        opacity: 0;
+        scale: 0.96;
+        translate: 0 --spacing(2);
+      }
+    }
+    &::backdrop {
+      background: rgb(0 0 0 / 0%);
+      transition:
+        background 150ms,
+        display 150ms allow-discrete,
+        overlay 150ms allow-discrete;
+    }
+    &[open]::backdrop {
+      background: rgb(0 0 0 / 60%);
+    }
+    @starting-style {
+      &[open]::backdrop {
+        background: rgb(0 0 0 / 0%);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      &[open] {
+        scale: none;
+        translate: none;
+      }
+    }
+  }
+  /* The title, and the close button at its end, over the leather. */
+  .dialog-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: --spacing(3);
+  }
+  /* A small danger button: out into the bar's padding, so it doesn't make the bar taller. */
+  .dialog-close {
+    flex-shrink: 0;
+    margin-block: --spacing(-1.5);
+    margin-inline-end: --spacing(-1.5);
+  }
+  /* The rows, between the title and the frame: the header and footer stay put, and only the content
+     scrolls. */
+  .dialog-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .dialog-header,
+  .dialog-footer {
+    padding: --spacing(4);
+  }
+  /* Inset 4px all round from the frame and the header and footer, in the bank's flat brown. The brown
+     border holds the scrollbar 4px in from the edges, as the scrollbar is drawn inside it; its outer 2px are
+     the thin frame, greyscaled, with the brown showing through the rest. The content rests --dialog-gap in
+     from the edges (the border counting towards it) and as far clear of the scrollbar; scrolled, it's cut
+     off 4px in. */
+  .dialog-content {
+    --dialog-gap: --spacing(2);
+    --dialog-content-border: --spacing(1);
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    margin: --spacing(1);
+    border: var(--dialog-content-border) solid var(--color-bank);
+    border-image: url("/textures/thin-frame-grey.svg") 2 / 2px;
+    padding: calc(var(--dialog-gap) - var(--dialog-content-border));
+    padding-inline-end: var(--dialog-gap);
+    background: var(--color-bank);
+  }
+  /* A brown well (the drop zone's) in the thin grey frame, e.g. around a panel's slots. */
+  .bank-well {
+    margin: --spacing(2);
+    border: 2px solid;
+    border-image: url("/textures/thin-frame-grey.svg") 2;
+    padding: --spacing(2);
+    background: var(--color-bronze-700);
+  }
+  /* Header and footer: divided from the content by the thin frame's edge. */
+  .dialog-header {
+    border-bottom: 2px solid;
+    border-image: url("/textures/thin-frame.svg") 2;
+  }
+  .dialog-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: --spacing(3);
+    border-top: 2px solid;
+    border-image: url("/textures/thin-frame.svg") 2;
+  }
+
+  /*
+   * Scrollbars (.scrollbar, on a scrolling element), as the game draws them: 10px wide. The track is black
+   * inside two dark rings, its ends cut round on whole pixels; the thumb fills its width, ten 1px columns from light gold
+   * on the left to dark brown on the right, so it looks round. Gold chevrons for the arrows. Chrome and
+   * Safari draw it from these pseudo-elements, which they ignore on an element that sets scrollbar-color or
+   * scrollbar-width; Firefox can't shape a scrollbar, so it gets just the colours.
+   */
+  .scrollbar {
+    &::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    /* Track and thumb: 10px wide pixel art, their ends cut to a curve on whole pixels like the frame's
+       corners (in 2px, then 1px, then full), stretched between the ends (border-image: the 3px ends kept,
+       the 1px middle row stretched). */
+    &::-webkit-scrollbar-track {
+      border: solid transparent;
+      border-width: 3px 0;
+      border-image: var(--scrollbar-track) 3 0 fill / 3px 0 stretch;
+    }
+    &::-webkit-scrollbar-thumb {
+      border: solid transparent;
+      border-width: 3px 0;
+      border-image: var(--scrollbar-thumb) 3 0 fill / 3px 0 stretch;
+    }
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-button:single-button {
+      display: block;
+      height: 10px;
+      background: transparent center / 10px no-repeat;
+    }
+    &::-webkit-scrollbar-button:single-button:vertical:decrement {
+      background-image: var(--chevron-up);
+    }
+    &::-webkit-scrollbar-button:single-button:vertical:increment {
+      background-image: var(--chevron);
+    }
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    .scrollbar {
+      scrollbar-color: #daa666 #0b0a09;
+    }
+  }
+
+  /* The item search's results (item-search.tsx): a fixed height, scrolling, so the dialog keeps its size. */
+  .item-search-results {
+    height: --spacing(72);
+    overflow-y: auto;
+    /* The frame's 2px, then 4px more of the field's dark, which holds the scrollbar (drawn inside the
+       border) off the frame. */
+    border: calc(2px + --spacing(1)) solid;
+    border-image: url("/textures/slot-frame.png") 2 / 2px;
+    background: rgb(0 0 0 / 35%);
+    font-size: var(--text-sm);
+
+    & li {
+      display: flex;
+      align-items: center;
+      gap: --spacing(2);
+      padding: --spacing(1) --spacing(2);
+      cursor: pointer;
+    }
+    /* Pointed at or picked: the sidebar's links' bronze fill. */
+    & li[data-active],
+    & li[aria-selected="true"] {
+      background: var(--color-sidebar-accent);
+    }
+    /* The picked item: gold, with a gold check at the end. The check's drawn in left to right, and wiped out
+       left to right when another's picked: every row has it, clipped away from the left until it's picked.
+       Picked, it's drawn by an animation (a transition would draw it from the right, where it's clipped);
+       unpicked, it transitions back, from where it is. */
+    & li::after {
+      content: "";
+      flex-shrink: 0;
+      width: --spacing(4);
+      height: --spacing(4);
+      margin-inline-start: auto;
+      background: var(--check) center / contain no-repeat;
+      clip-path: inset(0 0 0 100%);
+    }
+    & li[aria-selected="true"] {
+      color: var(--color-gold-300);
+
+      &::after {
+        clip-path: inset(0);
+      }
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .item-search-results li::after {
+      transition: clip-path 0.12s ease-in;
+    }
+    .item-search-results li[aria-selected="true"]::after {
+      transition: none;
+      animation: draw-check 0.15s ease-out;
+    }
+  }
+  @keyframes draw-check {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+
+  /*
+   * Accordions (accordion.tsx): a panel that opens and closes by its title bar, a <details>. The chevron
+   * turns over as it opens, and the body slides open and shut (::details-content's height, animated to
+   * `auto` by interpolate-size; where that's unsupported, it just snaps).
+   */
+  .accordion {
+    width: auto;
+    interpolate-size: allow-keywords;
+
+    & > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: --spacing(3);
+      cursor: pointer;
+      list-style: none;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+      &::after {
+        content: "";
+        flex-shrink: 0;
+        width: --spacing(4);
+        height: --spacing(4);
+        background: var(--chevron) center / contain no-repeat;
+        transition: rotate 0.25s ease;
+      }
+      &:hover {
+        color: var(--color-gold-300);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--color-ring);
+        outline-offset: 2px;
+      }
+    }
+    &[open] > summary::after {
+      rotate: 180deg;
+    }
+    & > .panel-body {
+      padding: --spacing(3);
+      /* Worn Equipment brings its own padding and ground, edge to edge, as in a panel. */
+      &:has(> .equipment) {
+        padding: 0;
+      }
+    }
+
+    &::details-content {
+      block-size: 0;
+      /* A panel's a flex column, and a flex item won't shrink below its content without this. */
+      min-block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.25s ease,
+        content-visibility 0.25s allow-discrete;
+    }
+    &[open]::details-content {
+      block-size: auto;
+    }
+  }
+  /* Naked: the title alone, muted, on a faint orange band, with a smaller chevron. */
+  .accordion-naked > summary {
+    padding: --spacing(0.5) --spacing(2);
+    color: var(--color-muted-foreground);
+    background: color-mix(in srgb, var(--color-gold-500) 12%, transparent);
+    &::after {
+      width: --spacing(3);
+      height: --spacing(3);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .accordion > summary::after,
+    .accordion::details-content {
+      transition: none;
+    }
+  }
+
+  /*
+   * Text tooltips (ui/tooltip.tsx): a small window, the panel's frame and texture, with an arrow at the
+   * thing it labels (see .tooltip-arrow). The shadow is a drop-shadow filter, not a box-shadow, so it
+   * follows the arrow too (a box-shadow would stop at the box).
+   */
+  .tooltip {
+    position: relative;
+    padding: --spacing(1.5) --spacing(3);
+    border: 5px solid;
+    border-image: url("/textures/panel-frame.png") 5;
+    background: var(--texture-panel), var(--color-ink-900);
+    /* Inside the frame, so its cut corners show what's behind. */
+    background-clip: padding-box;
+    filter: drop-shadow(0 4px 8px rgb(0 0 0 / 50%));
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    color: var(--color-parchment-100);
+  }
+  .tooltip-arrow {
+    /* The frame's outline bending out round the arrow and back, drawn as pixel art over the panel texture:
+       the frame's five rings, each a 1px staircase down the diagonals, and clipped along the outer
+       staircase. Not strokes: anti-aliasing blends the 1px rings on a diagonal into a darker mush. It
+       spans 6px of the box's own frame either side so the join matches. Inside the rings is the texture,
+       so the box runs on into the arrow with no frame across its base. It's 9px deep past the box's edge
+       (14 with the frame); one drawing per side, none rotated. */
+    --tooltip-arrow-depth: 14px;
+    --tooltip-arrow-span: 30px;
+    background: var(--tooltip-arrow-frame), var(--texture-panel), var(--color-ink-900);
+
+    &[data-side="top"] {
+      --tooltip-arrow-frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='14' shape-rendering='crispEdges'%3E%3Cpath fill='%234d3d26' d='M0 0h6v1h-6zM24 0h6v1h-6zM6 1h1v1h-1zM23 1h1v1h-1zM7 2h1v1h-1zM22 2h1v1h-1zM8 3h1v1h-1zM21 3h1v1h-1zM9 4h1v1h-1zM20 4h1v1h-1zM10 5h1v1h-1zM19 5h1v1h-1zM11 6h1v1h-1zM18 6h1v1h-1zM12 7h1v1h-1zM17 7h1v1h-1zM13 8h1v1h-1zM16 8h1v1h-1zM14 9h2v1h-2z'/%3E%3Cpath fill='%23635032' d='M0 1h6v1h-6zM24 1h6v1h-6zM6 2h1v1h-1zM23 2h1v1h-1zM7 3h1v1h-1zM22 3h1v1h-1zM8 4h1v1h-1zM21 4h1v1h-1zM9 5h1v1h-1zM20 5h1v1h-1zM10 6h1v1h-1zM19 6h1v1h-1zM11 7h1v1h-1zM18 7h1v1h-1zM12 8h1v1h-1zM17 8h1v1h-1zM13 9h1v1h-1zM16 9h1v1h-1zM14 10h2v1h-2z'/%3E%3Cpath fill='%239a7e4e' d='M0 2h6v1h-6zM24 2h6v1h-6zM6 3h1v1h-1zM23 3h1v1h-1zM7 4h1v1h-1zM22 4h1v1h-1zM8 5h1v1h-1zM21 5h1v1h-1zM9 6h1v1h-1zM20 6h1v1h-1zM10 7h1v1h-1zM19 7h1v1h-1zM11 8h1v1h-1zM18 8h1v1h-1zM12 9h1v1h-1zM17 9h1v1h-1zM13 10h1v1h-1zM16 10h1v1h-1zM14 11h2v1h-2z'/%3E%3Cpath fill='%23745d39' d='M0 3h6v1h-6zM24 3h6v1h-6zM6 4h1v1h-1zM23 4h1v1h-1zM7 5h1v1h-1zM22 5h1v1h-1zM8 6h1v1h-1zM21 6h1v1h-1zM9 7h1v1h-1zM20 7h1v1h-1zM10 8h1v1h-1zM19 8h1v1h-1zM11 9h1v1h-1zM18 9h1v1h-1zM12 10h1v1h-1zM17 10h1v1h-1zM13 11h1v1h-1zM16 11h1v1h-1zM14 12h2v1h-2z'/%3E%3Cpath fill='%2323201c' d='M0 4h6v1h-6zM24 4h6v1h-6zM6 5h1v1h-1zM23 5h1v1h-1zM7 6h1v1h-1zM22 6h1v1h-1zM8 7h1v1h-1zM21 7h1v1h-1zM9 8h1v1h-1zM20 8h1v1h-1zM10 9h1v1h-1zM19 9h1v1h-1zM11 10h1v1h-1zM18 10h1v1h-1zM12 11h1v1h-1zM17 11h1v1h-1zM13 12h1v1h-1zM16 12h1v1h-1zM14 13h2v1h-2z'/%3E%3C/svg%3E");
+      bottom: calc(var(--tooltip-arrow-depth) * -1);
+      width: var(--tooltip-arrow-span);
+      height: var(--tooltip-arrow-depth);
+      clip-path: polygon(0px 0px, 30px 0px, 30px 5px, 24px 5px, 24px 6px, 23px 6px, 23px 7px, 22px 7px, 22px 8px, 21px 8px, 21px 9px, 20px 9px, 20px 10px, 19px 10px, 19px 11px, 18px 11px, 18px 12px, 17px 12px, 17px 13px, 16px 13px, 16px 14px, 14px 14px, 14px 13px, 13px 13px, 13px 12px, 12px 12px, 12px 11px, 11px 11px, 11px 10px, 10px 10px, 10px 9px, 9px 9px, 9px 8px, 8px 8px, 8px 7px, 7px 7px, 7px 6px, 6px 6px, 6px 5px, 0px 5px);
+    }
+    &[data-side="bottom"] {
+      --tooltip-arrow-frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='14' shape-rendering='crispEdges'%3E%3Cpath fill='%234d3d26' d='M14 4h2v1h-2zM13 5h1v1h-1zM16 5h1v1h-1zM12 6h1v1h-1zM17 6h1v1h-1zM11 7h1v1h-1zM18 7h1v1h-1zM10 8h1v1h-1zM19 8h1v1h-1zM9 9h1v1h-1zM20 9h1v1h-1zM8 10h1v1h-1zM21 10h1v1h-1zM7 11h1v1h-1zM22 11h1v1h-1zM6 12h1v1h-1zM23 12h1v1h-1zM0 13h6v1h-6zM24 13h6v1h-6z'/%3E%3Cpath fill='%23635032' d='M14 3h2v1h-2zM13 4h1v1h-1zM16 4h1v1h-1zM12 5h1v1h-1zM17 5h1v1h-1zM11 6h1v1h-1zM18 6h1v1h-1zM10 7h1v1h-1zM19 7h1v1h-1zM9 8h1v1h-1zM20 8h1v1h-1zM8 9h1v1h-1zM21 9h1v1h-1zM7 10h1v1h-1zM22 10h1v1h-1zM6 11h1v1h-1zM23 11h1v1h-1zM0 12h6v1h-6zM24 12h6v1h-6z'/%3E%3Cpath fill='%23a48a5b' d='M14 2h2v1h-2zM13 3h1v1h-1zM16 3h1v1h-1zM12 4h1v1h-1zM17 4h1v1h-1zM11 5h1v1h-1zM18 5h1v1h-1zM10 6h1v1h-1zM19 6h1v1h-1zM9 7h1v1h-1zM20 7h1v1h-1zM8 8h1v1h-1zM21 8h1v1h-1zM7 9h1v1h-1zM22 9h1v1h-1zM6 10h1v1h-1zM23 10h1v1h-1zM0 11h6v1h-6zM24 11h6v1h-6z'/%3E%3Cpath fill='%23745d39' d='M14 1h2v1h-2zM13 2h1v1h-1zM16 2h1v1h-1zM12 3h1v1h-1zM17 3h1v1h-1zM11 4h1v1h-1zM18 4h1v1h-1zM10 5h1v1h-1zM19 5h1v1h-1zM9 6h1v1h-1zM20 6h1v1h-1zM8 7h1v1h-1zM21 7h1v1h-1zM7 8h1v1h-1zM22 8h1v1h-1zM6 9h1v1h-1zM23 9h1v1h-1zM0 10h6v1h-6zM24 10h6v1h-6z'/%3E%3Cpath fill='%2323201c' d='M14 0h2v1h-2zM13 1h1v1h-1zM16 1h1v1h-1zM12 2h1v1h-1zM17 2h1v1h-1zM11 3h1v1h-1zM18 3h1v1h-1zM10 4h1v1h-1zM19 4h1v1h-1zM9 5h1v1h-1zM20 5h1v1h-1zM8 6h1v1h-1zM21 6h1v1h-1zM7 7h1v1h-1zM22 7h1v1h-1zM6 8h1v1h-1zM23 8h1v1h-1zM0 9h6v1h-6zM24 9h6v1h-6z'/%3E%3C/svg%3E");
+      top: calc(var(--tooltip-arrow-depth) * -1);
+      width: var(--tooltip-arrow-span);
+      height: var(--tooltip-arrow-depth);
+      clip-path: polygon(0px 14px, 30px 14px, 30px 9px, 24px 9px, 24px 8px, 23px 8px, 23px 7px, 22px 7px, 22px 6px, 21px 6px, 21px 5px, 20px 5px, 20px 4px, 19px 4px, 19px 3px, 18px 3px, 18px 2px, 17px 2px, 17px 1px, 16px 1px, 16px 0px, 14px 0px, 14px 1px, 13px 1px, 13px 2px, 12px 2px, 12px 3px, 11px 3px, 11px 4px, 10px 4px, 10px 5px, 9px 5px, 9px 6px, 8px 6px, 8px 7px, 7px 7px, 7px 8px, 6px 8px, 6px 9px, 0px 9px);
+    }
+    &[data-side="right"],
+    &[data-side="inline-end"] {
+      --tooltip-arrow-frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' shape-rendering='crispEdges'%3E%3Cpath fill='%234d3d26' d='M13 0h1v1h-1zM13 1h1v1h-1zM13 2h1v1h-1zM13 3h1v1h-1zM13 4h1v1h-1zM13 5h1v1h-1zM12 6h1v1h-1zM11 7h1v1h-1zM10 8h1v1h-1zM9 9h1v1h-1zM8 10h1v1h-1zM7 11h1v1h-1zM6 12h1v1h-1zM5 13h1v1h-1zM4 14h1v1h-1zM4 15h1v1h-1zM5 16h1v1h-1zM6 17h1v1h-1zM7 18h1v1h-1zM8 19h1v1h-1zM9 20h1v1h-1zM10 21h1v1h-1zM11 22h1v1h-1zM12 23h1v1h-1zM13 24h1v1h-1zM13 25h1v1h-1zM13 26h1v1h-1zM13 27h1v1h-1zM13 28h1v1h-1zM13 29h1v1h-1z'/%3E%3Cpath fill='%23635032' d='M12 0h1v1h-1zM12 1h1v1h-1zM12 2h1v1h-1zM12 3h1v1h-1zM12 4h1v1h-1zM12 5h1v1h-1zM11 6h1v1h-1zM10 7h1v1h-1zM9 8h1v1h-1zM8 9h1v1h-1zM7 10h1v1h-1zM6 11h1v1h-1zM5 12h1v1h-1zM4 13h1v1h-1zM3 14h1v1h-1zM3 15h1v1h-1zM4 16h1v1h-1zM5 17h1v1h-1zM6 18h1v1h-1zM7 19h1v1h-1zM8 20h1v1h-1zM9 21h1v1h-1zM10 22h1v1h-1zM11 23h1v1h-1zM12 24h1v1h-1zM12 25h1v1h-1zM12 26h1v1h-1zM12 27h1v1h-1zM12 28h1v1h-1zM12 29h1v1h-1z'/%3E%3Cpath fill='%239a7e4e' d='M11 0h1v1h-1zM11 1h1v1h-1zM11 2h1v1h-1zM11 3h1v1h-1zM11 4h1v1h-1zM11 5h1v1h-1zM10 6h1v1h-1zM9 7h1v1h-1zM8 8h1v1h-1zM7 9h1v1h-1zM6 10h1v1h-1zM5 11h1v1h-1zM4 12h1v1h-1zM3 13h1v1h-1zM2 14h1v1h-1zM2 15h1v1h-1zM3 16h1v1h-1zM4 17h1v1h-1zM5 18h1v1h-1zM6 19h1v1h-1zM7 20h1v1h-1zM8 21h1v1h-1zM9 22h1v1h-1zM10 23h1v1h-1zM11 24h1v1h-1zM11 25h1v1h-1zM11 26h1v1h-1zM11 27h1v1h-1zM11 28h1v1h-1zM11 29h1v1h-1z'/%3E%3Cpath fill='%23745d39' d='M10 0h1v1h-1zM10 1h1v1h-1zM10 2h1v1h-1zM10 3h1v1h-1zM10 4h1v1h-1zM10 5h1v1h-1zM9 6h1v1h-1zM8 7h1v1h-1zM7 8h1v1h-1zM6 9h1v1h-1zM5 10h1v1h-1zM4 11h1v1h-1zM3 12h1v1h-1zM2 13h1v1h-1zM1 14h1v1h-1zM1 15h1v1h-1zM2 16h1v1h-1zM3 17h1v1h-1zM4 18h1v1h-1zM5 19h1v1h-1zM6 20h1v1h-1zM7 21h1v1h-1zM8 22h1v1h-1zM9 23h1v1h-1zM10 24h1v1h-1zM10 25h1v1h-1zM10 26h1v1h-1zM10 27h1v1h-1zM10 28h1v1h-1zM10 29h1v1h-1z'/%3E%3Cpath fill='%2323201c' d='M9 0h1v1h-1zM9 1h1v1h-1zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM8 6h1v1h-1zM7 7h1v1h-1zM6 8h1v1h-1zM5 9h1v1h-1zM4 10h1v1h-1zM3 11h1v1h-1zM2 12h1v1h-1zM1 13h1v1h-1zM0 14h1v1h-1zM0 15h1v1h-1zM1 16h1v1h-1zM2 17h1v1h-1zM3 18h1v1h-1zM4 19h1v1h-1zM5 20h1v1h-1zM6 21h1v1h-1zM7 22h1v1h-1zM8 23h1v1h-1zM9 24h1v1h-1zM9 25h1v1h-1zM9 26h1v1h-1zM9 27h1v1h-1zM9 28h1v1h-1zM9 29h1v1h-1z'/%3E%3C/svg%3E");
+      left: calc(var(--tooltip-arrow-depth) * -1);
+      width: var(--tooltip-arrow-depth);
+      height: var(--tooltip-arrow-span);
+      clip-path: polygon(14px 0px, 14px 30px, 9px 30px, 9px 24px, 8px 24px, 8px 23px, 7px 23px, 7px 22px, 6px 22px, 6px 21px, 5px 21px, 5px 20px, 4px 20px, 4px 19px, 3px 19px, 3px 18px, 2px 18px, 2px 17px, 1px 17px, 1px 16px, 0px 16px, 0px 14px, 1px 14px, 1px 13px, 2px 13px, 2px 12px, 3px 12px, 3px 11px, 4px 11px, 4px 10px, 5px 10px, 5px 9px, 6px 9px, 6px 8px, 7px 8px, 7px 7px, 8px 7px, 8px 6px, 9px 6px, 9px 0px);
+    }
+    &[data-side="left"],
+    &[data-side="inline-start"] {
+      --tooltip-arrow-frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' shape-rendering='crispEdges'%3E%3Cpath fill='%234d3d26' d='M0 0h1v1h-1zM0 1h1v1h-1zM0 2h1v1h-1zM0 3h1v1h-1zM0 4h1v1h-1zM0 5h1v1h-1zM1 6h1v1h-1zM2 7h1v1h-1zM3 8h1v1h-1zM4 9h1v1h-1zM5 10h1v1h-1zM6 11h1v1h-1zM7 12h1v1h-1zM8 13h1v1h-1zM9 14h1v1h-1zM9 15h1v1h-1zM8 16h1v1h-1zM7 17h1v1h-1zM6 18h1v1h-1zM5 19h1v1h-1zM4 20h1v1h-1zM3 21h1v1h-1zM2 22h1v1h-1zM1 23h1v1h-1zM0 24h1v1h-1zM0 25h1v1h-1zM0 26h1v1h-1zM0 27h1v1h-1zM0 28h1v1h-1zM0 29h1v1h-1z'/%3E%3Cpath fill='%23635032' d='M1 0h1v1h-1zM1 1h1v1h-1zM1 2h1v1h-1zM1 3h1v1h-1zM1 4h1v1h-1zM1 5h1v1h-1zM2 6h1v1h-1zM3 7h1v1h-1zM4 8h1v1h-1zM5 9h1v1h-1zM6 10h1v1h-1zM7 11h1v1h-1zM8 12h1v1h-1zM9 13h1v1h-1zM10 14h1v1h-1zM10 15h1v1h-1zM9 16h1v1h-1zM8 17h1v1h-1zM7 18h1v1h-1zM6 19h1v1h-1zM5 20h1v1h-1zM4 21h1v1h-1zM3 22h1v1h-1zM2 23h1v1h-1zM1 24h1v1h-1zM1 25h1v1h-1zM1 26h1v1h-1zM1 27h1v1h-1zM1 28h1v1h-1zM1 29h1v1h-1z'/%3E%3Cpath fill='%239a7e4e' d='M2 0h1v1h-1zM2 1h1v1h-1zM2 2h1v1h-1zM2 3h1v1h-1zM2 4h1v1h-1zM2 5h1v1h-1zM3 6h1v1h-1zM4 7h1v1h-1zM5 8h1v1h-1zM6 9h1v1h-1zM7 10h1v1h-1zM8 11h1v1h-1zM9 12h1v1h-1zM10 13h1v1h-1zM11 14h1v1h-1zM11 15h1v1h-1zM10 16h1v1h-1zM9 17h1v1h-1zM8 18h1v1h-1zM7 19h1v1h-1zM6 20h1v1h-1zM5 21h1v1h-1zM4 22h1v1h-1zM3 23h1v1h-1zM2 24h1v1h-1zM2 25h1v1h-1zM2 26h1v1h-1zM2 27h1v1h-1zM2 28h1v1h-1zM2 29h1v1h-1z'/%3E%3Cpath fill='%23745d39' d='M3 0h1v1h-1zM3 1h1v1h-1zM3 2h1v1h-1zM3 3h1v1h-1zM3 4h1v1h-1zM3 5h1v1h-1zM4 6h1v1h-1zM5 7h1v1h-1zM6 8h1v1h-1zM7 9h1v1h-1zM8 10h1v1h-1zM9 11h1v1h-1zM10 12h1v1h-1zM11 13h1v1h-1zM12 14h1v1h-1zM12 15h1v1h-1zM11 16h1v1h-1zM10 17h1v1h-1zM9 18h1v1h-1zM8 19h1v1h-1zM7 20h1v1h-1zM6 21h1v1h-1zM5 22h1v1h-1zM4 23h1v1h-1zM3 24h1v1h-1zM3 25h1v1h-1zM3 26h1v1h-1zM3 27h1v1h-1zM3 28h1v1h-1zM3 29h1v1h-1z'/%3E%3Cpath fill='%2323201c' d='M4 0h1v1h-1zM4 1h1v1h-1zM4 2h1v1h-1zM4 3h1v1h-1zM4 4h1v1h-1zM4 5h1v1h-1zM5 6h1v1h-1zM6 7h1v1h-1zM7 8h1v1h-1zM8 9h1v1h-1zM9 10h1v1h-1zM10 11h1v1h-1zM11 12h1v1h-1zM12 13h1v1h-1zM13 14h1v1h-1zM13 15h1v1h-1zM12 16h1v1h-1zM11 17h1v1h-1zM10 18h1v1h-1zM9 19h1v1h-1zM8 20h1v1h-1zM7 21h1v1h-1zM6 22h1v1h-1zM5 23h1v1h-1zM4 24h1v1h-1zM4 25h1v1h-1zM4 26h1v1h-1zM4 27h1v1h-1zM4 28h1v1h-1zM4 29h1v1h-1z'/%3E%3C/svg%3E");
+      right: calc(var(--tooltip-arrow-depth) * -1);
+      width: var(--tooltip-arrow-depth);
+      height: var(--tooltip-arrow-span);
+      clip-path: polygon(0px 0px, 0px 30px, 5px 30px, 5px 24px, 6px 24px, 6px 23px, 7px 23px, 7px 22px, 8px 22px, 8px 21px, 9px 21px, 9px 20px, 10px 20px, 10px 19px, 11px 19px, 11px 18px, 12px 18px, 12px 17px, 13px 17px, 13px 16px, 14px 16px, 14px 14px, 13px 14px, 13px 13px, 12px 13px, 12px 12px, 11px 12px, 11px 11px, 10px 11px, 10px 10px, 9px 10px, 9px 9px, 8px 9px, 8px 8px, 7px 8px, 7px 7px, 6px 7px, 6px 6px, 5px 6px, 5px 0px);
+    }
+    /* Centred along the side: the positioner measures from the box's outer edge, but an absolute child
+       sits inside its frame, so back by the frame's width. */
+    &[data-side="top"],
+    &[data-side="bottom"] {
+      margin-left: -5px;
+    }
+    &[data-side="left"],
+    &[data-side="right"],
+    &[data-side="inline-start"],
+    &[data-side="inline-end"] {
+      margin-top: -5px;
+    }
+  }
+
+  /*
+   * Item tooltips: a name band, then sections split by a rule that fades out at both ends. Everything's
+   * centred. Stats are a grey label and a bright value; effects are gold; flavour text is last, in
+   * italics. Near-black inside the window frame, so the text stands out over anything.
+   */
+  .item-tooltip {
+    width: max-content;
+    max-width: --spacing(80);
+    border: 5px solid;
+    border-image: url("/textures/panel-frame.png") 5;
+    background: rgb(17 15 13 / 96%);
+    /* Inside the frame, so its cut corners show what's behind. */
+    background-clip: padding-box;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 60%);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    text-align: center;
+    color: var(--color-parchment-200);
+  }
+  /* The popover a tooltip follows the pointer in (follow-tooltip.tsx): none of the browser's popover
+     box, placed by `translate` from the top left, and never in the pointer's way. */
+  .follow-tooltip {
+    position: fixed;
+    inset: 0 auto auto 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .item-tooltip-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: --spacing(0.5);
+    padding: --spacing(2) --spacing(4) --spacing(1.75);
+    background: var(--color-leather);
+    /* The thin frame's edge, as under a panel's title. */
+    border-bottom: 2px solid;
+    border-image: url("/textures/thin-frame.svg") 2;
+    position: relative;
+    isolation: isolate;
+
+    /* The panel title's leather bar along the top, and upside down along the bottom, at its own height
+       (stretched to this, it streaks), each fading into the leather's brown between them. */
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: -1;
+      height: 32px;
+      border-image: url("/textures/leather-2.png") 0 2 fill / 0 2px / 0 repeat stretch;
+      mask-image: linear-gradient(black 50%, transparent);
+    }
+    &::after {
+      inset: auto 0 0;
+      scale: 1 -1;
+    }
+  }
+  .item-tooltip-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-gold-300);
+    text-shadow: 1px 1px 0 var(--color-ink-950);
+  }
+  .item-tooltip-type {
+    font-size: var(--text-xs);
+    color: var(--color-parchment-400);
+  }
+  .item-tooltip-section {
+    padding: --spacing(2) --spacing(4);
+
+    & + & {
+      border-top: 1px solid;
+      border-image: linear-gradient(90deg, transparent, var(--color-bronze-500), transparent) 1;
+    }
+  }
+  /* "Label: value" lines, e.g. <div><dt>Durability</dt><dd>6</dd></div> in a <dl>. */
+  .item-tooltip-stats {
+    & > div {
+      display: flex;
+      justify-content: center;
+      gap: --spacing(1.5);
+    }
+    & dt {
+      color: var(--color-ash-400);
+      &::after {
+        content: ":";
+      }
+    }
+    /* Values can hold icons (an ink's, say), sized to the text and centred on it. Name what they show in
+       the label: nothing in a tooltip can be hovered for its name. */
+    & dd {
+      display: flex;
+      align-items: center;
+      gap: --spacing(1);
+      font-weight: 600;
+      color: var(--color-parchment-100);
+      & img {
+        width: 1.25em;
+        height: 1.25em;
+        object-fit: contain;
+      }
+    }
+  }
+  .item-tooltip-effect {
+    color: var(--color-gold-400);
+  }
+  .item-tooltip-requires {
+    font-size: var(--text-xs);
+    color: var(--color-ash-400);
+    & strong {
+      font-weight: 600;
+      color: var(--color-parchment-100);
+    }
+  }
+  .item-tooltip-flavour {
+    font-style: italic;
+    color: color-mix(in srgb, var(--color-gold-600), var(--color-ash-400));
+  }
+
+  /*
+   * Tables: <table className="table">, usually in a panel. Rows like the game's lists: dark, every other
+   * one a shade lighter. Column headings in gold on a recessed strip; totals (<tfoot>) below the frame's
+   * edge, as the panel's title is. Give number columns .num: right-aligned, every digit the same width,
+   * so they line up.
+   */
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--text-sm);
+    color: var(--color-parchment-200);
+
+    & th,
+    & td {
+      padding: --spacing(1.5) --spacing(3);
+      text-align: left;
+      white-space: nowrap;
+    }
+    & thead th {
+      font-weight: 600;
+      color: var(--color-gold-400);
+      background: rgb(0 0 0 / 20%);
+    }
+    & tbody tr:nth-child(even) {
+      background: rgb(255 255 255 / 3%);
+    }
+    /* On each cell, not the <tfoot>: separated tables don't draw borders on rows or row groups. The side
+       borders are zero width, so the cells' edges join into one. */
+    & tfoot td,
+    & tfoot th {
+      border-top: 2px solid;
+      border-image: url("/textures/thin-frame.svg") 2;
+      font-weight: 700;
+      color: var(--color-gold-300);
+    }
+    & .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  /*
+   * Text fields (<input className="input">, or ui/input.tsx) and dropdowns share a look: a recessed dark
+   * bar in the equipment slot's frame, light text with a shadow.
+   */
+  .input,
+  .select {
+    height: --spacing(9);
+    border: 2px solid;
+    border-image: url("/textures/slot-frame.png") 2;
+    background-color: rgb(0 0 0 / 35%);
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 40%);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--color-parchment-100);
+    text-shadow: 1px 1px 0 var(--color-black);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 2px;
+    }
+    /* Text fields: browsers show focus on them however they're reached, a click included (you're about to
+       type), so the ring would show on every click. A thin gold line inside the frame instead: still
+       visible, for keyboard users, without the ring. */
+    &.input:focus-visible,
+    &.input:has(input:focus-visible) {
+      outline: none;
+      box-shadow:
+        inset 0 0 0 1px var(--color-gold-400),
+        inset 0 2px 4px rgb(0 0 0 / 40%);
+    }
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    /* Invalid (a Field with an error): a thin red edge inside the frame. */
+    &[aria-invalid="true"],
+    &:has([aria-invalid="true"]) {
+      box-shadow:
+        inset 0 0 0 1px var(--color-blood-300),
+        inset 0 2px 4px rgb(0 0 0 / 40%);
+    }
+  }
+
+  .input {
+    width: 100%;
+    min-width: 0;
+    padding-inline: --spacing(3);
+
+    /* Small, as tall as a small button (.btn-sm), to sit in a row of them. */
+    &.input-sm {
+      height: --spacing(7);
+      font-size: var(--text-xs);
+    }
+
+    /* Read-only: a value to see and copy, not a slot to fill, so not sunken. The frame stays. */
+    &[readonly],
+    &:has(input[readonly]) {
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: var(--color-ash-400);
+      text-shadow: none;
+    }
+
+    /* Search fields: the magnifying glass at the front, the text centred. Padded as far at both ends, so
+       it's centred in the field, not just the space after the glass. */
+    &[type="search"] {
+      padding-inline: --spacing(8);
+      background-image: var(--magnifying-glass);
+      background-repeat: no-repeat;
+      background-position: --spacing(2) center;
+      /* 8px clear of the start, top and bottom, however tall the field. */
+      background-size: auto calc(100% - --spacing(4));
+      text-align: center;
+
+      /* The browser's clear button, once there's text: the dialog close button's X, mirroring the glass at
+         the other end (out into the padding, so the text stays centred). */
+      &::-webkit-search-cancel-button {
+        appearance: none;
+        width: --spacing(4);
+        height: --spacing(4);
+        margin-inline-end: calc(-1 * --spacing(6));
+        background: var(--x) center / contain no-repeat;
+        cursor: pointer;
+      }
+    }
+    /* No browser spin buttons: number-input.tsx has its own. */
+    &[type="number"] {
+      appearance: textfield;
+    }
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  /*
+   * Checkboxes and radio buttons: native <input type="checkbox" className="checkbox"> and
+   * <input type="radio" className="radio">, small sunken boxes, marked in the scrollbar thumb's gold (#deb06e) drawn like the
+   * dropdown's chevron and the number field's − and +: a tick, or a dot.
+   */
+  .checkbox,
+  .radio,
+  .switch {
+    appearance: none;
+    flex-shrink: 0;
+    width: --spacing(5);
+    height: --spacing(5);
+    margin: 0;
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 40%);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 2px;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    /* Invalid (in a group with an error): a thin red edge inside, like the text fields'. */
+    &[aria-invalid="true"] {
+      box-shadow:
+        inset 0 0 0 1px var(--color-blood-300),
+        inset 0 1px 3px rgb(0 0 0 / 40%);
+    }
+  }
+
+  .checkbox {
+    /* The equipment slot's frame, as on fields. */
+    border: 2px solid;
+    border-image: url("/textures/slot-frame.png") 2;
+    background: rgb(0 0 0 / 35%) center / 100% no-repeat;
+
+    &:checked {
+      background-image: var(--check);
+    }
+    &:hover:not(:disabled) {
+      background-color: rgb(255 255 255 / 6%);
+    }
+  }
+
+  /* Round, so no frame image (border-image ignores border-radius): the slot frame's colours as a
+     ring instead, dark at the top to its lighter bottom edge, under a solid sunken fill. */
+  .radio {
+    --radio-dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5.5' fill='%23deb06e'/%3E%3C/svg%3E");
+    --radio-fill: color-mix(in srgb, var(--color-ink-900), black 35%);
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background:
+      linear-gradient(var(--radio-fill) 0 0) padding-box,
+      linear-gradient(#2c2924, #504c47) border-box;
+
+    &:checked {
+      background:
+        var(--radio-dot) center / 100% no-repeat padding-box,
+        linear-gradient(var(--radio-fill) 0 0) padding-box,
+        linear-gradient(#2c2924, #504c47) border-box;
+    }
+    &:hover:not(:disabled) {
+      --radio-fill: color-mix(in srgb, var(--color-ink-900), white 6%);
+    }
+  }
+
+  /*
+   * Toggle switches: <input type="checkbox" role="switch" className="switch">. A progress bar's track (.progress)
+   * with a knob in it like a progress bar at 55%: a rounded bar 55% of the track's length, dim at the start
+   * when off, sliding to the end and turning gold when on.
+   */
+  .switch {
+    --switch-fill: color-mix(in srgb, var(--color-ink-900), black 35%);
+    --switch-track: var(--switch-fill);
+    position: relative;
+    width: --spacing(9);
+    height: --spacing(4);
+    padding: 2px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background:
+      linear-gradient(var(--switch-track) 0 0) padding-box,
+      linear-gradient(#2c2924, #504c47) border-box;
+
+    /* The knob: 55% of the inside, so on, it's moved the other 45% (45/55 of its width). */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 2px;
+      left: 2px;
+      width: calc((100% - 4px) * 0.55);
+      border-radius: 999px;
+      background: linear-gradient(#8a8173, #5d564c 40%, #3a352f);
+    }
+    &:checked::before {
+      translate: calc(45 / 55 * 100%) 0;
+    }
+    /* Gold when on; always, choosing between two options (switch.tsx's `select`), as neither is off. */
+    &:checked::before,
+    &[data-select]::before {
+      background: linear-gradient(var(--color-gold-200), var(--color-gold-500) 40%, var(--color-gold-800));
+    }
+    /* The track darkly gold when on too; not choosing between two options, where neither side is on. */
+    &:checked:not([data-select]) {
+      --switch-fill: color-mix(in srgb, var(--color-gold-800), black 45%);
+    }
+    &:hover:not(:disabled) {
+      --switch-track: color-mix(in srgb, var(--switch-fill), white 6%);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      &::before {
+        transition: translate 150ms ease-out;
+      }
+    }
+  }
+
+  /* Parchment, for the NPC dialogue (rasial-says.tsx): the beige with the buttons' grain over it, at 7% of
+     its frequency (its 256px tile drawn at 3657px) for the paper and four times that for blotches, darkening
+     towards the edges like old paper. */
+  .parchment {
+    background:
+      radial-gradient(ellipse at center, transparent 45%, rgb(70 45 15 / 30%)),
+      var(--texture-grain) 0 0 / 14629px,
+      var(--texture-grain) 0 0 / 3657px,
+      var(--color-bronze-400);
+    background-blend-mode: normal, overlay, overlay, normal;
+    /* Ghost buttons in dark ink, as their light text wouldn't show on it. */
+    & .btn-ghost:not(:hover, [data-hover]) {
+      color: var(--color-ink-900);
+    }
+  }
+
+  /* An indeterminate loader (spinner.tsx): the small progress bar bent into a ring, its gold running round. */
+  .spinner {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: --spacing(12);
+    height: --spacing(12);
+    /* The still ring and the turning gold, one over the other. */
+    & svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    /* Bigger (spinner.tsx's `size`), the ring thicker with it. */
+    &.spinner-lg {
+      width: --spacing(16);
+      height: --spacing(16);
+    }
+    &.spinner-xl {
+      width: --spacing(24);
+      height: --spacing(24);
+    }
+    & .spinner-fill {
+      stroke: color-mix(in srgb, var(--color-ink-900), black 35%);
+    }
+    /* Turning a plain box by its transform, the case the browser runs on the GPU: a shape inside the SVG, or the
+       <svg> itself, it ran on the main thread, stalling while the page loads. */
+    & .spinner-turn {
+      position: absolute;
+      inset: 0;
+      animation: spinner-turn 1s linear infinite;
+      will-change: transform;
+    }
+    & .spinner-gold {
+      /* As long as --spinner-tail, a percentage of the ring (67 unless set; at most 95), fading in to the head.
+         The stroke starts at 3 o'clock (90deg round from 12); the mask turns with it, in its drawing. Hidden from just past the
+         head's round end round to the tail, or the tail's round end, poking back past the start, would show. */
+      stroke-dasharray: var(--spinner-tail, 67) 100;
+      mask: conic-gradient(
+        from 90deg,
+        transparent,
+        #000 calc(var(--spinner-tail, 67) * 1%),
+        #000 calc(var(--spinner-tail, 67) * 1% + 5%),
+        transparent calc(var(--spinner-tail, 67) * 1% + 5%)
+      );
+      /* Over the whole drawing, centred on the ring, not its fill box: the stroke's outer half lies past that,
+         where the mask would repeat. */
+      mask-origin: view-box;
+      mask-clip: view-box;
+      mask-repeat: no-repeat;
+    }
+    /* Slower, not stopped: still has to show it's working. */
+    @media (prefers-reduced-motion: reduce) {
+      & .spinner-turn {
+        animation-duration: 3s;
+      }
+    }
+  }
+
+  /* An NPC's chathead (rasial-says.tsx) on a dark disc in a thick ring of the slot frame's colours (drawn, as
+     the frame image can't follow a curve), like the radio button's. The head is cut to the circle below and
+     rises out of it above. */
+  .chathead {
+    --chathead-fill: color-mix(in srgb, var(--color-ink-900), black 35%);
+    position: relative;
+    flex-shrink: 0;
+    width: --spacing(20);
+    aspect-ratio: 1;
+    border: --spacing(1.5) solid transparent;
+    border-radius: 50%;
+    background:
+      linear-gradient(var(--chathead-fill) 0 0) padding-box,
+      linear-gradient(#2c2924, #504c47) border-box;
+    box-shadow: inset 0 2px 6px rgb(0 0 0 / 60%);
+    & img {
+      position: absolute;
+      inset: auto 0 0;
+      width: 100%;
+      height: 115%;
+      object-fit: contain;
+      object-position: bottom;
+      /* Its bottom corners rounded to a semicircle as wide as it: the disc's lower half. */
+      clip-path: inset(0 round 0 0 9999px 9999px);
+    }
+    @media (width >= 40rem) {
+      width: --spacing(32);
+    }
+  }
+
+  /*
+   * A number field between − and + buttons (number-input.tsx): the frame is on a wrapper, with a bare
+   * <input> inside it. The buttons are drawn like the dropdown's chevron, in the same gold, each with the same
+   * faded divider on the number's side, spaced like the chevron: 0.5rem from the edge and the divider.
+   */
+  .number-input {
+    --number-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23deb06e' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 12h12'/%3E%3C/svg%3E");
+    --number-divider: linear-gradient(transparent, rgb(from var(--color-gold-600) r g b / 55%), transparent);
+    display: flex;
+    align-items: stretch;
+    padding-inline-end: 0;
+
+    & input {
+      flex: 1;
+      min-width: 0;
+      background: none;
+      outline: none;
+      appearance: textfield;
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+      }
+    }
+    /* With steppers (even when read-only hides them), as wide as its number, but never narrower than a
+       button, and centred between them. Sized from its digits (number-input.tsx counts them), not
+       field-sizing: iOS Safari sized it far too wide, pushing the + out of view. */
+    &[data-steppers] {
+      width: fit-content;
+      padding-inline: 0;
+      &.input-sm button {
+        width: --spacing(6);
+      }
+      & input {
+        flex: none;
+        width: max(--spacing(8), calc(var(--number-digits) * 1ch + --spacing(4)));
+        padding-inline: --spacing(2);
+        text-align: center;
+        /* Every digit 1ch wide. */
+        font-variant-numeric: tabular-nums;
+      }
+    }
+    /* Something inside the field after the number, such as a lock button (which has its own padding). */
+    & .number-input-end {
+      display: flex;
+      align-items: center;
+    }
+    /* Buttons at either end, outside the − and +, behind the same divider as theirs. */
+    & .number-input-actions {
+      display: flex;
+      align-items: center;
+      padding-inline: --spacing(0.5);
+      &[data-side="before"] {
+        order: -2;
+        background: var(--number-divider) right center / 1px 67% no-repeat;
+      }
+      &[data-side="after"] {
+        background: var(--number-divider) left center / 1px 67% no-repeat;
+      }
+      /* Their icons drawn like the − and +: the same size and weight, and gold unless disabled (then the
+         button's own disabled colour). */
+      & svg {
+        width: --spacing(4);
+        height: --spacing(4);
+        stroke-width: 2.5;
+      }
+      & :not(:disabled) > svg {
+        color: #deb06e;
+      }
+    }
+    /* The wrapper shows the input's disabled state (and its focus, with .input's). */
+    &:has(input:disabled) {
+      opacity: 0.5;
+      & * {
+        cursor: not-allowed;
+      }
+    }
+    & button {
+      flex-shrink: 0;
+      /* Square, as wide as the field is tall inside its 2px frame, its sign in the middle. A set width, not
+         aspect-ratio: Safari counts an aspect-ratio button as 0 wide when fitting the field to its contents,
+         so the − and + spilled out of it. */
+      width: --spacing(8);
+      padding: 0;
+      cursor: pointer;
+      &:hover:not(:disabled) {
+        background-color: rgb(255 255 255 / 6%);
+      }
+      &:active:not(:disabled) {
+        background-color: rgb(0 0 0 / 20%);
+      }
+    }
+    & button[data-step="down"] {
+      /* Before the number on screen; after it in the markup (see number-input.tsx). */
+      order: -1;
+      background:
+        var(--number-minus) center / --spacing(4) no-repeat,
+        var(--number-divider) right center / 1px 67% no-repeat;
+    }
+    & button[data-step="up"] {
+      background:
+        var(--plus) center / --spacing(4) no-repeat,
+        var(--number-divider) left center / 1px 67% no-repeat;
+    }
+  }
+
+  /*
+   * Dropdowns: a native <select className="select">. Like the game's, a dark bar in a bronze frame with a
+   * gold chevron, but recessed (the slot's frame) and left-aligned. Where the browser supports
+   * base-select, its list is a popover in the top layer, anchored under it, framed like a window and
+   * styled here; elsewhere the browser's own list opens from the same bar.
+   */
+  .select {
+    /* The chevron (--chevron), and the gold line before it that fades out at both ends, like a
+       tooltip's dividers. */
+    --select-divider: linear-gradient(transparent, rgb(from var(--color-gold-600) r g b / 55%), transparent);
+    appearance: base-select;
+    display: inline-flex;
+    align-items: center;
+    min-width: --spacing(48);
+    /* On the right, room for the divider and chevron, drawn in it: a 0.5rem gap, the divider, 0.5rem,
+       the chevron, and --spacing(2) to the edge. */
+    padding-inline: --spacing(3) calc(--spacing(2) + 1px + --spacing(2) + --spacing(4) + --spacing(2));
+    white-space: nowrap;
+    /* A long value is cut off where the padding starts, not under the chevron. (Padding alone doesn't do
+       it: overflow is clipped at the padding's outer edge unless the clip margin says otherwise.) */
+    overflow: clip;
+    overflow-clip-margin: content-box;
+    /* The divider is 67% of the height. Backgrounds, not ::picker-icon, so they sit in the padding
+       and every browser draws them the same. */
+    background-image: var(--chevron), var(--select-divider);
+    background-position:
+      right --spacing(2) center,
+      right --spacing(8) center;
+    background-size:
+      --spacing(4),
+      1px 67%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: rgb(255 255 255 / 4%);
+    }
+    /* The browser's own chevron: ours is in the background. */
+    &::picker-icon {
+      display: none;
+    }
+
+    & option {
+      display: flex;
+      align-items: center;
+      gap: --spacing(2);
+      padding: --spacing(1.5) --spacing(3);
+      color: var(--color-parchment-200);
+      cursor: pointer;
+      &:hover,
+      &:focus-visible {
+        outline: none;
+        background: var(--color-bronze-700);
+        color: var(--color-parchment-100);
+      }
+      &:checked {
+        color: var(--color-gold-300);
+      }
+      /* An icon, from --option-icon on the option: an image in an option is dropped by browsers without
+         base-select, so the page they read wouldn't match React's. Those show the text alone. */
+      &[style*="--option-icon"]::before {
+        content: "";
+        flex-shrink: 0;
+        width: --spacing(6);
+        height: --spacing(6);
+        background: var(--option-icon) center / contain no-repeat;
+      }
+      /* A level, from data-level on the option: after the text, with the Necromancy icon. */
+      &[data-level]::after {
+        content: attr(data-level);
+        order: 1;
+        margin-inline-start: auto;
+        /* Room for two digits, so the icons line up. */
+        min-inline-size: calc(--spacing(5) + 2ch);
+        padding-inline-start: --spacing(5);
+        text-align: end;
+        background: url("/icons/necromancy.png") left center / --spacing(4) no-repeat;
+        color: var(--color-parchment-400);
+      }
+      &::checkmark {
+        order: 2;
+        margin-inline-start: auto;
+        color: var(--color-gold-400);
+      }
+      /* The level takes the free space before it, so the checkmark goes straight after. */
+      &[data-level]::checkmark {
+        margin-inline-start: 0;
+      }
+    }
+  }
+  /* A separate rule: browsers without base-select drop any rule with ::picker(). */
+  .select::picker(select) {
+    appearance: base-select;
+    /* Below, flipping above only when it doesn't fit. The browser's default opens it on whichever side
+       has more room, so it opens upwards whenever the dropdown is below the middle of the screen. */
+    position-try-order: normal;
+    /* Over the select's 2px edge, above or below, so the list's frame edge becomes the select's. The list
+       can't tell which side it opened on (anchored queries only reach what's inside it), so it doesn't drop
+       an edge; it overlaps one. */
+    margin-block: -2px;
+    padding-block: --spacing(1);
+    border: 5px solid;
+    border-image: url("/textures/panel-frame.png") 5;
+    background: var(--texture-panel), var(--color-ink-900);
+    /* Inside the frame, so its cut corners show what's behind. */
+    background-clip: padding-box;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 50%);
+    /* Fades in over 150 ms; display and overlay transition too, so it stays until it's faded out. No slide:
+       it can open either way. */
+    transition:
+      opacity 150ms,
+      display 150ms allow-discrete,
+      overlay 150ms allow-discrete;
+  }
+  .select:not(:open)::picker(select) {
+    opacity: 0;
+  }
+  @starting-style {
+    .select:open::picker(select) {
+      opacity: 0;
+    }
+  }
+  /* Without base-select, no browser arrow either. Here, not as an `appearance: none` before
+     base-select: the CSS build drops the earlier of the two. */
+  @supports not (appearance: base-select) {
+    .select {
+      appearance: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .select::picker(select) {
+      transition: none;
+    }
+  }
+}
+
+/* The sidebar's links as the site loads, one after another (--i is each link's position, set in
+   app-sidebar.tsx): each slides 60px in from the left and fades in over 400 ms, starting 300 ms in and
+   10 ms after the one above. The sidebar stays across pages, so this plays once. With reduced motion
+   they're simply there. */
+.nav-in {
+  animation: nav-in 400ms cubic-bezier(0.2, 0.8, 0, 1) calc(300ms + var(--i, 0) * 10ms) both;
+}
+/* Not clickable while they move: pointer-events is in the keyframes, not on .nav-in, so they come back
+   when the animation ends even if nothing removes the class (with reduced motion, it never runs). */
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    translate: -60px 0;
+    pointer-events: none;
+  }
+  99.9% {
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    pointer-events: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-in {
+    animation: none;
+  }
+}
+
+/* The sidebar's logo as the site loads: from three-quarter size, blurred and unseen,
+   to itself in 250 ms (ease-out-emphasized) after 300 ms. Filled backwards only, so it's unseen during the
+   wait. The layout stays across pages, so this plays once. With reduced motion it's simply there. */
+.logo-in {
+  animation: logo-in 250ms cubic-bezier(0.2, 0.8, 0, 1) 300ms backwards;
+}
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    scale: 0.75;
+    filter: blur(2px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-in {
+    animation: none;
+  }
+}
+
+/* The phone's menu button (a manual popover), floating in the bottom-left corner on the game's ribbon button plate
+   (rebuilt from the wiki's ribbon icons with the icons removed). */
+.menu-fab {
+  position: fixed;
+  /* A popover: undo the browser's centring, border and background. */
+  inset: auto auto --spacing(3) --spacing(3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  display: grid;
+  place-items: center;
+  width: --spacing(12);
+  height: --spacing(12);
+  color: var(--color-gold-200);
+  background: url("/textures/button-plate.png") center / 100% 100%;
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 50%));
+
+  & svg {
+    width: --spacing(6);
+    height: --spacing(6);
+    filter: drop-shadow(1px 1px 0 var(--color-ink-950));
+  }
+  &:hover {
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 50%)) brightness(1.1);
+  }
+  &:active {
+    translate: 0 1px;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+  /* Out of the way while the drawer's open. */
+  &[data-open] {
+    visibility: hidden;
+  }  /* Phones only. Here, not md:hidden: this unlayered rule's display would beat the utility. */
+  @media (width >= 48rem) {
+    display: none;
+  }
+}
+
+/* How far open the phone drawer is while dragged, 0 to 1. Registered so the spring can animate it. */
+@property --drawer-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* The phone drawer (see Sidebar in sidebar.tsx), fixed underneath the page, which slides over by the
+   drawer's width to reveal it, leaving a sliver of itself in view. The page is opaque so it hides the
+   drawer while closed, and its shadow falls on the drawer while open. */
+.mobile-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  /* Screen-wide, with its contents kept to the drawer's width: when the page springs open past the
+     drawer, its background is still underneath. */
+  width: 100vw;
+  padding-right: calc(100vw - var(--sidebar-width-mobile));
+}
+[data-slot="sidebar-inset"] {
+  background: var(--texture-panel), var(--color-ink-900);
+  transition: translate 300ms cubic-bezier(0.2, 0.8, 0, 1);
+
+  &[data-pushed] {
+    translate: var(--sidebar-width-mobile) 0;
+  }
+  /* Dimmed while pushed. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    background: rgb(0 0 0 / 50%);
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(0.2, 0.8, 0, 1);
+  }
+  &[data-pushed]::after {
+    opacity: 1;
+  }
+  /* Being dragged (use-drawer-swipe.ts): the dim follows how far open it is. */
+  &[data-dragging]::after {
+    opacity: var(--drawer-progress);
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="sidebar-inset"],
+  [data-slot="sidebar-inset"]::after {
+    transition: none;
+  }
+}
+
+/* The sidebar, desktop and phone drawer alike: the page texture with 20% black over it, so it looks
+   recessed under the content's frame. Unlayered, so it beats the component's bg-sidebar. */
+[data-sidebar="sidebar"] {
+  background: linear-gradient(rgb(0 0 0 / 20%) 0 0), var(--texture-panel), var(--color-ink-900);
+}
+
+/* The wordmark's tie-dye textures: the trans flag's pink, white and blue; the bi flag's magenta,
+   lavender and royal blue; the rainbow pride flag; and the logo skull's eyes, aqua-green and purple.
+   --tie-dye-image picks one each hover: the eyes, but 1 time in 200 a flag (app-sidebar.tsx). */
+:root {
+  --tie-dye-trans: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.36 0.96 1.00 0.96 0.36 0.96 1.00 0.96 0.36'/%3E%3CfeFuncG type='table' tableValues='0.81 0.66 1.00 0.66 0.81 0.66 1.00 0.66 0.81'/%3E%3CfeFuncB type='table' tableValues='0.98 0.72 1.00 0.72 0.98 0.72 1.00 0.72 0.98'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-bi: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.84 0.84 0.61 0.00 0.00 0.61 0.84 0.84 0.61'/%3E%3CfeFuncG type='table' tableValues='0.01 0.01 0.31 0.22 0.22 0.31 0.01 0.01 0.31'/%3E%3CfeFuncB type='table' tableValues='0.44 0.44 0.59 0.66 0.66 0.59 0.44 0.44 0.59'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-gay: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.89 1.00 1.00 0.00 0.00 0.45 0.89 1.00 1.00'/%3E%3CfeFuncG type='table' tableValues='0.01 0.55 0.93 0.50 0.30 0.16 0.01 0.55 0.93'/%3E%3CfeFuncB type='table' tableValues='0.01 0.00 0.00 0.15 1.00 0.51 0.01 0.00 0.00'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-eyes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.04 0.04 0.34 0.64 0.64 0.34 0.04 0.04 0.34'/%3E%3CfeFuncG type='table' tableValues='0.99 0.99 0.57 0.15 0.15 0.57 0.99 0.99 0.57'/%3E%3CfeFuncB type='table' tableValues='0.83 0.83 0.91 1.00 1.00 0.91 0.83 0.83 0.91'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-image: var(--tie-dye-eyes);
+  --tie-dye-spin: var(--tie-dye-eyes-spin);
+  /* The icons below, and the radio's dot and number field's minus, are drawn in #deb06e: the
+     gold from the middle of the scrollbar thumb's light half. */
+  /* A gold check, for checkboxes and the item search's picked item. */
+  --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23deb06e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5 9.5-10'/%3E%3C/svg%3E");
+  /* The close button's X (stroke 3.4, in the danger button's text colour), for search fields' clear button. */
+  --x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dcb58d' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
+  /* A gold plus, for number fields' step up and drop zones. */
+  --plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23deb06e' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 12h12M12 6v12'/%3E%3C/svg%3E");
+  /* A gold chevron pointing down, for dropdowns and accordions. */
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23deb06e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  /* A gold magnifying glass, for search fields, as the game draws it: a thin ring, lighter at the top, and a
+     thick, round-ended handle. Cropped to the drawing, so it fills whatever size it's given. */
+  --magnifying-glass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='2.5 2.5 17.5 17.5' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d0a848'/%3E%3Cstop offset='1' stop-color='%23b07810'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='9.5' cy='9.5' r='6' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='m14 14 4.5 4.5' stroke='%23c08820' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  /* A gold padlock, shut when locked and open when not, for keeping a value from being changed. */
+  --lock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='3 0.5 14 18.5' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d0a848'/%3E%3Cstop offset='1' stop-color='%23b07810'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M6.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5' stroke='%23c08820' stroke-width='2' stroke-linecap='round'/%3E%3Crect x='4' y='9' width='12' height='9' rx='1.5' fill='url(%23g)'/%3E%3C/svg%3E");
+  --lock-open: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='3 0.5 14 18.5' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d0a848'/%3E%3Cstop offset='1' stop-color='%23b07810'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M6.5 9.5V5.5a3.5 3.5 0 0 1 6.8-1.2' stroke='%23c08820' stroke-width='2' stroke-linecap='round'/%3E%3Crect x='4' y='9' width='12' height='9' rx='1.5' fill='url(%23g)'/%3E%3C/svg%3E");
+  /* A gold circular arrow, for fetching a value again: dark at the edges and bright down the middle, so it looks round. */
+  --refresh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1.5 1.5 17 17' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.76 12.75A5.5 5.5 0 1 1 13.9 6.1' stroke='%238a5a0c' stroke-width='2.6'/%3E%3Cpath d='M15 3.5v3.5h-3.5' stroke='%238a5a0c' stroke-width='2.6'/%3E%3Cpath d='M14.76 12.75A5.5 5.5 0 1 1 13.9 6.1' stroke='%23c08820' stroke-width='1.7'/%3E%3Cpath d='M15 3.5v3.5h-3.5' stroke='%23c08820' stroke-width='1.7'/%3E%3Cpath d='M14.76 12.75A5.5 5.5 0 1 1 13.9 6.1' stroke='%23ecc874' stroke-width='0.7'/%3E%3Cpath d='M15 3.5v3.5h-3.5' stroke='%23ecc874' stroke-width='0.7'/%3E%3C/svg%3E");
+  /* Scrollbars' track (black in two dark rings) and thumb (light gold to dark brown, left to right), each
+     an end, a middle row and an end, for border-image (.scrollbar). */
+  --scrollbar-track: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' shape-rendering='crispEdges'%3E%3Crect x='2' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='3' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='4' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='5' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='7' y='0' width='1' height='1' fill='%231b1917'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%231b1917'/%3E%3Crect x='2' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='5' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='6' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='7' y='1' width='1' height='1' fill='%23171412'/%3E%3Crect x='8' y='1' width='1' height='1' fill='%231b1917'/%3E%3Crect x='0' y='2' width='1' height='1' fill='%231b1917'/%3E%3Crect x='1' y='2' width='1' height='1' fill='%23171412'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='3' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='5' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='6' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='7' y='2' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='8' y='2' width='1' height='1' fill='%23171412'/%3E%3Crect x='9' y='2' width='1' height='1' fill='%231b1917'/%3E%3Crect x='0' y='3' width='1' height='1' fill='%231b1917'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23171412'/%3E%3Crect x='2' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='3' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='4' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='5' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='6' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='7' y='3' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='8' y='3' width='1' height='1' fill='%23171412'/%3E%3Crect x='9' y='3' width='1' height='1' fill='%231b1917'/%3E%3Crect x='0' y='4' width='1' height='1' fill='%231b1917'/%3E%3Crect x='1' y='4' width='1' height='1' fill='%23171412'/%3E%3Crect x='2' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='3' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='5' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='6' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='7' y='4' width='1' height='1' fill='%230b0a09'/%3E%3Crect x='8' y='4' width='1' height='1' fill='%23171412'/%3E%3Crect x='9' y='4' width='1' height='1' fill='%231b1917'/%3E%3Crect x='1' y='5' width='1' height='1' fill='%231b1917'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='3' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='4' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='5' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='6' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23171412'/%3E%3Crect x='8' y='5' width='1' height='1' fill='%231b1917'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%231b1917'/%3E%3Crect x='3' y='6' width='1' height='1' fill='%231b1917'/%3E%3Crect x='4' y='6' width='1' height='1' fill='%231b1917'/%3E%3Crect x='5' y='6' width='1' height='1' fill='%231b1917'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%231b1917'/%3E%3Crect x='7' y='6' width='1' height='1' fill='%231b1917'/%3E%3C/svg%3E");
+  --scrollbar-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' shape-rendering='crispEdges'%3E%3Crect x='2' y='0' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='0' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='0' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='0' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='0' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%23dfc379'/%3E%3Crect x='2' y='1' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='1' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='1' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='1' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='8' y='1' width='1' height='1' fill='%236b5433'/%3E%3Crect x='0' y='2' width='1' height='1' fill='%23ead886'/%3E%3Crect x='1' y='2' width='1' height='1' fill='%23dfc379'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='2' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='2' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='2' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='2' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='8' y='2' width='1' height='1' fill='%236b5433'/%3E%3Crect x='9' y='2' width='1' height='1' fill='%2361492d'/%3E%3Crect x='0' y='3' width='1' height='1' fill='%23ead886'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23dfc379'/%3E%3Crect x='2' y='3' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='3' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='3' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='3' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='3' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='3' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='8' y='3' width='1' height='1' fill='%236b5433'/%3E%3Crect x='9' y='3' width='1' height='1' fill='%2361492d'/%3E%3Crect x='0' y='4' width='1' height='1' fill='%23ead886'/%3E%3Crect x='1' y='4' width='1' height='1' fill='%23dfc379'/%3E%3Crect x='2' y='4' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='4' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='4' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='4' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='4' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='8' y='4' width='1' height='1' fill='%236b5433'/%3E%3Crect x='9' y='4' width='1' height='1' fill='%2361492d'/%3E%3Crect x='1' y='5' width='1' height='1' fill='%23dfc379'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='5' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='5' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='5' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='5' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23725c3a'/%3E%3Crect x='8' y='5' width='1' height='1' fill='%236b5433'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%23deba74'/%3E%3Crect x='3' y='6' width='1' height='1' fill='%23deb06e'/%3E%3Crect x='4' y='6' width='1' height='1' fill='%23daa666'/%3E%3Crect x='5' y='6' width='1' height='1' fill='%239b774c'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%2382643e'/%3E%3Crect x='7' y='6' width='1' height='1' fill='%23725c3a'/%3E%3C/svg%3E");
+  /* And pointing up, for scrollbars' up arrow. */
+  --chevron-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23deb06e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 15 6-6 6 6'/%3E%3C/svg%3E");
+  /* The same noise in gold (gold-600, 500 and 200; not darker, or it sinks into the field), for the ritual count when it's a golden ratio. */
+  --gold-shimmer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.86 0.97 0.96 0.97 0.86 0.97 0.96 0.97 0.86'/%3E%3CfeFuncG type='table' tableValues='0.60 0.64 0.84 0.64 0.60 0.64 0.84 0.64 0.60'/%3E%3CfeFuncB type='table' tableValues='0.21 0.01 0.58 0.01 0.21 0.01 0.58 0.01 0.21'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  /* The same textures, moving (for whatever shows them moving): two big squares of each (the second's noise
+     half as big again, or the two line up into a repeating stripe), each orbiting in a circle without
+     turning (60px round in 10s, and 90px round the other way in 14s), overlaid, so where they cross keeps
+     changing: the colours swirl. Orbiting, not spinning, moves every point at the same speed (a spin is
+     faster the further from its centre). Far bigger than any element, so their edges never show. Each
+     noise filter covers exactly its 160px tile (x, y, width and height), so the tiles join seamlessly. SVG animations in images ignore reduced motion, so the still ones are used then instead. Sized to
+     the element (background-size: 100% 100%). */
+  --tie-dye-trans-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.36 0.96 1.00 0.96 0.36 0.96 1.00 0.96 0.36'/%3E%3CfeFuncG type='table' tableValues='0.81 0.66 1.00 0.66 0.81 0.66 1.00 0.66 0.81'/%3E%3CfeFuncB type='table' tableValues='0.98 0.72 1.00 0.72 0.98 0.72 1.00 0.72 0.98'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  --tie-dye-bi-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.84 0.84 0.61 0.00 0.00 0.61 0.84 0.84 0.61'/%3E%3CfeFuncG type='table' tableValues='0.01 0.01 0.31 0.22 0.22 0.31 0.01 0.01 0.31'/%3E%3CfeFuncB type='table' tableValues='0.44 0.44 0.59 0.66 0.66 0.59 0.44 0.44 0.59'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  --tie-dye-gay-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.89 1.00 1.00 0.00 0.00 0.45 0.89 1.00 1.00'/%3E%3CfeFuncG type='table' tableValues='0.01 0.55 0.93 0.50 0.30 0.16 0.01 0.55 0.93'/%3E%3CfeFuncB type='table' tableValues='0.01 0.00 0.00 0.15 1.00 0.51 0.01 0.00 0.00'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  --tie-dye-eyes-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.04 0.04 0.34 0.64 0.64 0.34 0.04 0.04 0.34'/%3E%3CfeFuncG type='table' tableValues='0.99 0.99 0.57 0.15 0.15 0.57 0.99 0.99 0.57'/%3E%3CfeFuncB type='table' tableValues='0.83 0.83 0.91 1.00 1.00 0.91 0.83 0.83 0.91'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  /* The eyes' textures in other colours, for glyphs on a ritual site: the ritual's own in neon green and
+     yellow-green, alteration glyphs in neon purple and magenta. */
+  --tie-dye-neon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.22 0.22 0.51 0.80 0.80 0.51 0.22 0.22 0.51'/%3E%3CfeFuncG type='table' tableValues='1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00'/%3E%3CfeFuncB type='table' tableValues='0.08 0.08 0.04 0.00 0.00 0.04 0.08 0.08 0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-neon-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.22 0.22 0.51 0.80 0.80 0.51 0.22 0.22 0.51'/%3E%3CfeFuncG type='table' tableValues='1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00'/%3E%3CfeFuncB type='table' tableValues='0.08 0.08 0.04 0.00 0.00 0.04 0.08 0.08 0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  --tie-dye-violet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.69 0.69 0.84 1.00 1.00 0.84 0.69 0.69 0.84'/%3E%3CfeFuncG type='table' tableValues='0.15 0.15 0.20 0.24 0.24 0.20 0.15 0.15 0.20'/%3E%3CfeFuncB type='table' tableValues='1.00 1.00 0.97 0.94 0.94 0.97 1.00 1.00 0.97'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-violet-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.69 0.69 0.84 1.00 1.00 0.84 0.69 0.69 0.84'/%3E%3CfeFuncG type='table' tableValues='0.15 0.15 0.20 0.24 0.24 0.20 0.15 0.15 0.20'/%3E%3CfeFuncB type='table' tableValues='1.00 1.00 0.97 0.94 0.94 0.97 1.00 1.00 0.97'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  /* And purple with darker purple, for a ritual's duration. */
+  --tie-dye-purple: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.62 0.62 0.43 0.24 0.24 0.43 0.62 0.62 0.43'/%3E%3CfeFuncG type='table' tableValues='0.30 0.30 0.18 0.06 0.06 0.18 0.30 0.30 0.18'/%3E%3CfeFuncB type='table' tableValues='1.00 1.00 0.72 0.45 0.45 0.72 1.00 1.00 0.72'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23t%29'/%3E%3C/svg%3E");
+  --tie-dye-purple-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.62 0.62 0.43 0.24 0.24 0.43 0.62 0.62 0.43'/%3E%3CfeFuncG type='table' tableValues='0.30 0.30 0.18 0.06 0.06 0.18 0.30 0.30 0.18'/%3E%3CfeFuncB type='table' tableValues='1.00 1.00 0.72 0.45 0.45 0.72 1.00 1.00 0.72'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+  --gold-shimmer-spin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cfilter id='t' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.86 0.97 0.96 0.97 0.86 0.97 0.96 0.97 0.86'/%3E%3CfeFuncG type='table' tableValues='0.60 0.64 0.84 0.64 0.60 0.64 0.84 0.64 0.60'/%3E%3CfeFuncB type='table' tableValues='0.21 0.01 0.58 0.01 0.21 0.01 0.58 0.01 0.21'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpattern id='p' width='160' height='160' patternUnits='userSpaceOnUse'%3E%3Crect width='160' height='160' filter='url(%23t)'/%3E%3C/pattern%3E%3Cpattern id='q' href='%23p' patternTransform='scale(1.5)'/%3E%3C/defs%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23p)'%3E%3CanimateMotion path='M0,0a60,60 0 1,1 120,0a60,60 0 1,1 -120,0' dur='10s' repeatCount='indefinite'/%3E%3C/rect%3E%3Crect x='-3000' y='-3000' width='6000' height='6000' fill='url(%23q)' style='mix-blend-mode:overlay'%3E%3CanimateMotion path='M0,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0' dur='14s' keyPoints='1;0' keyTimes='0;1' calcMode='linear' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+}
+
+/* The wordmark, and the nav links' labels, tie-dye while hovered: Perlin noise (SVG feTurbulence) banded into
+   the flag's colours, spinning (--tie-dye-spin), clipped to the text. Still with reduced motion. */
+.wordmark {
+  :hover > &,
+  :focus-visible > & {
+    color: transparent;
+    background: var(--tie-dye-spin) 0 0 / 100% 100%;
+    background-clip: text;
+
+    & * {
+      color: transparent;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      background-image: var(--tie-dye-image);
+      background-size: 160px 160px;
+    }
+  }
+}
+
+/* A number field's number, shimmering gold the same way (<NumberInput shimmer>): bold, so there's more
+   of it to see, without the text shadow, which would paint over the clipped background. */
+.number-input[data-shimmer] input {
+  color: transparent;
+  caret-color: var(--color-gold-300);
+  font-weight: 700;
+  text-shadow: none;
+  background: var(--gold-shimmer-spin) 0 0 / 100% 100%;
+  background-clip: text;
+
+  @media (prefers-reduced-motion: reduce) {
+    background-image: var(--gold-shimmer);
+    background-size: 160px 160px;
+  }
+}
+
+@keyframes spinner-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}

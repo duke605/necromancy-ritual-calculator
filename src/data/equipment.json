@@ -1,0 +1,167 @@
+{
+  "55203": {
+    "id": 55203,
+    "name": "Necromancy cape",
+    "slot": "back",
+    "effects": {
+      "glyph": "alteration"
+    },
+    "image": "https://runescape.wiki/images/Necromancy_cape.png?0638f",
+    "examine": "The cape worn by master necromancers."
+  },
+  "55208": {
+    "id": 55208,
+    "name": "Necromancy master cape",
+    "slot": "back",
+    "effects": {
+      "glyph": "alteration"
+    },
+    "image": "https://runescape.wiki/images/Necromancy_master_cape.png?79380",
+    "examine": "The cape worn by the true masters of Necromancy."
+  },
+  "55675": {
+    "id": 55675,
+    "name": "Underworld Grimoire 1",
+    "slot": "pocket",
+    "effects": {
+      "disturbanceXp": 3
+    },
+    "image": "https://runescape.wiki/images/Underworld_Grimoire_1.png?d509b",
+    "examine": "An ancient folio that holds secret knowledge about the Underworld. Tier 1."
+  },
+  "55676": {
+    "id": 55676,
+    "name": "Underworld Grimoire 2",
+    "slot": "pocket",
+    "effects": {
+      "disturbanceXp": 6,
+      "necroplasm": 5
+    },
+    "image": "https://runescape.wiki/images/Underworld_Grimoire_2.png?c3bec",
+    "examine": "An ancient folio that holds secret knowledge about the Underworld. Tier 2."
+  },
+  "55677": {
+    "id": 55677,
+    "name": "Underworld Grimoire 3",
+    "slot": "pocket",
+    "effects": {
+      "disturbanceXp": 9,
+      "necroplasm": 10
+    },
+    "image": "https://runescape.wiki/images/Underworld_Grimoire_3.png?92869",
+    "examine": "An ancient folio that holds secret knowledge about the Underworld. Tier 3."
+  },
+  "55678": {
+    "id": 55678,
+    "name": "Underworld Grimoire 4",
+    "slot": "pocket",
+    "effects": {
+      "disturbanceXp": 12,
+      "necroplasm": 15
+    },
+    "image": "https://runescape.wiki/images/Underworld_Grimoire_4.png?b616e",
+    "examine": "An ancient folio that holds secret knowledge about the Underworld. Tier 4."
+  },
+  "55972": {
+    "id": 55972,
+    "name": "Pumpkin mask",
+    "slot": "head",
+    "effects": {
+      "lights": "tier 1 and 2"
+    },
+    "image": "https://runescape.wiki/images/Pumpkin_mask.png?8195d",
+    "examine": "Spooky, scary, pumpkin hat."
+  },
+  "55973": {
+    "id": 55973,
+    "name": "Ensouled pumpkin mask",
+    "slot": "head",
+    "effects": {
+      "lights": "all"
+    },
+    "image": "https://runescape.wiki/images/Ensouled_pumpkin_mask.png?ec754",
+    "examine": "Spooky, scary, pumpkin hat bursting with otherworldly energy."
+  },
+  "56412": {
+    "id": 56412,
+    "name": "Alteration necklace",
+    "slot": "neck",
+    "effects": {
+      "alterationBoost": 20
+    },
+    "image": "https://runescape.wiki/images/Alteration_necklace.png?5e62f",
+    "examine": "Empowers necromancy alteration glyphs."
+  },
+  "57696": {
+    "id": 57696,
+    "name": "Modified ritualist's mask",
+    "slot": "head",
+    "effects": {
+      "xp": 1,
+      "focusSave": 5
+    },
+    "image": "https://runescape.wiki/images/Modified_ritualist%27s_mask.png?978b5",
+    "examine": "Gives +1% Necromancy XP. Can be used to spawn a deathshead moth once per day. Occasionally saves a ritual focus object."
+  },
+  "57697": {
+    "id": 57697,
+    "name": "Ritualist's mask",
+    "slot": "head",
+    "effects": {
+      "xp": 1
+    },
+    "image": "https://runescape.wiki/images/Ritualist%27s_mask.png?9ca5d",
+    "examine": "Increases Necromancy experience gained by 1% when worn."
+  },
+  "57698": {
+    "id": 57698,
+    "name": "Ritualist's robe top",
+    "slot": "torso",
+    "effects": {
+      "xp": 1
+    },
+    "image": "https://runescape.wiki/images/Ritualist%27s_robe_top.png?84d87",
+    "examine": "Increases Necromancy experience gained by 1% when worn."
+  },
+  "57699": {
+    "id": 57699,
+    "name": "Ritualist's robe bottoms",
+    "slot": "legs",
+    "effects": {
+      "xp": 1
+    },
+    "image": "https://runescape.wiki/images/Ritualist%27s_robe_bottoms.png?17cb0",
+    "examine": "Increases Necromancy experience gained by 1% when worn."
+  },
+  "57700": {
+    "id": 57700,
+    "name": "Ritualist's gloves",
+    "slot": "hands",
+    "effects": {
+      "xp": 1
+    },
+    "image": "https://runescape.wiki/images/Ritualist%27s_gloves.png?15ff6",
+    "examine": "Increases Necromancy experience gained by 1% when worn."
+  },
+  "57701": {
+    "id": 57701,
+    "name": "Ritualist's boots",
+    "slot": "feet",
+    "effects": {
+      "xp": 1
+    },
+    "image": "https://runescape.wiki/images/Ritualist%27s_boots.png?70bdb",
+    "examine": "Increases Necromancy experience gained by 1% when worn."
+  },
+  "61760": {
+    "id": 61760,
+    "name": "Ring of Kayazu",
+    "slot": "ring",
+    "effects": {
+      "soulAttraction": 80,
+      "doubleRewards": 20
+    },
+    "image": "https://runescape.wiki/images/Ring_of_Kayazu.png?b7217",
+    "examine": "Contains a trace of the power of the fox colossus Kayazu, Lord of Ceremonies."
+  }
+}

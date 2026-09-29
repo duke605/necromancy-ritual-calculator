@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "id": 55594, "name": "Basic ghostly ink", "count": 73079, "slot": { "row": 1, "column": 1 } },
+    { "id": 55595, "name": "Regular ghostly ink", "count": 757, "slot": { "row": 1, "column": 2 } },
+    { "id": 55596, "name": "Greater ghostly ink", "count": 418, "slot": { "row": 1, "column": 3 } },
+    { "id": 55597, "name": "Powerful ghostly ink", "count": 300, "slot": { "row": 1, "column": 4 } },
+    { "id": 55618, "name": "Greater ensouled cloth", "count": 4 },
+    { "id": 55622, "name": "Greater ensouled thread", "count": 3 }
+  ]
+}
