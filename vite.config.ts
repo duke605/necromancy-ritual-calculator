@@ -7,7 +7,7 @@ import path from 'node:path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/necromancy-ritual-calculator',
+  base: '/',
   build: {
     assetsInlineLimit: 0,
   },
