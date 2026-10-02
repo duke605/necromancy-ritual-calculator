@@ -90,13 +90,6 @@ export function BankImport() {
     setNote(undefined);
     if (!file) return setScan(null);
     setScan(0);
-    // Where there's a server (dev, or `npm start`), kept on it as a test image (api/bank-screenshots/route.server.ts).
-    // The scan doesn't wait on it, nor mind if it fails.
-    if (process.env.BANK_SCREENSHOT_UPLOADS) {
-      fetch("/api/bank-screenshots", { method: "POST", headers: { "content-type": file.type }, body: file }).catch(
-        () => {},
-      );
-    }
     // ponytail: a new worker each scan, so it fetches the icons again (from the HTTP cache); keep one
     // alive if that shows.
     const scanner = (worker.current = new Worker(new URL("../../lib/bank-scan.worker.ts", import.meta.url)));
