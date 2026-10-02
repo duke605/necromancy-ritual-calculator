@@ -6,8 +6,8 @@ import sharp from "sharp";
 const API = "https://runescape.wiki/api.php";
 const USER_AGENT = "necromancy-ritual-calculator (https://rituals.duke605.ca)";
 const OUT_DIR = new URL("../src/data/", import.meta.url);
-// The glyphs' pictures: each one's high-res render ("<name> detail.png"), saved here as 128px squares and served
-// by the site rather than hotlinked from the wiki.
+// The glyphs' and the light source's pictures: each one's high-res render ("<name> detail.png"), saved here as
+// 128px squares and served by the site rather than hotlinked from the wiki.
 const IMAGE_DIR = "public/images";
 const IMAGE_SIZE = 128;
 
@@ -133,6 +133,8 @@ type ItemRef = { name: string; amount: number };
 type Ritual = {
   level: number;
   glyphs: { name: string; amount: number }[];
+  /** How many light sources it needs. */
+  lights: number;
   focuses: { input: ItemRef; outputs: ItemRef[]; souls?: number }[];
   durationTicks: number;
   disturbanceChances: number;
@@ -143,7 +145,8 @@ for (const r of recipes) {
   if (!r.facility?.startsWith("Ritual site") || !r.process) continue;
 
   const name = r.process.replace(/ \(ritual\)$/, "");
-  const inputs = r.materials.filter((m) => !isGlyph(m.name) && !/ritual candle/i.test(m.name));
+  const isLight = (m: Stack) => /ritual candle/i.test(m.name);
+  const inputs = r.materials.filter((m) => !isGlyph(m.name) && !isLight(m));
   if (inputs.length !== 1) {
     console.warn(`Skipping a ${name} recipe: expected 1 focus, got ${inputs.map((m) => m.name).join(", ")}`);
     continue;
@@ -155,6 +158,7 @@ for (const r of recipes) {
   const ritual = (rituals[name] ??= {
     level: Number(r.skills?.[0]?.level),
     glyphs: r.materials.filter((m) => isGlyph(m.name)).map((m) => ({ name: m.name, amount: Number(m.quantity) })),
+    lights: r.materials.filter(isLight).reduce((sum, m) => sum + Number(m.quantity), 0),
     focuses: [],
     durationTicks,
     disturbanceChances: Math.floor((durationTicks - 1) / 12),
@@ -373,6 +377,11 @@ const EQUIPMENT: Record<string, { slot: string; effects: Record<string, number |
   "Necromancy cape": { slot: "back", effects: { glyph: "alteration" } },
   "Necromancy master cape": { slot: "back", effects: { glyph: "alteration" } },
 };
+// Any tier of light source works; the site shows the greater candle on its light spots.
+await rm(`${IMAGE_DIR}/lights`, { recursive: true, force: true });
+const LIGHT = "Greater ritual candle";
+await saveImage((await detailUrls([LIGHT])).get(LIGHT)!, "lights/greater-ritual-candle");
+
 const equipmentInfo = await bucket<{ page_name: string; item_id: number[]; image: string[]; examine?: string }>(
   `bucket('infobox_item').select('page_name','item_id','image','examine').where(bucket.Or(${Object.keys(EQUIPMENT)
     .map((name) => `{'page_name',${JSON.stringify(name)}}`)

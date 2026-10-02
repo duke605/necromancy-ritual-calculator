@@ -11,6 +11,7 @@
         "amount": 2
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -44,6 +45,7 @@
         "amount": 2
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -152,6 +154,7 @@
         "amount": 2
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -189,6 +192,7 @@
         "amount": 1
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -340,6 +344,7 @@
         "amount": 1
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -377,6 +382,7 @@
         "amount": 2
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -418,6 +424,7 @@
         "amount": 1
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -459,6 +466,7 @@
         "amount": 1
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -495,6 +503,7 @@
         "amount": 1
       }
     ],
+    "lights": 4,
     "focuses": [
       {
         "input": {
@@ -536,6 +545,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -748,6 +758,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -890,6 +901,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -931,6 +943,7 @@
         "amount": 1
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -967,6 +980,7 @@
         "amount": 1
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -1004,6 +1018,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -1155,6 +1170,7 @@
         "amount": 3
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -1196,6 +1212,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -1232,6 +1249,7 @@
         "amount": 2
       }
     ],
+    "lights": 6,
     "focuses": [
       {
         "input": {
@@ -1273,6 +1291,7 @@
         "amount": 2
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {
@@ -1370,6 +1389,7 @@
         "amount": 2
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {
@@ -1411,6 +1431,7 @@
         "amount": 3
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {
@@ -1447,6 +1468,7 @@
         "amount": 4
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {
@@ -1483,6 +1505,7 @@
         "amount": 2
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {
@@ -1524,6 +1547,7 @@
         "amount": 3
       }
     ],
+    "lights": 10,
     "focuses": [
       {
         "input": {

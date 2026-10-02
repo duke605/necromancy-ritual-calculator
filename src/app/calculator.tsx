@@ -90,6 +90,7 @@ function LoadedCalculator() {
             <RitualSite
               site={site}
               glyphs={layoutGlyphs(SITES[site], ritual.glyphs)}
+              lights={ritual.data.lights}
               focus={{ name, image, examine, amount: input.amount, stats: prices }}
               onFocusClick={() => setChoosing(true)}
             />

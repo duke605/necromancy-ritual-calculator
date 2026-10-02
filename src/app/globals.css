@@ -696,13 +696,38 @@
       height: min(--spacing(7), var(--cell) - 4px);
       object-fit: scale-down;
     }
-    /* A glyph, shadowed against its pale slate: a tight dark edge, and a softer shadow under it. */
+    /* A lit candle's flame, over its picture, the same size; it flickers, squashing and stretching from its
+       foot, as its glow dims and brightens. */
+    & .candle-flame {
+      width: min(--spacing(7), var(--cell) - 4px);
+      height: min(--spacing(7), var(--cell) - 4px);
+      pointer-events: none;
+    }
+    /* Over the ring, which its mask lifts onto a layer of its own, above what isn't positioned. */
+    & [data-spot="light"] :is(img, .candle-flame) {
+      position: relative;
+    }
+    & .candle-flame-fire {
+      transform-box: fill-box;
+      transform-origin: bottom;
+      animation: candle-flicker var(--flicker) ease-in-out infinite;
+    }
+    & .candle-flame-glow {
+      animation: candle-glow var(--flicker) ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      & .candle-flame-fire,
+      & .candle-flame-glow {
+        animation: none;
+      }
+    }
+    /* A glyph or a light, shadowed against its pale slate: a tight dark edge, and a softer shadow under it. */
     & [data-filled] img {
       filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.9)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.6));
     }
     /*
-     * A glyph on its spot: a 3px tie-dye border, swirling neon green and yellow-green, cut to a ring around
-     * the slate. Still where motion's reduced: SVG animations in images don't heed it themselves.
+     * A glyph or light on its spot: a 3px tie-dye border, swirling neon green and yellow-green, cut to a ring
+     * around the slate. Still where motion's reduced: SVG animations in images don't heed it themselves.
      */
     & [data-filled] {
       --ring: var(--tie-dye-neon-spin) 0 0 / 100% 100%;
@@ -717,12 +742,14 @@
         --ring: var(--tie-dye-violet);
       }
     }
+    /* Around a glyph's slate: its rounded square, edge included (as Slate draws it, 1.25 of 40 in from the
+       spot's sides, rounded 4.75), and 3px out from that. */
     & [data-filled]::before {
       content: "";
       grid-area: 1 / 1;
       place-self: stretch;
-      margin: -3px;
-      border-radius: 5px;
+      margin: calc(3.125% - 3px);
+      border-radius: calc(12.5% + 2.5px);
       padding: 3px;
       background: var(--ring);
       /* Its mask puts it over the glyph, which it would otherwise keep from being hovered. */
@@ -730,6 +757,14 @@
       mask:
         linear-gradient(#000 0 0) content-box exclude,
         linear-gradient(#000 0 0);
+    }
+    /* A light's follows its five-sided slate, corners rounded: a 3px stroke of the slate's outline, grown
+       from its middle, 1 unit to a pixel at a 40px spot. */
+    & [data-spot="light"][data-filled]::before {
+      margin: -3px;
+      border-radius: 0;
+      mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 46 46' preserveAspectRatio='none'><path d='M15.15 2.99Q20-.55 24.85 2.99L36.05 11.16Q40.9 14.7 39.09 20.42L34.81 33.88Q33 39.6 27 39.6L13 39.6Q7 39.6 5.19 33.88L.91 20.42Q-.9 14.7 3.95 11.16Z' fill='none' stroke='black' stroke-width='3'/></svg>")
+        0 0 / 100% 100% no-repeat;
     }
     & .slate-edge {
       fill: #6e7088;
@@ -1337,6 +1372,32 @@
       animation: draw-check 0.15s ease-out;
     }
   }
+  @keyframes candle-flicker {
+    25% {
+      scale: 0.88 1.12;
+    }
+    50% {
+      scale: 1.06 0.92;
+    }
+    75% {
+      scale: 0.94 1.06;
+    }
+  }
+  @keyframes candle-glow {
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+    25% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.9;
+    }
+    75% {
+      opacity: 0.6;
+    }
+  }
   @keyframes draw-check {
     from {
       clip-path: inset(0 100% 0 0);
@@ -1403,11 +1464,11 @@
       block-size: auto;
     }
   }
-  /* Naked: the title alone, muted, on a faint orange band, with a smaller chevron. */
+  /* Naked: the title alone, muted, on a table head's recessed strip, with a smaller chevron. */
   .accordion-naked > summary {
     padding: --spacing(0.5) --spacing(2);
     color: var(--color-muted-foreground);
-    background: color-mix(in srgb, var(--color-gold-500) 12%, transparent);
+    background: rgb(0 0 0 / 20%);
     &::after {
       width: --spacing(3);
       height: --spacing(3);

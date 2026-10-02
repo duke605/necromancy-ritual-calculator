@@ -7,17 +7,21 @@ const SYMMETRIES = [
 
 /**
  * Where a ritual's glyphs go on a site: on glyph spots ("G" in `rows`, a row to a line, around the focus
- * "F"), as the site's `glyphs` prop takes them, in reading order. As symmetrical as can be: each kind
+ * "F"; or `cell`'s spots), as the site's `glyphs` prop takes them, in reading order. As symmetrical as can be: each kind
  * fills pairs, mirrored left and right of the focus where there are any left, then above and below it,
  * then diagonally opposite; nearest the focus first. An odd one out goes in line with the focus (its
  * column or row), which mirrors itself; where that's taken, as near the focus as there's room, across
  * from another odd one out where it can, so the two at least balance.
  */
-export function layoutGlyphs<Name extends string>(rows: string[], glyphs: { name: Name; amount: number }[]) {
+export function layoutGlyphs<Name extends string>(
+  rows: string[],
+  glyphs: { name: Name; amount: number }[],
+  cell = "G",
+) {
   const focusY = rows.findIndex((row) => row.includes("F"));
   const focusX = rows[focusY].indexOf("F");
   const spots = rows.flatMap((row, y) =>
-    [...row].flatMap((cell, x) => (cell === "G" ? [{ dx: x - focusX, dy: y - focusY }] : [])),
+    [...row].flatMap((spot, x) => (spot === cell ? [{ dx: x - focusX, dy: y - focusY }] : [])),
   );
   const distance = (index: number) => spots[index].dx ** 2 + spots[index].dy ** 2;
   // The spot a symmetry takes this one to: -1 if there's none, or this one if it mirrors itself.
@@ -56,7 +60,7 @@ export function layoutGlyphs<Name extends string>(rows: string[], glyphs: { name
         return free(index) && across !== -1 && across !== index && !free(across);
       }) ??
       nearest.find(free);
-    if (spot === undefined) throw new Error(`More glyphs than glyph spots: no room for ${name}`);
+    if (spot === undefined) throw new Error(`More than there are spots: no room for ${name}`);
     placed[spot] = name;
   }
   return placed;

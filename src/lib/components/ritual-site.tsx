@@ -1,9 +1,11 @@
 import Image from "next/image";
+import { useId } from "react";
 import glyphData from "@/data/glyphs.json";
 import inks from "@/data/inks.json";
 import items from "@/data/items.json";
 import { ItemImage } from "./item-image";
 import { ItemTooltip } from "./item-tooltip";
+import { layoutGlyphs } from "@/lib/glyph-layout";
 import { SITES, type RitualSiteName } from "@/lib/sites";
 
 /** What goes on a spot: a glyph, a light source, or the focus. */
@@ -11,6 +13,8 @@ type Spot = "glyph" | "light" | "focus";
 
 const SPOTS: Record<string, Spot> = { G: "glyph", L: "light", F: "focus" };
 const LABELS: Record<Spot, string> = { glyph: "Glyph", light: "Light source", focus: "Focus" };
+/** What's shown on lit light spots: any tier works, and npm run data saves the greater candle's picture. */
+const LIGHT = { name: "Greater ritual candle", image: "/images/lights/greater-ritual-candle.webp" };
 
 /**
  * The ground around a site's tiles, behind them: a 0 to 100 box over the tiles, reaching past it (as far as
@@ -74,21 +78,26 @@ export type FocusItem = {
 /**
  * A ritual site from above: each spot a slate, shaped by what goes there, laid out as on the ground.
  * `glyphs` are what's on the glyph spots, in reading order (left to right, then down); a gap leaves one empty.
+ * `lights` light that many light spots, laid out as symmetrically as glyphs.
  * `focus` is the item on the focus; clicking it calls `onFocusClick`, if there is one.
  */
 export function RitualSite({
   site,
   glyphs = [],
+  lights = 0,
   focus,
   onFocusClick,
 }: {
   site: RitualSiteName;
   glyphs?: (GlyphName | undefined)[];
+  lights?: number;
   focus?: FocusItem;
   onFocusClick?: () => void;
 }) {
   const rows = SITES[site];
   let glyphSpot = 0;
+  const lit = layoutGlyphs(rows, [{ name: LIGHT.name, amount: lights }], "L");
+  let lightSpot = 0;
   return (
     // The frame measures the room there is, so the grid in it can shrink to fit.
     <div className="ritual-site-frame">
@@ -109,20 +118,27 @@ export function RitualSite({
             if (!spot) return null;
             const glyph = spot === "glyph" ? glyphs[glyphSpot++] : undefined;
             const item = spot === "focus" ? focus : undefined;
+            const light = spot === "light" ? lit[lightSpot++] : undefined;
             return (
               <div
                 key={`${x},${y}`}
                 // A glyph's or item's trigger names it; an image can't hold something focusable.
                 role={glyph || item ? undefined : "img"}
-                aria-label={glyph || item ? undefined : LABELS[spot]}
+                aria-label={glyph || item ? undefined : light ? `${LABELS.light}: ${light}` : LABELS[spot]}
                 data-spot={spot}
-                data-filled={glyph ? "" : undefined}
+                data-filled={glyph || light ? "" : undefined}
                 // The player's choice, not the ritual's, so it's told apart.
                 data-alteration={glyph && "alteration" in glyphData[glyph] ? "" : undefined}
                 style={{ gridColumn: x + 1, gridRow: y + 1 }}
               >
                 <Slate spot={spot} />
                 {glyph && <PlacedGlyph name={glyph} />}
+                {light && (
+                  <>
+                    <Image src={LIGHT.image} alt="" width={28} height={28} />
+                    <Flame flicker={FLICKERS[lightSpot % FLICKERS.length]} />
+                  </>
+                )}
                 {item && <PlacedFocus item={item} onClick={onFocusClick} />}
               </div>
             );
@@ -199,7 +215,44 @@ function PlacedFocus({
   );
 }
 
-/** Glyphs' slates are square, light sources' five-sided with an eye, the focus's round. */
+/** How long lit candles' flames take to flicker, in seconds, taken in turn so they don't flicker together. */
+const FLICKERS = [1.3, 1.1, 1.45, 1.2, 1.35];
+
+/** A candle's flame and its glow, over the candle's picture (128 by 128), on its wick's tip. */
+function Flame({ flicker }: { flicker: number }) {
+  const id = useId();
+  return (
+    <svg
+      className="candle-flame"
+      viewBox="0 0 128 128"
+      aria-hidden
+      style={{ "--flicker": `${flicker}s` } as React.CSSProperties}
+    >
+      <defs>
+        <radialGradient id={`${id}-flame`} cx=".5" cy=".75" r=".7">
+          <stop offset="0" stopColor="#fff" />
+          <stop offset=".35" stopColor="#bff6ff" />
+          <stop offset=".75" stopColor="#3fd8ff" />
+          <stop offset="1" stopColor="#2a6cff" stopOpacity=".6" />
+        </radialGradient>
+        <radialGradient id={`${id}-glow`}>
+          <stop offset="0" stopColor="#3fd8ff" stopOpacity=".6" />
+          <stop offset="1" stopColor="#3fd8ff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <g transform="translate(66.5 1) scale(3)">
+        <circle className="candle-flame-glow" r="7" cy="-4" fill={`url(#${id}-glow)`} />
+        <path
+          className="candle-flame-fire"
+          d="M0 0c-2.4 0-3.4-1.8-3.4-3.6 0-2.6 2.2-4.6 3.4-8.4 1.2 3.8 3.4 5.8 3.4 8.4 0 1.8-1 3.6-3.4 3.6z"
+          fill={`url(#${id}-flame)`}
+        />
+      </g>
+    </svg>
+  );
+}
+
+/** Glyphs' slates are square, light sources' five-sided with an eye, the focus's round; corners rounded. */
 function Slate({ spot }: { spot: Spot }) {
   return (
     <svg viewBox="0 0 40 40" aria-hidden>
@@ -211,8 +264,14 @@ function Slate({ spot }: { spot: Spot }) {
       )}
       {spot === "light" && (
         <>
-          <path className="slate-edge" d="M20 2 38.5 15.5 31.5 37.5h-23L1.5 15.5Z" />
-          <path className="slate-face" d="M20 6.5 34.5 17 29 33.5H11L5.5 17Z" />
+          <path
+            className="slate-edge"
+            d="M16.77 4.36Q20 2 23.23 4.36L35.27 13.14Q38.5 15.5 37.29 19.31L32.71 33.69Q31.5 37.5 27.5 37.5L12.5 37.5Q8.5 37.5 7.29 33.69L2.71 19.31Q1.5 15.5 4.73 13.14Z"
+          />
+          <path
+            className="slate-face"
+            d="M17.98 7.97Q20 6.5 22.02 7.97L32.48 15.53Q34.5 17 33.71 19.37L29.79 31.13Q29 33.5 26.5 33.5L13.5 33.5Q11 33.5 10.21 31.13L6.29 19.37Q5.5 17 7.52 15.53Z"
+          />
           <path className="slate-mark" d="M12 21q8-8 16 0-8 8-16 0Z" />
           <circle className="slate-mark" cx="20" cy="21" r="2.5" />
         </>
