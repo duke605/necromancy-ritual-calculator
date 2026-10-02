@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset=".github/logo-light.svg" />
-    <img src=".github/logo.svg" alt="Necromancy Ritual Calculator" width="368" />
+    <source media="(prefers-color-scheme: light)" srcset="public/logo-light.svg" />
+    <img src="public/logo.svg" alt="Necromancy Ritual Calculator" width="368" />
   </picture>
 </p>
 
