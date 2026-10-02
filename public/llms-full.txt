@@ -70,10 +70,6 @@ examine text.
 - **Take from inventory** (off to begin with): items in the inventory are taken off the inputs first.
 - **Ironman Mode**: ink is made, not bought, and the rituals that make its necroplasm are added (below).
 - **No waste**: rounds the added rituals up to a multiple of their golden ratio. Only in Ironman mode.
-- **On added rituals** (in **Alteration glyphs**, on to begin with): puts the ritual's alteration glyphs on
-  the added rituals too, as many as fit. Only in Ironman mode.
-- **Cape on added rituals** (in **Alteration glyphs**): the Necromancy cape glyph for the added rituals:
-  **Same as worn**, **None**, or any alteration glyph. Only in Ironman mode, with a Necromancy cape worn.
 
 Disabled settings show what they need on hover.
 
@@ -87,6 +83,13 @@ Disabled settings show what they need on hover.
   Since more of one can mean more ink for another, the counts are worked out again until none changes.
 - Added rituals are done in the Underworld, whatever site is chosen, with the same gear. Necroplasm they
   make for the ink is taken off the inputs; any left over is listed in Output.
+- Each added ritual is set up in **Alteration glyphs**: its **Ritual** dropdown (only in Ironman mode) lists
+  the ritual and, under "Added rituals", the added ones. Choosing an added ritual shows it on the site, and
+  shows **Same as main ritual** (on to begin with): the added ritual uses the ritual's alteration glyphs, as
+  many as fit, and its Necromancy cape glyph. Turned off, the added ritual's alteration glyphs are set with
+  − and + as usual, starting from the ritual's, and **Cape glyph** (with a Necromancy cape worn) sets its
+  cape glyph: **None** or any alteration glyph. The reset button turns **Same as main ritual** back on. Each
+  added ritual's setup is saved.
 - If putting the alteration glyphs on the added rituals never settles (they'd cost more necroplasm than
   they make), they're left off and Results says "Not self-sustaining".
 

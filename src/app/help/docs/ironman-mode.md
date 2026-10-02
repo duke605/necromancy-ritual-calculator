@@ -26,14 +26,19 @@ Added rituals are performed in the Underworld, whichever site you choose for you
 
 ## Settings for added rituals
 
-| Setting               | Where             | Effect                                                                                                                              |
-| --------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| No waste              | Results           | Rounds each added ritual up to a multiple of its golden ratio. You redraw fewer half-used glyphs, and some necroplasm is left over. |
-| On added rituals      | Alteration glyphs | Places your alteration glyphs on the added rituals too, as many as fit.                                                             |
-| Cape on added rituals | Alteration glyphs | Sets the glyph on your Necromancy cape for the added rituals. **Same as worn** keeps your own. Needs a Necromancy cape.             |
+**No waste**, in **Results**, rounds each added ritual up to a multiple of its golden ratio. You redraw fewer half-used glyphs, and some necroplasm is left over. It is unavailable while Ironman mode is off.
 
-These settings are unavailable while Ironman mode is off. Hover over one to see what it needs.
+### Glyphs for each added ritual
+
+In Ironman mode, the **Alteration glyphs** panel has a **Ritual** list. Choose an added ritual in it to see that ritual on the site and set up its glyphs.
+
+| Setting             | Effect                                                                                                               |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Same as main ritual | Uses your ritual's alteration glyphs, as many as fit, and your Necromancy cape's glyph. On until you turn it off.    |
+| Cape glyph          | The glyph on your Necromancy cape for this ritual. Set it after turning off **Same as main ritual**. Needs the cape. |
+
+With **Same as main ritual** off, set the ritual's alteration glyphs as you would your own. They start as your ritual's. The reset button turns **Same as main ritual** back on. Each added ritual keeps its own setup.
 
 ### Not self-sustaining
 
-With **On added rituals** on, the added rituals pay for their alteration glyphs in ink, and so in necroplasm. If the glyphs cost more necroplasm than the rituals make, the counts never settle. The calculator then leaves the alteration glyphs off the added rituals and shows a warning in **Results**.
+The added rituals pay for their alteration glyphs in ink, and so in necroplasm. If the glyphs cost more necroplasm than the rituals make, the counts never settle. The calculator then leaves the alteration glyphs off the added rituals and shows a warning in **Results**.

@@ -12,10 +12,11 @@ import type { GlyphName } from "@/lib/components/ritual-site";
 import { Button } from "@/lib/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/lib/components/ui/tooltip";
 import type { Ritual } from "@/lib/ritual";
-import { plan, type AddedCape } from "@/lib/plan";
+import { ADDED_RITUALS, plan } from "@/lib/plan";
 import { formatDuration } from "@/lib/ritual-duration";
 import { useInventory } from "@/lib/inventory";
 import { useSettings } from "@/lib/settings";
+import type { RitualName } from "./choose-ritual";
 import { ResultSettings, Setting } from "./result-settings";
 import { ItemLine, Lines, PlainLine, RitualLine, TotalRow, Totals } from "./result-lines";
 
@@ -39,35 +40,33 @@ export function AlterationOptions() {
 }
 
 /**
- * How many of each alteration glyph to put on the site, up to the spots the ritual's own glyphs leave `free`.
- * It folds away.
+ * How many of each alteration glyph to put on the site, up to the spots the ritual's own glyphs leave `free`,
+ * under `header`. While `disabled`, they're only shown. It folds away.
  */
 export function Alterations({
   counts,
   free,
-  capeWorn,
+  disabled,
+  header,
   onChange,
+  onReset = () => onChange({}),
 }: {
   counts: AlterationCounts;
   free: number;
-  /** Whether a Necromancy cape is worn, for choosing the added rituals' cape glyph. */
-  capeWorn: boolean;
+  disabled?: boolean;
+  header?: React.ReactNode;
   onChange: (counts: AlterationCounts) => void;
+  onReset?: () => void;
 }) {
   const placed = Object.values(counts).reduce((sum, count) => sum + count, 0);
   return (
     <Accordion
       title="Alteration glyphs"
       open
-      action={<ResetButton label="Reset alteration glyphs" onClick={() => onChange({})} />}
+      action={<ResetButton label="Reset alteration glyphs" onClick={onReset} />}
     >
       <div className="flex flex-col gap-4">
-        <div>
-          <AddedAlterationsToggle />
-        </div>
-        <div>
-          <AddedCapeSelect capeWorn={capeWorn} />
-        </div>
+        {header}
         <p className="body-sm text-muted-foreground" aria-live="polite">
           {placed} of {free} free spots
         </p>
@@ -83,9 +82,10 @@ export function Alterations({
                   min={0}
                   max={count + free - placed}
                   value={count}
+                  disabled={disabled}
                   // Only with some to clear.
                   beforeActions={
-                    count ? (
+                    count && !disabled ? (
                       <InputAction
                         label={`Clear ${name}`}
                         tooltip="Clear"
@@ -112,47 +112,68 @@ export function Alterations({
   );
 }
 
-/** The cape glyph on the rituals Ironman mode adds; only for Ironman mode, disabled without it. */
-function AddedCapeSelect({ capeWorn }: { capeWorn: boolean }) {
-  const { ironman, addedCape, setAddedCape } = useSettings();
-  const missing = [!ironman && "Ironman mode", !capeWorn && "Necromancy cape"].filter(Boolean);
-  const disabled = missing.length ? `Needs ${missing.join(" and ")}` : undefined;
-  const field = (
-    <Field label="Cape on added rituals">
+/** Which ritual's alteration glyphs are shown: `ritual`, or (`value`) one Ironman mode adds. */
+export function AddedRitualSelect({
+  ritual,
+  value,
+  onChange,
+}: {
+  ritual: Ritual;
+  value?: RitualName;
+  onChange: (value?: RitualName) => void;
+}) {
+  return (
+    <Field label="Ritual">
       <Select
-        value={addedCape}
-        disabled={!!disabled}
-        // A disabled select takes no hover, so the tooltip around it gets it instead.
-        className={disabled ? "pointer-events-none" : undefined}
-        onChange={(event) => setAddedCape(event.target.value as AddedCape)}
+        className="w-full"
+        value={value ?? ""}
+        onChange={(event) => onChange((event.target.value || undefined) as RitualName)}
       >
-        <option value="worn">Same as worn</option>
-        <option value="none">None</option>
-        <AlterationOptions />
+        <option value="">{ritual.config.choice.ritual}</option>
+        <optgroup label="Added rituals">
+          {ADDED_RITUALS.map(({ ritual: name }) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </optgroup>
       </Select>
     </Field>
   );
-  if (!disabled) return field;
-  // Why, on hover, as the switches have it.
-  return (
-    <Tooltip>
-      <TooltipTrigger render={<div />}>{field}</TooltipTrigger>
-      <TooltipContent>{disabled}</TooltipContent>
-    </Tooltip>
-  );
 }
 
-/** Whether the alteration glyphs go on the rituals Ironman mode adds too; only for Ironman mode, faded without it. */
-function AddedAlterationsToggle() {
-  const { ironman, addedAlterations, setAddedAlterations } = useSettings();
+/**
+ * Whether the added ritual `name` (`shown`) is set up as `main`, and if not, its cape glyph. Turned off, it starts
+ * from what it had.
+ */
+export function AddedSetupControls({ main, shown, name }: { main: Ritual; shown: Ritual; name: RitualName }) {
+  const { added, setAdded } = useSettings();
+  const setup = added[name] ?? { same: true };
   return (
-    <Setting
-      title="On added rituals"
-      description="Applies the selected alteration glyphs to the rituals that Ironman mode adds, as many as fit."
-      on={addedAlterations}
-      disabled={ironman ? undefined : "Needs Ironman mode"}
-      onChange={setAddedAlterations}
-    />
+    <>
+      <Setting
+        title="Same as main ritual"
+        description="Its alteration glyphs, as many as fit, and cape glyph."
+        on={setup.same}
+        onChange={(same) =>
+          setAdded(name, same ? { same } : { same, alterations: shown.alterations, cape: shown.capeGlyph })
+        }
+      />
+      {main.wearsCape && (
+        <Field label="Cape glyph">
+          <Select
+            value={shown.capeGlyph ?? ""}
+            disabled={setup.same}
+            onChange={(event) =>
+              !setup.same && setAdded(name, { ...setup, cape: (event.target.value || undefined) as GlyphName })
+            }
+          >
+            <option value="">None</option>
+            <AlterationOptions />
+          </Select>
+        </Field>
+      )}
+    </>
   );
 }
 
@@ -221,7 +242,7 @@ export function Results({
  * attraction.
  */
 function Summary({ ritual, rituals }: { ritual: Ritual; rituals: number }) {
-  const { fromInventory, ironman, noWaste, addedAlterations, addedCape } = useSettings();
+  const { fromInventory, ironman, noWaste, added } = useSettings();
   const inventory = useInventory((state) => state.counts);
   const {
     steps,
@@ -235,9 +256,8 @@ function Summary({ ritual, rituals }: { ritual: Ritual; rituals: number }) {
   } = plan(ritual, rituals, {
     ironman,
     noWaste,
-    addedAlterations,
     inventory: fromInventory ? inventory : {},
-    addedCape,
+    added,
   });
   return (
     <div className="body-sm flex flex-col gap-3">

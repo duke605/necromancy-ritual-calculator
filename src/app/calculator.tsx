@@ -16,9 +16,10 @@ import { useInventory } from "@/lib/inventory";
 import { SITE_NAMES, SITES, type RitualSiteName } from "@/lib/sites";
 import { usePriceStats } from "@/lib/hooks/use-price-stats";
 import { useSettings } from "@/lib/settings";
-import { Alterations, Results } from "./alterations";
+import { addedRitual, ADDED_RITUALS } from "@/lib/plan";
+import { AddedRitualSelect, AddedSetupControls, Alterations, Results } from "./alterations";
 import { ChooseGear, GEAR_SLOTS, gearEffects } from "./choose-gear";
-import { ChooseRitual } from "./choose-ritual";
+import { ChooseRitual, type RitualName } from "./choose-ritual";
 
 /**
  * The site, chosen over it, with the ritual on it: its glyphs laid out, and its focus item on the focus.
@@ -52,8 +53,16 @@ function LoadedCalculator() {
   const { setRitual, setRituals, reset } = useCalculator.getState();
   const [choosing, setChoosing] = useState(false);
   const [choosingGear, setChoosingGear] = useState<EquipmentSlot | null>(null);
-  const { site, choice, worn } = ritual.config;
-  const { input } = ritual.focus;
+  const { ironman, added, setAdded } = useSettings();
+  // The ritual Ironman mode adds whose alteration glyphs are shown, if one is, instead of the ritual's; on the
+  // site too.
+  const [editing, setEditing] = useState<RitualName>();
+  const adding = ironman ? ADDED_RITUALS.find((choice) => choice.ritual === editing) : undefined;
+  const setup = adding && (added[adding.ritual] ?? { same: true });
+  const shown = adding ? addedRitual(ritual, adding, setup) : ritual;
+  const { choice, worn } = ritual.config;
+  const { site } = shown.config;
+  const { input } = shown.focus;
   const item = items[`${input.id}` as keyof typeof items];
   const { name, image, examine } = item;
   // Not every item can be alched or traded.
@@ -71,6 +80,8 @@ function LoadedCalculator() {
                   <Select
                     className="min-w-0 flex-1"
                     value={site}
+                    // Added rituals are always done in the Underworld.
+                    disabled={!!adding}
                     onChange={(event) => setRitual(ritual.with({ site: event.target.value as RitualSiteName }))}
                   >
                     {Object.entries(SITE_NAMES).map(([id, name]) => (
@@ -89,19 +100,33 @@ function LoadedCalculator() {
             </div>
             <RitualSite
               site={site}
-              glyphs={layoutGlyphs(SITES[site], ritual.glyphs)}
-              lights={ritual.data.lights}
+              glyphs={layoutGlyphs(SITES[site], shown.glyphs)}
+              lights={shown.data.lights}
               focus={{ name, image, examine, amount: input.amount, stats: prices }}
-              onFocusClick={() => setChoosing(true)}
+              onFocusClick={adding ? undefined : () => setChoosing(true)}
             />
           </div>
           {/* Beside the middle of the site art, against its left; on small screens, under the results. */}
           <div className="max-lg:order-2 lg:col-start-1 lg:row-start-1 lg:w-72 lg:justify-self-end">
             <Alterations
-              counts={ritual.alterations}
-              free={ritual.free}
-              capeWorn={ritual.wearsCape}
-              onChange={(counts) => setRitual(ritual.withAlterations(counts))}
+              counts={shown.alterations}
+              free={shown.free}
+              disabled={setup?.same}
+              header={
+                ironman && (
+                  <>
+                    <AddedRitualSelect ritual={ritual} value={adding?.ritual} onChange={setEditing} />
+                    {adding && <AddedSetupControls main={ritual} shown={shown} name={adding.ritual} />}
+                  </>
+                )
+              }
+              onChange={(counts) =>
+                adding
+                  ? setAdded(adding.ritual, { same: false, alterations: counts, cape: shown.capeGlyph })
+                  : setRitual(ritual.withAlterations(counts))
+              }
+              // An added ritual's, back to the ritual's.
+              onReset={adding && (() => setAdded(adding.ritual, { same: true }))}
             />
           </div>
         </div>

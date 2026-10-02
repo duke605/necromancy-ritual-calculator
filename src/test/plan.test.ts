@@ -2,7 +2,7 @@
 // Expected values are from the live calculator (rituals.duke605.ca) where it has the setup, except where noted.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { plan } from "../lib/plan.ts";
+import { ADDED_RITUALS, plan, type AddedSetup } from "../lib/plan.ts";
 import { Ritual } from "../lib/ritual.ts";
 import type { AlterationCounts } from "../app/alterations.tsx";
 
@@ -17,6 +17,8 @@ const greaterCommunion = (alterations: AlterationCounts = {}) =>
     alterations: { "Greater communion": alterations },
     worn: {},
   });
+/** Every added ritual set up as `setup`. */
+const allAdded = (setup: AddedSetup) => Object.fromEntries(ADDED_RITUALS.map(({ ritual }) => [ritual, setup]));
 const byId = (list: { id: number; amount: number }[]) => Object.fromEntries(list.map(({ id, amount }) => [id, amount]));
 const steps = (result: ReturnType<typeof plan>) =>
   result.steps.map(({ ritual, count }) => `${ritual.config.choice.ritual} ${count}`);
@@ -55,8 +57,9 @@ describe("plan", () => {
     assert.equal(result.glyphsLeftOff, false);
   });
 
-  it("leaves the added rituals without alteration glyphs, when asked", () => {
-    const result = plan(greaterCommunion({ "Multiply II": 2 }), 12, { ironman: true, addedAlterations: false });
+  it("does the added rituals with their own alteration glyphs, when set up so", () => {
+    const added = allAdded({ same: false, alterations: {} });
+    const result = plan(greaterCommunion({ "Multiply II": 2 }), 12, { ironman: true, added });
     assert.deepEqual(steps(result), ["Lesser necroplasm 9", "Greater necroplasm 2", "Greater communion 12"]);
     assert.deepEqual(byId(result.outputs), { [ECTOPLASM]: 185, [LESSER]: 20, [GREATER]: 40 });
   });
@@ -85,15 +88,22 @@ describe("plan", () => {
     const worn = { back: { id: 55203, glyph: "Speed III" as const } };
     const ritual = greaterCommunion().with({ worn });
     // The live calculator says 5 and 2: it adds a ritual too many when one makes exactly what's needed.
-    const multiply = plan(ritual, 12, { ironman: true, addedCape: "Multiply III" });
+    const multiply = plan(ritual, 12, {
+      ironman: true,
+      added: allAdded({ same: false, alterations: {}, cape: "Multiply III" }),
+    });
     assert.deepEqual(steps(multiply), ["Lesser necroplasm 4", "Greater necroplasm 1", "Greater communion 12"]);
     assert.equal(multiply.steps[0].ritual.capeGlyph, "Multiply III");
     // The ritual's own cape is left as it is.
     assert.equal(multiply.steps.at(-1)!.ritual.capeGlyph, "Speed III");
-    assert.equal(plan(ritual, 12, { ironman: true, addedCape: "worn" }).steps[0].ritual.capeGlyph, "Speed III");
-    assert.equal(plan(ritual, 12, { ironman: true, addedCape: "none" }).steps[0].ritual.capeGlyph, undefined);
+    assert.equal(plan(ritual, 12, { ironman: true }).steps[0].ritual.capeGlyph, "Speed III");
+    const none = allAdded({ same: false, alterations: {} });
+    assert.equal(plan(ritual, 12, { ironman: true, added: none }).steps[0].ritual.capeGlyph, undefined);
     // Without a Necromancy cape on, there's no glyph to choose.
-    const capeless = plan(greaterCommunion(), 12, { ironman: true, addedCape: "Multiply III" });
+    const capeless = plan(greaterCommunion(), 12, {
+      ironman: true,
+      added: allAdded({ same: false, alterations: {}, cape: "Multiply III" }),
+    });
     assert.equal(capeless.steps[0].ritual.capeGlyph, undefined);
   });
 });

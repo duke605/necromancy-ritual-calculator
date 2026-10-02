@@ -1,13 +1,10 @@
 // Relative imports, with extensions, so Node can run it for the tests.
-import equipment from "../data/equipment.json" with { type: "json" };
-import GLYPHS from "../data/glyphs.json" with { type: "json" };
 import inks from "../data/inks.json" with { type: "json" };
 import RITUALS from "../data/rituals.json" with { type: "json" };
 import type { AlterationCounts } from "@/app/alterations";
 import type { RitualChoice, RitualName } from "@/app/choose-ritual";
 import type { GlyphName } from "./components/ritual-site";
 import type { Ritual } from "./ritual.ts";
-import type { Worn } from "@/app/choose-gear";
 
 /** How many of each item, by its id. */
 type Amounts = Record<number, number>;
@@ -23,15 +20,18 @@ export type PlanOptions = {
   ironman?: boolean;
   /** Round the added rituals up to their golden ratio. */
   noWaste?: boolean;
-  /** Put the ritual's alteration glyphs on the added rituals too, as many as fit. */
-  addedAlterations?: boolean;
   /** What's already had, taken before anything's needed or made. */
   inventory?: Amounts;
-  /** The cape glyph on the added rituals: the one worn, none, or a Necromancy cape set to this glyph. */
-  addedCape?: AddedCape;
+  /** How each added ritual is set up, by name; one that isn't, as the ritual. */
+  added?: AddedSetups;
 };
 
-export type AddedCape = "worn" | "none" | GlyphName;
+/**
+ * How an added ritual is set up: as the ritual (its alteration glyphs, as many as fit, and its cape glyph), or
+ * with its own alteration glyphs and cape glyph (none without `cape`).
+ */
+export type AddedSetup = { same: true } | { same: false; alterations: AlterationCounts; cape?: GlyphName };
+export type AddedSetups = Partial<Record<RitualName, AddedSetup>>;
 
 // --- Data -----------------------------------------------------------------------------------------------------
 
@@ -40,9 +40,6 @@ const INK_RECIPES = new Map<number, { makes: number; materials: { id: number; am
 for (const ink of Object.values(inks)) {
   if ("materials" in ink) INK_RECIPES.set(ink.id, ink);
 }
-
-/** The Necromancy cape: the first gear that takes an alteration glyph. */
-const CAPE = Object.values(equipment).find(({ effects }) => "glyph" in effects)!.id;
 
 /** The ritual (and focus) that makes each ink material a ritual can make, by the material's id: the necroplasms. */
 const MAKERS = new Map<number, RitualChoice>();
@@ -55,6 +52,27 @@ for (const { materials } of INK_RECIPES.values()) {
   }
 }
 
+/** The rituals Ironman mode can add, lowest level first. */
+export const ADDED_RITUALS = [...MAKERS.values()].sort((a, b) => RITUALS[a.ritual].level - RITUALS[b.ritual].level);
+
+/**
+ * The added ritual `choice`, set up as `setup` says, for `main`: in the Underworld, in the same gear. Without
+ * `alterations`, its alteration glyphs are left off. Without a Necromancy cape on, there's no cape glyph to choose.
+ */
+export function addedRitual(
+  main: Ritual,
+  choice: RitualChoice,
+  setup: AddedSetup = { same: true },
+  alterations = true,
+) {
+  const ritual = main.with({ choice, site: "underworld" });
+  if (setup.same) return ritual.withAlterations(alterations ? fit(main.alterations, ritual.free) : {});
+  const { worn } = main.config;
+  return ritual
+    .with({ worn: main.wearsCape ? { ...worn, back: { ...worn.back!, glyph: setup.cape } } : worn })
+    .withAlterations(alterations ? setup.alterations : {});
+}
+
 // --- The plan -------------------------------------------------------------------------------------------------
 
 /**
@@ -65,7 +83,7 @@ for (const { materials } of INK_RECIPES.values()) {
  * the inks; anything left over is listed as made.
  */
 export function plan(ritual: Ritual, rituals: number, options: PlanOptions = {}) {
-  const { ironman = false, noWaste = false, addedAlterations = true, inventory = {}, addedCape = "worn" } = options;
+  const { ironman = false, noWaste = false, inventory = {}, added: setups = {} } = options;
   const main: Step = { ritual, count: rituals };
 
   if (!ironman) {
@@ -73,11 +91,11 @@ export function plan(ritual: Ritual, rituals: number, options: PlanOptions = {})
     return { ...summarize([main], needed, sum(ritual.outputs(rituals)), ritual.souls(rituals)), glyphsLeftOff: false };
   }
 
-  // With the alteration glyphs on the added rituals, if asked for and if that works out; otherwise without.
-  const setup = { noWaste, inventory, worn: wornFor(main.ritual, addedCape) };
-  const withGlyphs = addedAlterations ? addRituals(main, { ...setup, alterations: true }) : undefined;
-  // The glyphs were asked for on the added rituals, but left off: with them, the counts never settled.
-  const glyphsLeftOff = addedAlterations && !withGlyphs;
+  // With the added rituals' alteration glyphs, if that works out; otherwise without.
+  const setup = { noWaste, inventory, setups };
+  const withGlyphs = addRituals(main, { ...setup, alterations: true });
+  // Left off the added rituals: with them, the counts never settled.
+  const glyphsLeftOff = !withGlyphs;
   const added = (withGlyphs ?? addRituals(main, { ...setup, alterations: false })!).filter(({ count }) => count > 0);
   const steps = [...added, main];
 
@@ -104,13 +122,18 @@ export function plan(ritual: Ritual, rituals: number, options: PlanOptions = {})
  */
 function addRituals(
   main: Step,
-  { noWaste, inventory, worn, alterations }: { noWaste: boolean; inventory: Amounts; worn: Worn; alterations: boolean },
+  {
+    noWaste,
+    inventory,
+    setups,
+    alterations,
+  }: { noWaste: boolean; inventory: Amounts; setups: AddedSetups; alterations: boolean },
 ): AddedStep[] | undefined {
-  const added: AddedStep[] = [...MAKERS].map(([makes, choice]) => {
-    const ritual = main.ritual.with({ choice, site: "underworld", worn });
-    const glyphs = alterations ? fit(main.ritual.alterations, ritual.free) : {};
-    return { makes, ritual: ritual.withAlterations(glyphs), count: 0 };
-  });
+  const added: AddedStep[] = [...MAKERS].map(([makes, choice]) => ({
+    makes,
+    ritual: addedRitual(main.ritual, choice, setups[choice.ritual], alterations),
+    count: 0,
+  }));
 
   for (let round = 0; round < 1000; round++) {
     const needed = ironmanNeeds([...added, main], inventory);
@@ -124,17 +147,6 @@ function addRituals(
     }
     if (!changed) return added.sort((a, b) => a.ritual.data.level - b.ritual.data.level);
   }
-}
-
-/**
- * What's worn for the added rituals: what `ritual` is done in, with the cape glyph `addedCape` says (none for a
- * glyph that isn't one). Without a Necromancy cape on, there's no glyph to choose, so it's left as it is.
- */
-function wornFor(ritual: Ritual, addedCape: AddedCape): Worn {
-  const { worn } = ritual.config;
-  if (addedCape === "worn" || !ritual.wearsCape) return worn;
-  const isGlyph = addedCape in GLYPHS && "alteration" in GLYPHS[addedCape as GlyphName];
-  return { ...worn, back: isGlyph ? { id: CAPE, glyph: addedCape as GlyphName } : undefined };
 }
 
 /** How many times `step` has to be done to make `amount` of what it makes: whole rituals, or with `noWaste`, golden ratios. */
