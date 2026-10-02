@@ -46,7 +46,7 @@ it automatically.
      field: the fewest rituals that wear every glyph out at once, so no glyph is redrawn early. The number
      shimmers gold on any multiple of it; the < and > arrows jump to the previous or next multiple. Empty the
      field to go back to the golden ratio.
-   - The settings: **Take from inventory**, **Ironman Mode** and **No waste** (see below).
+   - **Options**: the settings **Take from inventory**, **Ironman Mode** and **No waste** (see below).
    - **Rituals to perform**: each ritual and how many times. Hover one for its time each and in total.
    - **Input**: the focus items, and the ink (and ectoplasm, for alteration glyphs) to draw the glyphs as
      often as they wear out. In Ironman mode, what the ink is made from instead.

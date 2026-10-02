@@ -33,7 +33,7 @@ Items without a price count as 0 in the totals. See [Inventory and prices](/help
 
 ## Settings
 
-The settings under the **Rituals** field change what the results include. They are saved, and apply to every ritual.
+The settings in **Options**, under the **Rituals** field, change what the results include. They are saved, and apply to every ritual.
 
 - **Take from inventory** removes the items you already have from the inputs.
 - **Ironman mode** makes ink instead of buying it. See [Ironman mode](/help/ironman-mode).
