@@ -5,7 +5,7 @@
       "basic": 3
     },
     "durability": 6,
-    "image": "https://runescape.wiki/images/Elemental_I.png?f88f6",
+    "image": "/images/glyphs/elemental-i.webp",
     "examine": "A tier 1 elemental glyph, representing necrotic magic."
   },
   "Elemental II": {
@@ -15,7 +15,7 @@
       "basic": 2
     },
     "durability": 12,
-    "image": "https://runescape.wiki/images/Elemental_II.png?e8637",
+    "image": "/images/glyphs/elemental-ii.webp",
     "examine": "A tier 2 elemental glyph, representing necrotic magic."
   },
   "Elemental III": {
@@ -25,7 +25,7 @@
       "regular": 2
     },
     "durability": 18,
-    "image": "https://runescape.wiki/images/Elemental_III.png?542c9",
+    "image": "/images/glyphs/elemental-iii.webp",
     "examine": "A tier 3 elemental glyph, representing necrotic magic."
   },
   "Reagent I": {
@@ -34,7 +34,7 @@
       "basic": 2
     },
     "durability": 6,
-    "image": "https://runescape.wiki/images/Reagent_I.png?e4b3a",
+    "image": "/images/glyphs/reagent-i.webp",
     "examine": "A tier 1 reagent glyph, used in creation of necrotic ingredients."
   },
   "Reagent II": {
@@ -44,7 +44,7 @@
       "basic": 3
     },
     "durability": 12,
-    "image": "https://runescape.wiki/images/Reagent_II.png?7e95f",
+    "image": "/images/glyphs/reagent-ii.webp",
     "examine": "A tier 2 reagent glyph, used in creation of necrotic ingredients."
   },
   "Reagent III": {
@@ -54,7 +54,7 @@
       "regular": 3
     },
     "durability": 18,
-    "image": "https://runescape.wiki/images/Reagent_III.png?ac887",
+    "image": "/images/glyphs/reagent-iii.webp",
     "examine": "A tier 3 reagent glyph, used in creation of necrotic ingredients."
   },
   "Commune I": {
@@ -63,7 +63,7 @@
       "basic": 4
     },
     "durability": 6,
-    "image": "https://runescape.wiki/images/Commune_I.png?3d535",
+    "image": "/images/glyphs/commune-i.webp",
     "examine": "A tier 1 commune glyph, used to entice spirits."
   },
   "Commune II": {
@@ -72,7 +72,7 @@
       "greater": 4
     },
     "durability": 12,
-    "image": "https://runescape.wiki/images/Commune_II.png?a5f1e",
+    "image": "/images/glyphs/commune-ii.webp",
     "examine": "A tier 2 commune glyph, used to entice spirits."
   },
   "Commune III": {
@@ -81,7 +81,7 @@
       "powerful": 4
     },
     "durability": 18,
-    "image": "https://runescape.wiki/images/Commune_III.png?c2027",
+    "image": "/images/glyphs/commune-iii.webp",
     "examine": "A tier 3 commune glyph, used to entice spirits."
   },
   "Change I": {
@@ -91,7 +91,7 @@
       "basic": 1
     },
     "durability": 6,
-    "image": "https://runescape.wiki/images/Change_I.png?d0949",
+    "image": "/images/glyphs/change-i.webp",
     "examine": "A tier 1 change glyph, used to necrotise materials from the living world."
   },
   "Change II": {
@@ -101,7 +101,7 @@
       "regular": 1
     },
     "durability": 12,
-    "image": "https://runescape.wiki/images/Change_II.png?54e63",
+    "image": "/images/glyphs/change-ii.webp",
     "examine": "A tier 2 change glyph, used to necrotise materials from the living world."
   },
   "Change III": {
@@ -111,7 +111,7 @@
       "greater": 1
     },
     "durability": 18,
-    "image": "https://runescape.wiki/images/Change_III.png?9ee8a",
+    "image": "/images/glyphs/change-iii.webp",
     "examine": "A tier 3 change glyph, used to necrotise materials from the living world."
   },
   "Multiply I": {
@@ -125,7 +125,7 @@
     "soulAttraction": 20,
     "durability": 3,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Multiply_I.png?1b92d",
+    "image": "/images/glyphs/multiply-i.webp",
     "examine": "A tier 1 multiply glyph. Increases ritual output by 20%."
   },
   "Multiply II": {
@@ -139,7 +139,7 @@
     "soulAttraction": 40,
     "durability": 6,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Multiply_II.png?5bbc1",
+    "image": "/images/glyphs/multiply-ii.webp",
     "examine": "A tier 2 multiply glyph. Increases ritual output by 40%."
   },
   "Multiply III": {
@@ -153,7 +153,7 @@
     "soulAttraction": 60,
     "durability": 9,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Multiply_III.png?47fc8",
+    "image": "/images/glyphs/multiply-iii.webp",
     "examine": "A tier 3 multiply glyph. Increases ritual output by 60%."
   },
   "Speed I": {
@@ -167,7 +167,7 @@
     "soulAttraction": 30,
     "durability": 3,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Speed_I.png?72d06",
+    "image": "/images/glyphs/speed-i.webp",
     "examine": "A tier 1 speed glyph. Decreases ritual duration by 5%."
   },
   "Speed II": {
@@ -181,7 +181,7 @@
     "soulAttraction": 60,
     "durability": 6,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Speed_II.png?045a2",
+    "image": "/images/glyphs/speed-ii.webp",
     "examine": "A tier 2 speed glyph. Decreases ritual duration by 10%."
   },
   "Speed III": {
@@ -195,7 +195,7 @@
     "soulAttraction": 90,
     "durability": 9,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Speed_III.png?f0287",
+    "image": "/images/glyphs/speed-iii.webp",
     "examine": "A tier 3 speed glyph. Decreases ritual duration by 15%."
   },
   "Protection I": {
@@ -208,7 +208,7 @@
     "soulAttraction": 20,
     "durability": 3,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Protection_I.png?2e907",
+    "image": "/images/glyphs/protection-i.webp",
     "examine": "A tier 1 protection glyph. Increases the duration of ritual disturbance by 20%."
   },
   "Protection II": {
@@ -221,7 +221,7 @@
     "soulAttraction": 40,
     "durability": 6,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Protection_II.png?04d24",
+    "image": "/images/glyphs/protection-ii.webp",
     "examine": "A tier 2 protection glyph. Increases the duration of ritual disturbance by 40%."
   },
   "Protection III": {
@@ -234,7 +234,7 @@
     "soulAttraction": 60,
     "durability": 9,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Protection_III.png?7cc87",
+    "image": "/images/glyphs/protection-iii.webp",
     "examine": "A tier 3 protection glyph. Increases the duration of ritual disturbances by 60%."
   },
   "Attraction I": {
@@ -247,7 +247,7 @@
     "soulAttraction": 50,
     "durability": 3,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Attraction_I.png?5e35c",
+    "image": "/images/glyphs/attraction-i.webp",
     "examine": "A tier 1 attraction glyph. Increases soul attraction by 50%."
   },
   "Attraction II": {
@@ -260,7 +260,7 @@
     "soulAttraction": 100,
     "durability": 6,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Attraction_II.png?56fef",
+    "image": "/images/glyphs/attraction-ii.webp",
     "examine": "A tier 2 attraction glyph. Increases soul attraction by 100%."
   },
   "Attraction III": {
@@ -273,7 +273,7 @@
     "soulAttraction": 150,
     "durability": 9,
     "alteration": true,
-    "image": "https://runescape.wiki/images/Attraction_III.png?3ba76",
+    "image": "/images/glyphs/attraction-iii.webp",
     "examine": "A tier 3 attraction glyph. Increases soul attraction by 150%."
   }
 }

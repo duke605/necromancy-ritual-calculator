@@ -1,10 +1,15 @@
 // Downloads ritual, glyph and ink data from the RuneScape Wiki API into src/data/.
 // Run `npm run data` to pick up new or changed rituals.
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import sharp from "sharp";
 
 const API = "https://runescape.wiki/api.php";
 const USER_AGENT = "necromancy-ritual-calculator (https://rituals.duke605.ca)";
 const OUT_DIR = new URL("../src/data/", import.meta.url);
+// The glyphs' pictures: each one's high-res render ("<name> detail.png"), saved here as 128px squares and served
+// by the site rather than hotlinked from the wiki.
+const IMAGE_DIR = "public/images";
+const IMAGE_SIZE = 128;
 
 type Stack = { name: string; quantity: string; image?: string };
 type Production = {
@@ -74,7 +79,6 @@ for (const [, name, body] of dataModule.matchAll(/\["([^"]+)"\] = \{[^{}]*\["alt
 const inkKey = (name: string) => name.split(" ")[0].toLowerCase();
 
 const glyphRecipes = recipes.filter((r) => r.facility === "Glyph spot" && isGlyph(r.outputs[0]?.name));
-const images = await imageUrls(glyphRecipes.map((r) => r.outputs[0].image!));
 
 // Glyphs' examines, for their tooltips' flavour text. They're scenery: each has a depleted variant too, which
 // the item infobox doesn't (it has "N/A" for most).
@@ -90,6 +94,9 @@ const glyphExamines = new Map(
     // Some have a doubled space.
     .map(({ page_name, examine }) => [page_name, examine!.replace(/\s+/g, " ")]),
 );
+
+await rm(`${IMAGE_DIR}/glyphs`, { recursive: true, force: true });
+const glyphDetails = await detailUrls(glyphRecipes.map((r) => r.outputs[0].name));
 
 const glyphs: Record<string, object> = {};
 for (const r of glyphRecipes) {
@@ -108,7 +115,7 @@ for (const r of glyphRecipes) {
     }),
     durability: components.get(name)!.durability,
     ...(alteration && { alteration }),
-    image: images.get(r.outputs[0].image!),
+    image: await saveImage(glyphDetails.get(name)!, `glyphs/${name.toLowerCase().replaceAll(" ", "-")}`),
     examine: glyphExamines.get(name),
   };
 }
@@ -280,6 +287,29 @@ const items = Object.fromEntries(
     },
   ]),
 );
+
+/** The URLs of the pages' detail renders, by page name. */
+async function detailUrls(names: string[]) {
+  const urls = await imageUrls(names.map((name) => `${name} detail.png`));
+  const missing = names.filter((name) => !urls.has(`${name} detail.png`));
+  if (missing.length) throw new Error(`No detail render on the wiki for ${missing.join(", ")}`);
+  return new Map(names.map((name) => [name, urls.get(`${name} detail.png`)!]));
+}
+
+/** Downloads an image into public/images/<path>.webp, shrunk into a transparent square. Returns its URL on the site. */
+async function saveImage(url: string, path: string) {
+  // One at a time, a little apart: the wiki's servers are shared.
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) throw new Error(`${res.status} for ${url}`);
+  const file = `${IMAGE_DIR}/${path}.webp`;
+  await mkdir(file.slice(0, file.lastIndexOf("/")), { recursive: true });
+  await sharp(Buffer.from(await res.arrayBuffer()))
+    .resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .webp()
+    .toFile(file);
+  return `/images/${path}.webp`;
+}
 
 async function imageUrls(files: string[]) {
   const urls = new Map<string, string>();
