@@ -108,25 +108,22 @@ function LoadedCalculator() {
         {/* Beside the site art, against its right, from its top, so it only grows down: with the equipment under it. */}
         <div className="flex flex-col gap-4 max-lg:order-1 lg:col-start-3 lg:row-start-1 lg:w-72">
           <Results ritual={ritual} rituals={times ?? ritual.goldenRatio} onRitualsChange={setRituals} />
-          <Accordion title="Equipment" open>
-            <div className="relative">
-              {/* What's worn only. */}
-              <ResetButton
-                label="Reset equipment"
-                className="absolute top-1 right-1 z-10"
-                onClick={() => setRitual(ritual.with({ worn: {} }))}
-              />
-              <Equipment
-                items={Object.fromEntries(
-                  ritual.gear.map((piece) => [
-                    piece.slot,
-                    { ...piece, effects: gearEffects(piece, worn[piece.slot as EquipmentSlot]?.glyph) },
-                  ]),
-                )}
-                choosable={GEAR_SLOTS}
-                onChoose={setChoosingGear}
-              />
-            </div>
+          <Accordion
+            title="Equipment"
+            open
+            // What's worn only.
+            action={<ResetButton label="Reset equipment" onClick={() => setRitual(ritual.with({ worn: {} }))} />}
+          >
+            <Equipment
+              items={Object.fromEntries(
+                ritual.gear.map((piece) => [
+                  piece.slot,
+                  { ...piece, effects: gearEffects(piece, worn[piece.slot as EquipmentSlot]?.glyph) },
+                ]),
+              )}
+              choosable={GEAR_SLOTS}
+              onChoose={setChoosingGear}
+            />
           </Accordion>
         </div>
       </div>

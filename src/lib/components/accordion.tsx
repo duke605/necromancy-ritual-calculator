@@ -17,13 +17,15 @@ export function AccordionGroup({ children }: { children: React.ReactNode }) {
  * A panel that opens and closes by its title bar (a native <details>, so the browser's find-in-page
  * opens it too), and stays open or shut between visits, by its title. `headingLevel` keeps the page outline right
  * wherever it's used. The naked `variant` is
- * just its title, small and muted, over what it holds, for a part of a panel.
+ * just its title, small and muted, over what it holds, for a part of a panel. `action` (a reset button, say) sits in
+ * the title bar, before the chevron.
  */
 export function Accordion({
   title,
   headingLevel = 2,
   variant = "panel",
   open,
+  action,
   children,
 }: {
   title: string;
@@ -31,6 +33,7 @@ export function Accordion({
   variant?: "panel" | "naked";
   /** Open to begin with, until it's been opened or shut. */
   open?: boolean;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const Heading = `h${headingLevel}` as const;
@@ -45,6 +48,12 @@ export function Accordion({
     >
       <summary className={naked ? undefined : "panel-title"}>
         <Heading>{title}</Heading>
+        {/* Clicking it doesn't open or shut the panel too. */}
+        {action && (
+          <span className="accordion-action" onClick={(event) => event.preventDefault()}>
+            {action}
+          </span>
+        )}
       </summary>
       <div className={naked ? "pt-1" : "panel-body"}>{children}</div>
     </details>

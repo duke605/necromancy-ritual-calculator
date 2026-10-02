@@ -11,7 +11,7 @@ Alteration glyphs change how a ritual behaves. You place them in the spots the r
 
 Every alteration glyph also raises soul attraction. Each one costs ink and ectoplasm to draw, and wears out faster than the ritual's own glyphs.
 
-To remove one kind of glyph, select the **×** before its number. To remove all of them, use the reset button at the top of the panel.
+To remove one kind of glyph, select the **×** before its number. To remove all of them, use the reset button in the panel's title bar.
 
 The calculator saves the alteration glyphs for each ritual separately. They come back when you choose that ritual again.
 

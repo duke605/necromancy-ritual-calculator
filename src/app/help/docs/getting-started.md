@@ -34,6 +34,6 @@ The field shimmers when the count is a multiple of the golden ratio. Use the arr
 
 ## Start again
 
-Each panel has a red reset button in its top right corner. It clears only that panel.
+Each panel has a red reset button in its title bar, beside the arrow. It clears only that panel.
 
 **Reset all**, beside the **Site** list, clears the ritual, site, glyphs, equipment and ritual count. It keeps your settings, inventory and prices.

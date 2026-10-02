@@ -56,11 +56,13 @@ export function Alterations({
 }) {
   const placed = Object.values(counts).reduce((sum, count) => sum + count, 0);
   return (
-    <Accordion title="Alteration glyphs" open>
-      <div className="relative flex flex-col gap-4">
-        <ResetButton label="Reset alteration glyphs" className="absolute top-0 right-0" onClick={() => onChange({})} />
-        {/* Clear of the reset button, beside it. */}
-        <div className="pr-10">
+    <Accordion
+      title="Alteration glyphs"
+      open
+      action={<ResetButton label="Reset alteration glyphs" onClick={() => onChange({})} />}
+    >
+      <div className="flex flex-col gap-4">
+        <div>
           <AddedAlterationsToggle />
         </div>
         <div>
@@ -171,10 +173,13 @@ export function Results({
   // The multiples of the golden ratio either side; none before the first.
   const [previous, next] = [(Math.ceil(rituals / golden) - 1) * golden, (Math.floor(rituals / golden) + 1) * golden];
   return (
-    <Accordion title="Results" open>
-      <div className="relative flex flex-col gap-4">
-        {/* Back to the golden ratio. */}
-        <ResetButton label="Reset results" className="absolute top-0 right-0" onClick={() => onRitualsChange()} />
+    <Accordion
+      title="Results"
+      open
+      // Back to the golden ratio.
+      action={<ResetButton label="Reset results" onClick={() => onRitualsChange()} />}
+    >
+      <div className="flex flex-col gap-4">
         <Field label="Rituals" help={`Golden ratio: ${golden}`}>
           <NumberInput
             min={1}

@@ -1447,6 +1447,12 @@
     &[open] > summary::after {
       rotate: 180deg;
     }
+    /* A button in the title bar, against the chevron; it doesn't make the bar taller. */
+    & .accordion-action {
+      display: flex;
+      margin-block: --spacing(-1.5);
+      margin-left: auto;
+    }
     & > .panel-body {
       padding: --spacing(3);
       /* Worn Equipment brings its own padding and ground, edge to edge, as in a panel. */

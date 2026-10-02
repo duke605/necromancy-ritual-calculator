@@ -58,7 +58,7 @@ it automatically.
    - **Soul attraction**: five faces, one lit per level reached (Low, Medium, High, Extreme, Dangerous).
    - **Multiplier**: how much each output is multiplied, and for necroplasm with the Underworld Grimoire.
 
-Each panel has a red reset button in its top right corner that clears only that panel. **Reset all**, beside
+Each panel has a red reset button in its title bar, beside the arrow, that clears only that panel. **Reset all**, beside
 the **Site** dropdown, clears the ritual, site, glyphs, gear and count, but keeps settings, inventory and
 prices. Everything chosen is saved and comes back on the next visit.
 
