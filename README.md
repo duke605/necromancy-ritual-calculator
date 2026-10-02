@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: light)" srcset=".github/logo-light.svg" />
-    <img src=".github/logo.svg" alt="Necromancy Ritual Calculator" width="336" />
+    <img src=".github/logo.svg" alt="Necromancy Ritual Calculator" width="368" />
   </picture>
 </p>
 
@@ -76,4 +76,4 @@ Bug reports, suggestions and pull requests are welcome.
 
 ## AI disclaimer
 
-This version of the site was built with the help of AI ([Claude Code](https://claude.com/claude-code)). It uses my earlier Necromancy Ritual Calculator, first released in 2023, as its foundation. The original's ritual maths, data and design were the starting point, and its results were used to test the new calculator. I reviewed, tested and directed the work throughout.
+This version of the site was built with the help of AI ([Claude Code](https://claude.com/claude-code)). It uses my [earlier Necromancy Ritual Calculator](https://github.com/duke605/necromancy-ritual-calculator/tree/539e95e1f61b7e0ac83346da2c07969975b0f4f8), first released in 2023, as its foundation. The original's ritual maths, data and design were the starting point, and its results were used to test the new calculator. I reviewed, tested and directed the work throughout.
