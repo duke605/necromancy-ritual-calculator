@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { NoWasteIcon } from "@/lib/components/gold-icons";
+import { NoWasteIcon } from "@/lib/components/icons";
 import { Switch } from "@/lib/components/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/lib/components/ui/tooltip";
 import { useSettings } from "@/lib/settings";
