@@ -478,6 +478,8 @@
     position: relative;
     display: grid;
     place-items: center;
+    /* Clicks and drags don't select what's in it. */
+    user-select: none;
     width: --spacing(10.5);
     height: --spacing(10.5);
     border: 2px solid;
@@ -675,6 +677,8 @@
     & [data-spot] {
       display: grid;
       place-items: center;
+      /* Clicks and drags don't select what's on it. */
+      user-select: none;
       /* No line box: a tooltip's trigger is inline, and a line would make it taller than a shrunk slate. */
       line-height: 0;
       /* The slate and what's on it, stacked. */
