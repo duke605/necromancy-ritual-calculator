@@ -1,6 +1,6 @@
 ## Reading the results
 
-The **Results** panel covers every ritual you set in the **Rituals** field. Each list in it folds away when you select its title.
+The **Results** panel covers every ritual you set in the **Rituals** field. The **Focus** button above it shows the focus item. Select it to choose the ritual and focus item. Each list in the panel folds away when you select its title.
 
 | List               | Contents                                                                                        |
 | ------------------ | ----------------------------------------------------------------------------------------------- |

@@ -9,7 +9,6 @@ import { RitualSite } from "@/lib/components/ritual-site";
 import { Select } from "@/lib/components/select";
 import { Spinner } from "@/lib/components/spinner";
 import { ResetButton } from "@/lib/components/reset-button";
-import { Button } from "@/lib/components/ui/button";
 import { layoutGlyphs } from "@/lib/glyph-layout";
 import { useCalculator } from "@/lib/calculator";
 import { useInventory } from "@/lib/inventory";
@@ -23,7 +22,7 @@ import { ChooseRitual, type RitualName } from "./choose-ritual";
 
 /**
  * The site, chosen over it, with the ritual on it: its glyphs laid out, and its focus item on the focus.
- * Clicking the focus item, or the button under the site, chooses the ritual and its focus item. Beside
+ * Clicking the focus item, or the Focus button in the results, chooses the ritual and its focus item. Beside
  * the site (under it on smaller screens), the alteration glyphs on it, kept for each ritual, on its left, and
  * the results on its right, both against it, and under the results the worn equipment, chosen from the gear
  * that changes rituals. All of it is kept between visits, so a spinner shows until it's loaded, rather than
@@ -90,10 +89,6 @@ function LoadedCalculator() {
                       </option>
                     ))}
                   </Select>
-                  {/* The same as clicking the focus item, for anyone who doesn't know it can be. */}
-                  <Button variant="secondary" size="sm" className="shrink-0" onClick={() => setChoosing(true)}>
-                    Select focus
-                  </Button>
                   <ResetButton label="Reset all" className="shrink-0" onClick={reset} />
                 </div>
               </Field>
@@ -132,7 +127,12 @@ function LoadedCalculator() {
         </div>
         {/* Beside the site art, against its right, from its top, so it only grows down: with the equipment under it. */}
         <div className="flex flex-col gap-4 max-lg:order-1 lg:col-start-3 lg:row-start-1 lg:w-72">
-          <Results ritual={ritual} rituals={times ?? ritual.goldenRatio} onRitualsChange={setRituals} />
+          <Results
+            ritual={ritual}
+            rituals={times ?? ritual.goldenRatio}
+            onRitualsChange={setRituals}
+            onChooseFocus={() => setChoosing(true)}
+          />
           <Accordion
             title="Equipment"
             open

@@ -11,7 +11,7 @@ the numbers are worked out and what isn't supported yet, is [llms-full.txt](http
 ## Pages
 
 - [Rituals](https://rituals.duke605.ca/): the calculator, on the home page. Choose the site from **Site**,
-  then click the item on the plinth (or **Select focus**) to choose the ritual and its focus item. Add
+  then click **Focus** in **Results** (or the item on the plinth) to choose the ritual and its focus item. Add
   alteration glyphs in **Alteration glyphs** and gear in **Equipment**. **Results** lists the rituals to
   perform, the input, the output and totals (cost, value, profit or loss, time, XP) for a number of rituals,
   the golden ratio to begin with. In Ironman mode, **Ritual** in **Alteration glyphs** sets up each added

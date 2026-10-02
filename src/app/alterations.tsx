@@ -17,6 +17,7 @@ import { formatDuration } from "@/lib/ritual-duration";
 import { useInventory } from "@/lib/inventory";
 import { useSettings } from "@/lib/settings";
 import type { RitualName } from "./choose-ritual";
+import { FocusSelect } from "./focus-select";
 import { ResultSettings, Setting } from "./result-settings";
 import { ItemLine, Lines, PlainLine, RitualLine, TotalRow, Totals } from "./result-lines";
 
@@ -185,10 +186,13 @@ export function Results({
   ritual,
   rituals,
   onRitualsChange,
+  onChooseFocus,
 }: {
   ritual: Ritual;
   rituals: number;
   onRitualsChange: (rituals?: number) => void;
+  /** Opens the ritual and focus item chooser. */
+  onChooseFocus: () => void;
 }) {
   const golden = ritual.goldenRatio;
   // The multiples of the golden ratio either side; none before the first.
@@ -201,6 +205,9 @@ export function Results({
       action={<ResetButton label="Reset results" onClick={() => onRitualsChange()} />}
     >
       <div className="flex flex-col gap-4">
+        <Field label="Focus">
+          <FocusSelect choice={ritual.config.choice} onClick={onChooseFocus} />
+        </Field>
         <Field label="Rituals" help={`Golden ratio: ${golden}`}>
           <NumberInput
             min={1}

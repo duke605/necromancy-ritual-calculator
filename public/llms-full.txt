@@ -29,10 +29,10 @@ it automatically.
 
 1. Choose the site from the **Site** dropdown above it: **The Underworld** or **Ungael**. Both have 11 glyph
    spots and 10 light sources.
-2. Choose the ritual: click the item on the plinth, or the **Select focus** button beside the **Site**
-   dropdown. In the **Choose ritual** dialog, pick the ritual from **Ritual** (each shows its Necromancy
-   level) and the item to use from **Focus item** (some rituals accept several, e.g. different bones), then
-   press **Choose**.
+2. Choose the ritual: click the **Focus** button at the top of **Results** (it shows the focus item), or the
+   item on the plinth. In the **Choose ritual** dialog, pick the ritual from **Ritual** (each shows its
+   Necromancy level) and the item to use from **Focus item** (some rituals accept several, e.g. different
+   bones), then press **Choose**.
 3. Add alteration glyphs in the **Alteration glyphs** panel, left of the site (under it on phones and
    tablets): use − and + beside Multiply, Speed, Protection or Attraction, tiers I to III. The × before a
    count sets it back to 0. They go in the glyph spots the ritual's own glyphs leave free; the panel says how
@@ -42,6 +42,7 @@ it automatically.
    ritualist's outfit slots also offer **Entire Ritualist's Outfit**, with the plain or the modified mask,
    to wear all five pieces at once.
 5. Read the **Results** panel, right of the site. Its lists fold away by their titles.
+   - **Focus**: the focus item, on a button that opens the **Choose ritual** dialog (step 2).
    - **Rituals**: how many rituals the results are for. It starts at the golden ratio, shown under the
      field: the fewest rituals that wear every glyph out at once, so no glyph is redrawn early. The number
      shimmers gold on any multiple of it; the < and > arrows jump to the previous or next multiple. Empty the

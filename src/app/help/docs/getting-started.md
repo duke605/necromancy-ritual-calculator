@@ -6,10 +6,11 @@ Your choices are saved in your browser. They are still there the next time you o
 
 ## Choose a ritual
 
-1. Select **Select focus** beside the **Site** list, or select the focus item in the middle of the ritual site.
-2. In **Ritual**, choose the ritual. The number after each name is the Necromancy level it needs.
-3. In **Focus item**, choose the item you place on the focus. Some rituals accept more than one.
-4. Select **Choose**.
+Select the **Focus** button in **Results**, or the focus item in the middle of the ritual site. Then:
+
+1. In **Ritual**, choose the ritual. The number after each name is the Necromancy level it needs.
+2. In **Focus item**, choose the item you place on the focus. Some rituals accept more than one.
+3. Select **Choose**.
 
 The ritual's glyphs appear on the site, arranged around the focus.
 
