@@ -5,10 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { ExternalLinkIcon, GitHubIcon } from "@/lib/components/icons";
 import { LinkProgress } from "@/lib/components/link-progress";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -143,9 +145,27 @@ export function AppSidebar() {
           <MainNav entering={entering} />
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="GitHub"
+              onPointerEnter={pickTieDye}
+              onFocus={pickTieDye}
+              render={<a href={GITHUB} target="_blank" rel="noopener noreferrer" />}
+            >
+              <GitHubIcon className="size-5 fill-white" />
+              <span className="wordmark">GitHub</span>
+              <ExternalLinkIcon className="ml-auto size-4" />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
+
+const GITHUB = "https://github.com/duke605/necromancy-ritual-calculator";
 
 /** The site's pages, each with a game icon. The style guide is for building the site, so it's only
     listed when SHOW_STYLE_GUIDE is set: in dev, by default (see next.config.ts). The page itself is still
