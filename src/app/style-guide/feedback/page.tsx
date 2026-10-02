@@ -20,7 +20,7 @@ const PROGRESS_SIZES = [
 ];
 const PROGRESS_TEXTURES = [
   { label: "Gold", className: "" },
-  ...["molten", "eyes", "trans", "bi", "gay"].map((texture) => ({
+  ...["molten", "eyes", "trans", "bi", "pride"].map((texture) => ({
     label: `progress-${texture}`,
     className: `progress-${texture}`,
   })),

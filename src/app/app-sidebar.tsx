@@ -27,7 +27,7 @@ import { HELP_PAGES } from "./help/help";
 import { STYLE_GUIDE_PAGES } from "./style-guide/style-guide";
 
 /** The wordmark's rarer tie-dye palettes (--tie-dye-* in globals.css). */
-const RARE_TIE_DYES = ["trans", "bi", "gay"];
+const RARE_TIE_DYES = ["trans", "bi", "pride"];
 
 /** A palette for this hover: nearly always the skull's eyes, but 1 time in 200 one of the rare ones. */
 function pickTieDye() {
