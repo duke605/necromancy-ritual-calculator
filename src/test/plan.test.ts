@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { collect } from "../lib/collect.ts";
-import { ADDED_RITUALS, plan, type AddedSetup } from "../lib/plan.ts";
+import { ADDED_RITUALS, needsNecroplasmNotMadeYet, plan, type AddedSetup } from "../lib/plan.ts";
 import { Ritual } from "../lib/ritual.ts";
 import type { AlterationCounts } from "../app/alterations.tsx";
 
@@ -144,5 +144,21 @@ describe("plan", () => {
       added: allAdded({ same: false, alterations: {}, cape: "Multiply III" }),
     });
     assert.equal(capeless.steps[0].ritual.capeGlyph, undefined);
+  });
+});
+
+describe("needsNecroplasmNotMadeYet", () => {
+  it("is so for ink made from the ritual's own necroplasm, or a later ritual's", () => {
+    // Multiply II takes regular ink, made from Lesser necroplasm: the Lesser necroplasm ritual's own.
+    assert.equal(needsNecroplasmNotMadeYet("Lesser necroplasm", "Multiply II"), true);
+    // Multiply III takes powerful and greater ink, from Greater necroplasm (its own) and Powerful (later).
+    assert.equal(needsNecroplasmNotMadeYet("Greater necroplasm", "Multiply III"), true);
+    assert.equal(needsNecroplasmNotMadeYet("Lesser necroplasm", "Multiply III"), true);
+  });
+
+  it("isn't for ink made from necroplasm an earlier ritual makes", () => {
+    // Regular ink's Lesser necroplasm is made before Greater necroplasm's ritual.
+    assert.equal(needsNecroplasmNotMadeYet("Greater necroplasm", "Multiply II"), false);
+    assert.equal(needsNecroplasmNotMadeYet("Powerful necroplasm", "Speed II"), false);
   });
 });

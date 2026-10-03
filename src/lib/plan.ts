@@ -1,4 +1,5 @@
 // Relative imports, with extensions, so Node can run it for the tests.
+import GLYPHS from "../data/glyphs.json" with { type: "json" };
 import inks from "../data/inks.json" with { type: "json" };
 import RITUALS from "../data/rituals.json" with { type: "json" };
 import type { AlterationCounts } from "@/app/alterations";
@@ -55,6 +56,20 @@ for (const { materials } of INK_RECIPES.values()) {
 
 /** The rituals Ironman mode can add, lowest level first. */
 export const ADDED_RITUALS = [...MAKERS.values()].sort((a, b) => RITUALS[a.ritual].level - RITUALS[b.ritual].level);
+
+/**
+ * Whether the alteration glyph `glyph` on the added ritual `name` takes ink made from necroplasm not made yet when
+ * it's done: its own, or a later added ritual's. There's then some to get before it starts.
+ */
+export function needsNecroplasmNotMadeYet(name: RitualName, glyph: GlyphName) {
+  const { level } = RITUALS[name];
+  return Object.keys(GLYPHS[glyph].inks).some((ink) =>
+    INK_RECIPES.get(inks[ink as keyof typeof inks].id)?.materials.some(({ id }) => {
+      const maker = MAKERS.get(id);
+      return maker !== undefined && RITUALS[maker.ritual].level >= level;
+    }),
+  );
+}
 
 /**
  * The added ritual `choice`, set up as `setup` says, for `main`: in the Underworld, in the same gear. The same as

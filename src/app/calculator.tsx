@@ -17,7 +17,7 @@ import { useInventory } from "@/lib/inventory";
 import { SITE_NAMES, SITES, type RitualSiteName } from "@/lib/sites";
 import { usePriceStats } from "@/lib/hooks/use-price-stats";
 import { useSettings } from "@/lib/settings";
-import { addedRitual, ADDED_RITUALS } from "@/lib/plan";
+import { addedRitual, ADDED_RITUALS, needsNecroplasmNotMadeYet } from "@/lib/plan";
 import { AddedRitualSelect, AddedSetupControls, Alterations, Results } from "./alterations";
 import { ChooseGear, GEAR_SLOTS, gearEffects } from "./choose-gear";
 import { ChooseRitual, type RitualName } from "./choose-ritual";
@@ -110,6 +110,7 @@ function LoadedCalculator() {
               counts={shown.alterations}
               free={shown.free}
               disabled={setup?.same}
+              notYetMade={adding && ((glyph) => needsNecroplasmNotMadeYet(adding.ritual, glyph))}
               header={
                 ironman && (
                   <>

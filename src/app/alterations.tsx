@@ -2,6 +2,7 @@
 
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import { useId } from "react";
 import glyphs from "@/data/glyphs.json";
 import { Accordion } from "@/lib/components/accordion";
 import { Field } from "@/lib/components/field";
@@ -43,13 +44,15 @@ export function AlterationOptions() {
 
 /**
  * How many of each alteration glyph to put on the site, up to the spots the ritual's own glyphs leave `free`,
- * under `header`. While `disabled`, they're only shown. It folds away.
+ * under `header`. While `disabled`, they're only shown. Those that are `notYetMade` (for an added ritual: their ink
+ * takes necroplasm not made yet) go under a separator. It folds away.
  */
 export function Alterations({
   counts,
   free,
   disabled,
   header,
+  notYetMade = () => false,
   onChange,
   onReset = () => onChange({}),
 }: {
@@ -57,10 +60,23 @@ export function Alterations({
   free: number;
   disabled?: boolean;
   header?: React.ReactNode;
+  notYetMade?: (glyph: GlyphName) => boolean;
   onChange: (counts: AlterationCounts) => void;
   onReset?: () => void;
 }) {
   const placed = Object.values(counts).reduce((sum, count) => sum + count, 0);
+  const later = ALTERATIONS.filter(notYetMade);
+  const id = useId();
+  const row = (name: GlyphName) => (
+    <AlterationRow
+      key={name}
+      name={name}
+      counts={counts}
+      left={free - placed}
+      disabled={disabled}
+      onChange={onChange}
+    />
+  );
   return (
     <Accordion
       title="Alteration glyphs"
@@ -72,45 +88,70 @@ export function Alterations({
         <p className="body-sm text-muted-foreground" aria-live="polite">
           {placed} of {free} free spots
         </p>
-        <ul className="flex flex-col gap-1.5">
-          {ALTERATIONS.map((name) => {
-            const count = counts[name] ?? 0;
-            return (
-              <li key={name} className="flex items-center gap-2">
-                <Image src={glyphs[name].image} alt="" aria-hidden width={24} height={24} className="size-6" />
-                <span className="body-sm flex-1">{name}</span>
-                <NumberInput
-                  aria-label={name}
-                  min={0}
-                  max={count + free - placed}
-                  value={count}
-                  disabled={disabled}
-                  // Only with some to clear.
-                  beforeActions={
-                    count && !disabled ? (
-                      <InputAction
-                        label={`Clear ${name}`}
-                        tooltip="Clear"
-                        onClick={() => onChange({ ...counts, [name]: 0 })}
-                      >
-                        <XIcon />
-                      </InputAction>
-                    ) : undefined
-                  }
-                  // Typing isn't held to `max` as the buttons are.
-                  onChange={(event) =>
-                    onChange({
-                      ...counts,
-                      [name]: Math.min(Math.max(event.target.valueAsNumber || 0, 0), count + free - placed),
-                    })
-                  }
-                />
-              </li>
-            );
-          })}
-        </ul>
+        {/* None, for a Lesser necroplasm ritual: every alteration glyph takes regular ink or above. */}
+        {later.length < ALTERATIONS.length && (
+          <ul className="flex flex-col gap-1.5">{ALTERATIONS.filter((name) => !later.includes(name)).map(row)}</ul>
+        )}
+        {later.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            <div>
+              <p className="subheading" id={`${id}-later`}>
+                Needs necroplasm not made yet
+              </p>
+              <p className="body-sm text-muted-foreground" id={`${id}-why`}>
+                Glyphs below this point need ink that creates a chicken-and-egg problem. Don&apos;t select them unless
+                you have a backlog of that ink or are buying it from the GE.
+              </p>
+            </div>
+            <ul className="flex flex-col gap-1.5" aria-labelledby={`${id}-later`} aria-describedby={`${id}-why`}>
+              {later.map(row)}
+            </ul>
+          </div>
+        )}
       </div>
     </Accordion>
+  );
+}
+
+/** An alteration glyph and how many are on the site, up to the `left` free spots more. */
+function AlterationRow({
+  name,
+  counts,
+  left,
+  disabled,
+  onChange,
+}: {
+  name: GlyphName;
+  counts: AlterationCounts;
+  left: number;
+  disabled?: boolean;
+  onChange: (counts: AlterationCounts) => void;
+}) {
+  const count = counts[name] ?? 0;
+  return (
+    <li className="flex items-center gap-2">
+      <Image src={glyphs[name].image} alt="" aria-hidden width={24} height={24} className="size-6" />
+      <span className="body-sm flex-1">{name}</span>
+      <NumberInput
+        aria-label={name}
+        min={0}
+        max={count + left}
+        value={count}
+        disabled={disabled}
+        // Only with some to clear.
+        beforeActions={
+          count && !disabled ? (
+            <InputAction label={`Clear ${name}`} tooltip="Clear" onClick={() => onChange({ ...counts, [name]: 0 })}>
+              <XIcon />
+            </InputAction>
+          ) : undefined
+        }
+        // Typing isn't held to `max` as the buttons are.
+        onChange={(event) =>
+          onChange({ ...counts, [name]: Math.min(Math.max(event.target.valueAsNumber || 0, 0), count + left) })
+        }
+      />
+    </li>
   );
 }
 
