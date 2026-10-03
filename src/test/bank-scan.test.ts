@@ -4,6 +4,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import sharp from "sharp";
 import { scanBank } from "../lib/bank-scan.ts";
+import { collect } from "../lib/collect.ts";
 
 const load = async (path: string) => {
   const { data, info } = await sharp(path).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -31,7 +32,10 @@ const identical = (a: number, b: number) => a === b || IDENTICAL.some((pair) => 
 // are named, none missed and none extra from the other icons. Items cut off at a screenshot's edge
 // aren't expected.
 const fixtures = "src/test/fixtures";
-const names = (await readdir(fixtures)).filter((file) => file.endsWith(".png")).map((file) => file.replace(".png", ""));
+const names = collect(await readdir(fixtures))
+  .filter((file) => file.endsWith(".png"))
+  .map((file) => file.replace(".png", ""))
+  .toArray();
 
 describe("scanBank", () => {
   for (const name of names.sort()) {

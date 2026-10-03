@@ -1,4 +1,7 @@
+import { collect } from "./collect.ts";
+
 /** Where a spot's partner is, from its offset from the focus, in order of preference: across, up or down, opposite. */
+
 const SYMMETRIES = [
   (dx: number, dy: number) => [-dx, dy],
   (dx: number, dy: number) => [dx, -dy],
@@ -20,9 +23,9 @@ export function layoutGlyphs<Name extends string>(
 ) {
   const focusY = rows.findIndex((row) => row.includes("F"));
   const focusX = rows[focusY].indexOf("F");
-  const spots = rows.flatMap((row, y) =>
-    [...row].flatMap((spot, x) => (spot === cell ? [{ dx: x - focusX, dy: y - focusY }] : [])),
-  );
+  const spots = collect(rows)
+    .flatMap((row, y) => collect(row).flatMap((spot, x) => (spot === cell ? [{ dx: x - focusX, dy: y - focusY }] : [])))
+    .toArray();
   const distance = (index: number) => spots[index].dx ** 2 + spots[index].dy ** 2;
   // The spot a symmetry takes this one to: -1 if there's none, or this one if it mirrors itself.
   const partner = (index: number, symmetry: (typeof SYMMETRIES)[number]) => {

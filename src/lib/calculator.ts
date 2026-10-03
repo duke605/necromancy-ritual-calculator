@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
 import glyphs from "@/data/glyphs.json";
 import rituals from "@/data/rituals.json";
+import { collect } from "./collect";
 import { idbStorage } from "./idb-storage";
 import { Ritual, type RitualConfig } from "./ritual";
 import { SITES } from "./sites";
@@ -59,24 +60,32 @@ export const useCalculator = create(
           ritual: current.ritual.with({
             choice: valid ? choice : current.ritual.config.choice,
             site: site && site in SITES ? site : current.ritual.config.site,
-            alterations: Object.fromEntries(
-              Object.entries(alterations).map(([ritual, counts]) => [
-                ritual,
-                Object.fromEntries(Object.entries(counts ?? {}).filter(([name]) => name in glyphs)),
-              ]),
-            ),
+            alterations: collect(alterations)
+              .map(
+                ([ritual, counts]) =>
+                  [
+                    ritual,
+                    collect(counts ?? {})
+                      .filter(([name]) => name in glyphs)
+                      .toObject(),
+                  ] as const,
+              )
+              .toObject(),
             // Only an alteration glyph can be chosen for gear.
-            worn: Object.fromEntries(
-              Object.entries(worn).map(([slot, piece]) => [
-                slot,
-                piece && {
-                  id: piece.id,
-                  ...(piece.glyph &&
-                    piece.glyph in glyphs &&
-                    "alteration" in glyphs[piece.glyph] && { glyph: piece.glyph }),
-                },
-              ]),
-            ),
+            worn: collect(worn)
+              .map(
+                ([slot, piece]) =>
+                  [
+                    slot,
+                    piece && {
+                      id: piece.id,
+                      ...(piece.glyph &&
+                        piece.glyph in glyphs &&
+                        "alteration" in glyphs[piece.glyph] && { glyph: piece.glyph }),
+                    },
+                  ] as const,
+              )
+              .toObject(),
           }),
         };
       },

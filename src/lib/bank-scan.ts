@@ -3,6 +3,7 @@
 //
 // Nothing about the bank's layout is assumed, only that icons sit on one flat background colour:
 // the background is keyed out, and what's left falls apart into icons and count text.
+import { collect } from "./collect.ts";
 
 /** RGBA pixels, as in ImageData. */
 export type Pixels = { data: Uint8ClampedArray | Uint8Array; width: number; height: number };
@@ -21,7 +22,8 @@ export type Icon = { box: Box; count: number; truncated?: boolean };
  */
 const TEXT_COLOURS = [0xffff00, 0xffffff, 0x1eff00, 0x6698ff, 0xa335ee, 0xff8000];
 
-const rgb = (pixels: Pixels, i: number) => (pixels.data[i * 4] << 16) | (pixels.data[i * 4 + 1] << 8) | pixels.data[i * 4 + 2];
+const rgb = (pixels: Pixels, i: number) =>
+  (pixels.data[i * 4] << 16) | (pixels.data[i * 4 + 1] << 8) | pixels.data[i * 4 + 2];
 
 /**
  * The background colour: the commonest colour among pixels that match all four neighbours, so a flat
@@ -34,7 +36,12 @@ export function findBackground(pixels: Pixels): number {
     for (let x = 1; x < width - 1; x += 2) {
       const i = y * width + x;
       const c = rgb(pixels, i);
-      if (c === rgb(pixels, i - 1) && c === rgb(pixels, i + 1) && c === rgb(pixels, i - width) && c === rgb(pixels, i + width)) {
+      if (
+        c === rgb(pixels, i - 1) &&
+        c === rgb(pixels, i + 1) &&
+        c === rgb(pixels, i - width) &&
+        c === rgb(pixels, i + width)
+      ) {
         counts.set(c, (counts.get(c) ?? 0) + 1);
       }
     }
@@ -415,7 +422,10 @@ export function inGrid(found: Match[]): Match[] {
       if (index !== undefined) counts.set(index, (counts.get(index) ?? 0) + 1);
     }
     const full = Math.max(...counts.values()) / 2;
-    const own = named.map(({ box }) => line(middle(box)[along])).filter((index) => index !== undefined);
+    const own = collect(named)
+      .map(({ box }) => line(middle(box)[along]))
+      .filter((index) => index !== undefined)
+      .toArray();
     let [first, last] = [Math.min(...own), Math.max(...own)];
     while ((counts.get(first - 1) ?? 0) >= full) first--;
     while ((counts.get(last + 1) ?? 0) >= full) last++;

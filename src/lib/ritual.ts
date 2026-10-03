@@ -8,6 +8,7 @@ import type { AlterationCounts } from "@/app/alterations";
 import type { Worn } from "@/app/choose-gear";
 import type { RitualChoice, RitualName } from "@/app/choose-ritual";
 import type { GlyphName } from "./components/ritual-site";
+import { collect } from "./collect.ts";
 import { goldenRatio } from "./golden-ratio.ts";
 import { ritualSeconds } from "./ritual-duration.ts";
 import { ritualOutput } from "./ritual-output.ts";
@@ -48,11 +49,10 @@ const isOutfit = (piece?: { id: number }) =>
 
 /** `worn` with all of the ritualist's outfit on, the `modified` mask or the plain one, over whatever else is in its slots. */
 export function wearOutfit(worn: Worn, modified = false): Worn {
-  const outfit = Object.entries({ ...OUTFIT, head: modified ? 57696 : OUTFIT.head }).map(([slot, id]) => [
-    slot,
-    { id },
-  ]);
-  return { ...worn, ...Object.fromEntries(outfit) };
+  const outfit = collect({ ...OUTFIT, head: modified ? 57696 : OUTFIT.head })
+    .map(([slot, id]) => [slot, { id }] as const)
+    .toObject();
+  return { ...worn, ...outfit };
 }
 
 const isNecroplasm = (id: number) => /necroplasm/i.test(items[`${id}` as keyof typeof items].name);
@@ -95,9 +95,9 @@ export class Ritual {
   get glyphs() {
     return [
       ...(this.data.glyphs as { name: GlyphName; amount: number }[]),
-      ...Object.entries(this.alterations)
+      ...collect(this.alterations)
         .filter(([, amount]) => amount)
-        .map(([name, amount]) => ({ name: name as GlyphName, amount })),
+        .map(([name, amount]) => ({ name, amount: amount! })),
     ];
   }
 
@@ -109,9 +109,10 @@ export class Ritual {
 
   /** The gear worn; an unequipped slot has none. */
   get gear() {
-    return Object.values(this.config.worn)
-      .map((piece) => equipment[`${piece?.id}` as keyof typeof equipment])
-      .filter((piece): piece is Gear => piece !== undefined);
+    return collect(this.config.worn)
+      .map(([, piece]) => equipment[`${piece?.id}` as keyof typeof equipment])
+      .filter((piece): piece is Gear => piece !== undefined)
+      .toArray();
   }
 
   /** Whether a cape with the Necromancy cape's perk is worn (what was saved may be one that's no longer in the data). */
@@ -127,7 +128,9 @@ export class Ritual {
 
   /** What the worn gear adds up to. */
   get effects() {
-    const total = Object.fromEntries(EFFECTS.map((effect) => [effect, 0])) as GearEffects;
+    const total: GearEffects = collect(EFFECTS)
+      .map((effect) => [effect, 0] as const)
+      .toObject();
     for (const { effects } of this.gear) {
       for (const effect of EFFECTS) total[effect] += Number((effects as Record<string, unknown>)[effect] ?? 0);
     }

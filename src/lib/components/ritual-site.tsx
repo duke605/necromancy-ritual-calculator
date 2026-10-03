@@ -5,6 +5,7 @@ import inks from "@/data/inks.json";
 import items from "@/data/items.json";
 import { ItemImage } from "./item-image";
 import { ItemTooltip } from "./item-tooltip";
+import { collect } from "@/lib/collect";
 import { layoutGlyphs } from "@/lib/glyph-layout";
 import { SITES, type RitualSiteName } from "@/lib/sites";
 
@@ -112,38 +113,40 @@ export function RitualSite({
           </svg>
         )}
         <div className="ritual-site-tiles" aria-hidden />
-        {rows.flatMap((row, y) =>
-          [...row].map((cell, x) => {
-            const spot = SPOTS[cell];
-            if (!spot) return null;
-            const glyph = spot === "glyph" ? glyphs[glyphSpot++] : undefined;
-            const item = spot === "focus" ? focus : undefined;
-            const light = spot === "light" ? lit[lightSpot++] : undefined;
-            return (
-              <div
-                key={`${x},${y}`}
-                // A glyph's or item's trigger names it; an image can't hold something focusable.
-                role={glyph || item ? undefined : "img"}
-                aria-label={glyph || item ? undefined : light ? `${LABELS.light}: ${light}` : LABELS[spot]}
-                data-spot={spot}
-                data-filled={glyph || light ? "" : undefined}
-                // The player's choice, not the ritual's, so it's told apart.
-                data-alteration={glyph && "alteration" in glyphData[glyph] ? "" : undefined}
-                style={{ gridColumn: x + 1, gridRow: y + 1 }}
-              >
-                <Slate spot={spot} />
-                {glyph && <PlacedGlyph name={glyph} />}
-                {light && (
-                  <>
-                    <Image src={LIGHT.image} alt="" width={28} height={28} />
-                    <Flame flicker={FLICKERS[lightSpot % FLICKERS.length]} />
-                  </>
-                )}
-                {item && <PlacedFocus item={item} onClick={onFocusClick} />}
-              </div>
-            );
-          }),
-        )}
+        {collect(rows)
+          .flatMap((row, y) =>
+            collect(row).map((cell, x) => {
+              const spot = SPOTS[cell];
+              if (!spot) return null;
+              const glyph = spot === "glyph" ? glyphs[glyphSpot++] : undefined;
+              const item = spot === "focus" ? focus : undefined;
+              const light = spot === "light" ? lit[lightSpot++] : undefined;
+              return (
+                <div
+                  key={`${x},${y}`}
+                  // A glyph's or item's trigger names it; an image can't hold something focusable.
+                  role={glyph || item ? undefined : "img"}
+                  aria-label={glyph || item ? undefined : light ? `${LABELS.light}: ${light}` : LABELS[spot]}
+                  data-spot={spot}
+                  data-filled={glyph || light ? "" : undefined}
+                  // The player's choice, not the ritual's, so it's told apart.
+                  data-alteration={glyph && "alteration" in glyphData[glyph] ? "" : undefined}
+                  style={{ gridColumn: x + 1, gridRow: y + 1 }}
+                >
+                  <Slate spot={spot} />
+                  {glyph && <PlacedGlyph name={glyph} />}
+                  {light && (
+                    <>
+                      <Image src={LIGHT.image} alt="" width={28} height={28} />
+                      <Flame flicker={FLICKERS[lightSpot % FLICKERS.length]} />
+                    </>
+                  )}
+                  {item && <PlacedFocus item={item} onClick={onFocusClick} />}
+                </div>
+              );
+            }),
+          )
+          .toArray()}
       </div>
     </div>
   );

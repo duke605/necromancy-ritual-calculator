@@ -11,6 +11,7 @@ import { Spinner } from "@/lib/components/spinner";
 import { ResetButton } from "@/lib/components/reset-button";
 import { layoutGlyphs } from "@/lib/glyph-layout";
 import { useCalculator } from "@/lib/calculator";
+import { collect } from "@/lib/collect";
 import { useInventory } from "@/lib/inventory";
 import { SITE_NAMES, SITES, type RitualSiteName } from "@/lib/sites";
 import { usePriceStats } from "@/lib/hooks/use-price-stats";
@@ -140,12 +141,15 @@ function LoadedCalculator() {
             action={<ResetButton label="Reset equipment" onClick={() => setRitual(ritual.with({ worn: {} }))} />}
           >
             <Equipment
-              items={Object.fromEntries(
-                ritual.gear.map((piece) => [
-                  piece.slot,
-                  { ...piece, effects: gearEffects(piece, worn[piece.slot as EquipmentSlot]?.glyph) },
-                ]),
-              )}
+              items={collect(ritual.gear)
+                .map(
+                  (piece) =>
+                    [
+                      piece.slot,
+                      { ...piece, effects: gearEffects(piece, worn[piece.slot as EquipmentSlot]?.glyph) },
+                    ] as const,
+                )
+                .toObject()}
               choosable={GEAR_SLOTS}
               onChoose={setChoosingGear}
             />

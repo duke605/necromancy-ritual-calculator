@@ -2,6 +2,7 @@
 // Expected values are from the live calculator (rituals.duke605.ca) where it has the buff, except where noted.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { collect } from "../lib/collect.ts";
 import { Ritual, wearOutfit, type RitualConfig } from "../lib/ritual.ts";
 
 const [WEAK, LESSER, ECTOPLASM, BASIC, REGULAR] = [55598, 55599, 55336, 55594, 55595];
@@ -15,7 +16,10 @@ const lesserNecroplasm = (config: Partial<RitualConfig> = {}) =>
     worn: {},
     ...config,
   });
-const byId = (list: { id: number; amount: number }[]) => Object.fromEntries(list.map(({ id, amount }) => [id, amount]));
+const byId = (list: { id: number; amount: number }[]) =>
+  collect(list)
+    .map(({ id, amount }) => [id, amount] as const)
+    .toObject();
 /** Seconds to a tenth, past floating-point error. */
 const tenths = (seconds: number) => Math.round(seconds * 10) / 10;
 
@@ -103,7 +107,11 @@ describe("Ritual", () => {
     const outfit = [57697, 57698, 57699, 57700, 57701];
     const slots = ["head", "torso", "legs", "hands", "feet"] as const;
     const wearing = (count: number) =>
-      lesserNecroplasm({ worn: Object.fromEntries(slots.slice(0, count).map((slot, i) => [slot, { id: outfit[i] }])) });
+      lesserNecroplasm({
+        worn: collect(slots.slice(0, count))
+          .map((slot, i) => [slot, { id: outfit[i] }] as const)
+          .toObject(),
+      });
     assert.equal(wearing(4).experience, 208);
     assert.equal(wearing(5).experience, 212);
     // All of it, over anything else, with the mask asked for.

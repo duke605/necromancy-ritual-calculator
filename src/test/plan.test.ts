@@ -2,6 +2,7 @@
 // Expected values are from the live calculator (rituals.duke605.ca) where it has the setup, except where noted.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { collect } from "../lib/collect.ts";
 import { ADDED_RITUALS, plan, type AddedSetup } from "../lib/plan.ts";
 import { Ritual } from "../lib/ritual.ts";
 import type { AlterationCounts } from "../app/alterations.tsx";
@@ -18,8 +19,14 @@ const greaterCommunion = (alterations: AlterationCounts = {}) =>
     worn: {},
   });
 /** Every added ritual set up as `setup`. */
-const allAdded = (setup: AddedSetup) => Object.fromEntries(ADDED_RITUALS.map(({ ritual }) => [ritual, setup]));
-const byId = (list: { id: number; amount: number }[]) => Object.fromEntries(list.map(({ id, amount }) => [id, amount]));
+const allAdded = (setup: AddedSetup) =>
+  collect(ADDED_RITUALS)
+    .map(({ ritual }) => [ritual, setup] as const)
+    .toObject();
+const byId = (list: { id: number; amount: number }[]) =>
+  collect(list)
+    .map(({ id, amount }) => [id, amount] as const)
+    .toObject();
 const steps = (result: ReturnType<typeof plan>) =>
   result.steps.map(({ ritual, count }) => `${ritual.config.choice.ritual} ${count}`);
 

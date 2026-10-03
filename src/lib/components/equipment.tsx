@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { collect } from "@/lib/collect";
 import { ItemTooltip } from "./item-tooltip";
 import { Slot } from "./slot";
 
@@ -41,10 +42,13 @@ const capitalised = (text: string) => text.charAt(0).toUpperCase() + text.slice(
 
 /** An item's stats for its tooltip: labelled, numbers grouped ("1,415.5"), words capitalised. */
 function statsOf(stats: Record<string, string | number> = {}) {
-  return STAT_LABELS.filter(([key]) => stats[key] !== undefined).map(([key, label, unit = ""]) => {
-    const value = stats[key];
-    return { label, value: typeof value === "number" ? value.toLocaleString("en") + unit : capitalised(value) };
-  });
+  return collect(STAT_LABELS)
+    .filter(([key]) => stats[key] !== undefined)
+    .map(([key, label, unit = ""]) => {
+      const value = stats[key];
+      return { label, value: typeof value === "number" ? value.toLocaleString("en") + unit : capitalised(value) };
+    })
+    .toArray();
 }
 
 // Positions on a grid of half-slot columns, matching the in-game Worn Equipment layout.
@@ -76,13 +80,14 @@ const rails: [EquipmentSlot, EquipmentSlot][] = [
   ["mainHand", "hands"],
   ["offHand", "ring"],
 ];
-const slotById = Object.fromEntries(slots.map((slot) => [slot.id, slot]));
+const slotById = collect(slots)
+  .map((slot) => [slot.id, slot] as const)
+  .toObject();
 
 /** Slots' names, as the game gives them. */
-export const SLOT_LABELS = Object.fromEntries(slots.map(({ id, label }) => [id, label])) as Record<
-  EquipmentSlot,
-  string
->;
+export const SLOT_LABELS: Record<EquipmentSlot, string> = collect(slots)
+  .map(({ id, label }) => [id, label] as const)
+  .toObject();
 
 /**
  * Worn Equipment, as the game lays it out: `items` in their slots, a faint silhouette in each empty one. Slots

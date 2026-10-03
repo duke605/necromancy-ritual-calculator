@@ -3,6 +3,7 @@ import inks from "../data/inks.json" with { type: "json" };
 import RITUALS from "../data/rituals.json" with { type: "json" };
 import type { AlterationCounts } from "@/app/alterations";
 import type { RitualChoice, RitualName } from "@/app/choose-ritual";
+import { collect } from "./collect.ts";
 import type { GlyphName } from "./components/ritual-site";
 import type { Ritual } from "./ritual.ts";
 
@@ -129,11 +130,13 @@ function addRituals(
     alterations,
   }: { noWaste: boolean; inventory: Amounts; setups: AddedSetups; alterations: boolean },
 ): AddedStep[] | undefined {
-  const added: AddedStep[] = [...MAKERS].map(([makes, choice]) => ({
-    makes,
-    ritual: addedRitual(main.ritual, choice, setups[choice.ritual], alterations),
-    count: 0,
-  }));
+  const added: AddedStep[] = collect(MAKERS)
+    .map(([makes, choice]) => ({
+      makes,
+      ritual: addedRitual(main.ritual, choice, setups[choice.ritual], alterations),
+      count: 0,
+    }))
+    .toArray();
 
   for (let round = 0; round < 1000; round++) {
     const needed = ironmanNeeds([...added, main], inventory);
@@ -233,10 +236,14 @@ function add(to: Amounts, items: { id: number; amount: number }[]) {
 const sum = (items: { id: number; amount: number }[]) => add({}, items);
 
 /** `amounts` as [id, amount] pairs, ids as numbers. */
-const entries = (amounts: Amounts) => Object.entries(amounts).map(([id, amount]) => [Number(id), amount] as const);
+const entries = (amounts: Amounts) => collect(amounts).map(([id, amount]) => [Number(id), amount] as const);
 
 /** `amounts` as a list, leaving out what there's none of. */
-const list = (amounts: Amounts) => entries(amounts).flatMap(([id, amount]) => (amount > 0 ? [{ id, amount }] : []));
+const list = (amounts: Amounts) =>
+  entries(amounts)
+    .filter(([, amount]) => amount > 0)
+    .map(([id, amount]) => ({ id, amount }))
+    .toArray();
 
 /** As many of the alteration glyphs `counts` as fit in `free` spots, in order. */
 function fit(counts: AlterationCounts, free: number) {

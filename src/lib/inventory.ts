@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
+import { collect } from "./collect";
 import { idbStorage } from "./idb-storage";
 
 /**
@@ -21,7 +22,9 @@ export const useInventory = create(
             set((state) => ({
               counts: {
                 ...state.counts,
-                ...Object.fromEntries([...counts].map(([id, count]) => [id, (state.counts[id] ?? 0) + count])),
+                ...collect(counts)
+                  .map(([id, count]) => [id, (state.counts[id] ?? 0) + count] as const)
+                  .toObject(),
               },
             }));
         })(),

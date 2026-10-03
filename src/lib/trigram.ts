@@ -1,4 +1,7 @@
+import { collect } from "./collect.ts";
+
 /** A text's trigrams: every run of three characters, lowercased, padded so a word's start counts too. */
+
 function trigrams(text: string): Set<string> {
   const padded = `  ${text.toLowerCase().trim()} `;
   const grams = new Set<string>();
@@ -13,7 +16,7 @@ function trigrams(text: string): Set<string> {
 export function trigramSearch<T>(items: T[], query: string, name: (item: T) => string, limit = 20): T[] {
   if (!query.trim()) return items.slice(0, limit);
   const wanted = trigrams(query);
-  return items
+  return collect(items)
     .map((item) => {
       const grams = trigrams(name(item));
       let shared = 0;
@@ -21,6 +24,7 @@ export function trigramSearch<T>(items: T[], query: string, name: (item: T) => s
       return { item, score: shared / (wanted.size + grams.size - shared) };
     })
     .filter(({ score }) => score > 0)
+    .toArray()
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map(({ item }) => item);

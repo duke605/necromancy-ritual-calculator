@@ -8,6 +8,7 @@ import { Panel } from "@/lib/components/panel";
 import { Slot } from "@/lib/components/slot";
 import { Spinner } from "@/lib/components/spinner";
 import { Button } from "@/lib/components/ui/button";
+import { collect } from "@/lib/collect";
 import { useInventory } from "@/lib/inventory";
 import { usePriceStats } from "@/lib/hooks/use-price-stats";
 import { usePrices } from "@/lib/prices";
@@ -36,9 +37,10 @@ export function InventoryItems() {
   const [editing, setEditing] = useState<Owned | null>(null);
   const last = useChanges(counts, loaded);
 
-  const owned: Owned[] = Object.entries(counts)
+  const owned: Owned[] = collect(counts)
     .filter(([id, count]) => count > 0 && id in items)
     .map(([id, count]) => ({ ...items[id as keyof typeof items], count }))
+    .toArray()
     .sort((a, b) => a.name.localeCompare(b.name));
   const pages = Math.ceil(owned.length / PAGE);
   const searching = query.trim() !== "";

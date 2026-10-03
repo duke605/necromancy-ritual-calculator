@@ -2,6 +2,7 @@
 // Run `npm run data` to pick up new or changed rituals.
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import sharp from "sharp";
+import { collect } from "../src/lib/collect.ts";
 
 const API = "https://runescape.wiki/api.php";
 const USER_AGENT = "necromancy-ritual-calculator (https://rituals.duke605.ca)";
@@ -83,16 +84,16 @@ const glyphRecipes = recipes.filter((r) => r.facility === "Glyph spot" && isGlyp
 // Glyphs' examines, for their tooltips' flavour text. They're scenery: each has a depleted variant too, which
 // the item infobox doesn't (it has "N/A" for most).
 const glyphExamines = new Map(
-  (
+  collect(
     await bucket<{ page_name: string; examine?: string }>(
       `bucket('infobox_scenery').select('page_name','examine').where(bucket.Or(${glyphRecipes
         .map((r) => `{'page_name',${JSON.stringify(r.outputs[0].name)}}`)
         .join(",")})).limit(5000).run()`,
-    )
+    ),
   )
     .filter(({ examine }) => examine && !examine.includes("(depleted)"))
     // Some have a doubled space.
-    .map(({ page_name, examine }) => [page_name, examine!.replace(/\s+/g, " ")]),
+    .map(({ page_name, examine }) => [page_name, examine!.replace(/\s+/g, " ")] as const),
 );
 
 await rm(`${IMAGE_DIR}/glyphs`, { recursive: true, force: true });
@@ -106,9 +107,10 @@ for (const r of glyphRecipes) {
 
   glyphs[name] = {
     level: Number(r.skills?.[0]?.level),
-    inks: Object.fromEntries(
-      r.materials.filter((m) => m.name.endsWith("ghostly ink")).map((m) => [inkKey(m.name), Number(m.quantity)]),
-    ),
+    inks: collect(r.materials)
+      .filter((m) => m.name.endsWith("ghostly ink"))
+      .map((m) => [inkKey(m.name), Number(m.quantity)] as const)
+      .toObject(),
     ...(alteration && {
       ectoplasm: Number(r.materials.find((m) => m.name === "Ectoplasm")?.quantity ?? 0),
       ...effects.get(name),
@@ -157,8 +159,13 @@ for (const r of recipes) {
   const durationTicks = Math.ceil(Number(r.ticks) / 2);
   const ritual = (rituals[name] ??= {
     level: Number(r.skills?.[0]?.level),
-    glyphs: r.materials.filter((m) => isGlyph(m.name)).map((m) => ({ name: m.name, amount: Number(m.quantity) })),
-    lights: r.materials.filter(isLight).reduce((sum, m) => sum + Number(m.quantity), 0),
+    glyphs: collect(r.materials)
+      .filter((m) => isGlyph(m.name))
+      .map((m) => ({ name: m.name, amount: Number(m.quantity) }))
+      .toArray(),
+    lights: collect(r.materials)
+      .filter(isLight)
+      .reduce((sum, m) => sum + Number(m.quantity), 0),
     focuses: [],
     durationTicks,
     disturbanceChances: Math.floor((durationTicks - 1) / 12),
@@ -169,7 +176,10 @@ for (const r of recipes) {
   const souls = r.outputs.find((o) => o.name === SOUL);
   ritual.focuses.push({
     input: itemRef(inputs[0]),
-    outputs: r.outputs.filter((o) => o !== souls).map(itemRef),
+    outputs: collect(r.outputs)
+      .filter((o) => o !== souls)
+      .map((o) => itemRef(o))
+      .toArray(),
     ...(souls && { souls: Number(souls.quantity) }),
   });
 }
@@ -277,20 +287,23 @@ const idOf = (name: string) => {
 const toId = ({ name, amount }: ItemRef) => ({ id: idOf(name), _displayName: name, amount });
 
 const itemUrls = await imageUrls([...itemImages.values()]);
-const items = Object.fromEntries(
-  itemNames.map((name) => [
-    idOf(name),
-    {
-      id: idOf(name),
-      name,
-      image: itemUrls.get(itemImages.get(name)!),
-      tradeable: tradeableIds.has(idOf(name)),
-      examine: examines.get(name),
-      ...(highAlchs.has(name) && { highAlch: highAlchs.get(name) }),
-      ...(stats.has(name) && { stats: stats.get(name) }),
-    },
-  ]),
-);
+const items = collect(itemNames)
+  .map(
+    (name) =>
+      [
+        idOf(name),
+        {
+          id: idOf(name),
+          name,
+          image: itemUrls.get(itemImages.get(name)!),
+          tradeable: tradeableIds.has(idOf(name)),
+          examine: examines.get(name),
+          ...(highAlchs.has(name) && { highAlch: highAlchs.get(name) }),
+          ...(stats.has(name) && { stats: stats.get(name) }),
+        },
+      ] as const,
+  )
+  .toObject();
 
 /** The URLs of the pages' detail renders, by page name. */
 async function detailUrls(names: string[]) {
@@ -334,24 +347,25 @@ async function imageUrls(files: string[]) {
 }
 
 // Lowest level first, then by name, so reruns produce stable diffs.
-const sortedRituals = Object.fromEntries(
-  Object.entries(rituals)
-    .sort(([a, x], [b, y]) => x.level - y.level || a.localeCompare(b))
-    .map(([name, ritual]) => [
-      name,
-      {
-        ...ritual,
-        focuses: ritual.focuses.map((f) => ({ ...f, input: toId(f.input), outputs: f.outputs.map(toId) })),
-      },
-    ]),
-);
-const inksById = Object.fromEntries(
-  // Basic ink has no recipe: it's only sold, at Lupe's shop in Um, to ironmen too.
-  Object.entries(inks).map(([key, { name, makes, materials }]) => [
-    key,
-    { id: idOf(name), ...(makes && materials && { makes, materials: materials.map(toId) }) },
-  ]),
-);
+const sortedRituals = collect(Object.entries(rituals).sort(([a, x], [b, y]) => x.level - y.level || a.localeCompare(b)))
+  .map(
+    ([name, ritual]) =>
+      [
+        name,
+        {
+          ...ritual,
+          focuses: ritual.focuses.map((f) => ({ ...f, input: toId(f.input), outputs: f.outputs.map(toId) })),
+        },
+      ] as const,
+  )
+  .toObject();
+// Basic ink has no recipe: it's only sold, at Lupe's shop in Um, to ironmen too.
+const inksById = collect(inks)
+  .map(
+    ([key, { name, makes, materials }]) =>
+      [key, { id: idOf(name), ...(makes && materials && { makes, materials: materials.map(toId) }) }] as const,
+  )
+  .toObject();
 
 // Gear that changes rituals, by the slot it's worn in, and what it does: percentages, from the items' wiki pages
 // (their effects aren't data there). Kept apart from the items, so the bank scan and inventory never see it.
@@ -388,17 +402,17 @@ const equipmentInfo = await bucket<{ page_name: string; item_id: number[]; image
     .join(",")})).limit(500).run()`,
 );
 const equipmentUrls = await imageUrls(equipmentInfo.map(({ image }) => image[0].replace(/^File:/, "")));
-const equipment = Object.fromEntries(
-  Object.entries(EQUIPMENT).map(([name, gear]) => {
+const equipment = collect(EQUIPMENT)
+  .map(([name, gear]) => {
     const info = equipmentInfo.find((row) => row.page_name === name);
     if (!info) throw new Error(`${name} isn't on the wiki as an item`);
     const id = info.item_id[0];
     return [
       id,
       { id, name, ...gear, image: equipmentUrls.get(info.image[0].replace(/^File:/, "")), examine: info.examine },
-    ];
-  }),
-);
+    ] as const;
+  })
+  .toObject();
 
 await mkdir(OUT_DIR, { recursive: true });
 for (const [file, data] of Object.entries({ rituals: sortedRituals, glyphs, inks: inksById, items, equipment })) {
