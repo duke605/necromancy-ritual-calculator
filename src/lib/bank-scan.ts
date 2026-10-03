@@ -4,6 +4,7 @@
 // Nothing about the bank's layout is assumed, only that icons sit on one flat background colour:
 // the background is keyed out, and what's left falls apart into icons and count text.
 import { collect } from "./collect.ts";
+import wasm from "./bank-scan.wasm.ts";
 
 /** RGBA pixels, as in ImageData. */
 export type Pixels = { data: Uint8ClampedArray | Uint8Array; width: number; height: number };
@@ -24,6 +25,28 @@ const TEXT_COLOURS = [0xffff00, 0xffffff, 0x1eff00, 0x6698ff, 0xa335ee, 0xff8000
 
 const rgb = (pixels: Pixels, i: number) =>
   (pixels.data[i * 4] << 16) | (pixels.data[i * 4 + 1] << 8) | pixels.data[i * 4 + 2];
+
+/** A colour as bank-scan.wat reads one, a pixel's bytes as a little-endian i32: 0xBBGGRR. */
+const reversed = (c: number) => ((c & 255) << 16) | (c & 0xff00) | (c >> 16);
+
+const wasmModule = new WebAssembly.Module(wasm);
+
+type Exports = {
+  text: (n: number, width: number, out: number, ...colours: number[]) => void;
+  foreground: (n: number, background: number, tolerance: number, text: number, out: number) => void;
+  score: (...args: number[]) => [misses: number, error: number];
+};
+
+/**
+ * bank-scan.wat with `size` bytes of memory for it to work in, and 64 spare, which its SIMD loops can run
+ * into. ponytail: each step copies the screenshot in afresh, a few ms for a 4K one; share one memory
+ * across the steps if that shows.
+ */
+function instantiate(size: number) {
+  const memory = new WebAssembly.Memory({ initial: Math.ceil((size + 64) / 65536) });
+  const { exports } = new WebAssembly.Instance(wasmModule, { env: { memory } });
+  return { bytes: new Uint8Array(memory.buffer), exports: exports as Exports };
+}
 
 /**
  * The background colour: the commonest colour among pixels that match all four neighbours, so a flat
@@ -57,60 +80,57 @@ export function findBackground(pixels: Pixels): number {
  * (The shadow's the same black as icons' outlines, so it can only be told apart by where it is.)
  */
 export function findText(pixels: Pixels): Uint8Array {
-  const { width, height } = pixels;
-  const text = new Uint8Array(width * height);
-  for (let i = 0; i < width * height; i++) {
-    if (!TEXT_COLOURS.includes(rgb(pixels, i))) continue;
-    text[i] = 1;
-    const x = i % width;
-    if (x + 1 < width && i + width + 1 < width * height) {
-      const shadow = i + width + 1;
-      if (!TEXT_COLOURS.includes(rgb(pixels, shadow))) text[shadow] = 2;
-    }
-  }
-  return text;
+  const n = pixels.width * pixels.height;
+  const { bytes, exports } = instantiate(n * 5);
+  bytes.set(pixels.data);
+  exports.text(n, pixels.width, n * 4, ...TEXT_COLOURS.map(reversed));
+  return bytes.slice(n * 4, n * 5);
 }
 
 /** Icons are at most 32px square (more or less: a few overhang); anything bigger is the interface. */
 const MAX_ICON = 40;
 
 /**
- * Groups of connected pixels (8 neighbours) where `include` is true, as bounding boxes, with groups
+ * Groups of connected pixels (8 neighbours) where `include` is 1, as bounding boxes, with groups
  * up to `gap` pixels apart merged into one. Groups bigger than an icon are left out first, or the
  * bank's frame, one shape around everything, would swallow the lot.
  */
-function groups(width: number, height: number, include: (i: number) => boolean, gap: number): Box[] {
-  const seen = new Uint8Array(width * height);
+function groups(width: number, height: number, include: Uint8Array, gap: number): Box[] {
+  // Pixels still to visit (1s in `include`), with a border of 0s, so neighbours need no bounds checks.
+  const w = width + 2;
+  const todo = new Uint8Array(w * (height + 2));
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) todo[(y + 1) * w + x + 1] = +(include[y * width + x] === 1);
+  }
+  const neighbours = [-w - 1, -w, -w + 1, -1, 1, w - 1, w, w + 1];
   const stack = new Int32Array(width * height);
   const boxes: Box[] = [];
-  for (let start = 0; start < width * height; start++) {
-    if (seen[start] || !include(start)) continue;
-    const box = { left: width, top: height, right: -1, bottom: -1 };
-    let top = 0;
-    stack[top++] = start;
-    seen[start] = 1;
-    while (top) {
-      const i = stack[--top];
-      const x = i % width;
-      const y = (i - x) / width;
-      box.left = Math.min(box.left, x);
-      box.right = Math.max(box.right, x);
-      box.top = Math.min(box.top, y);
-      box.bottom = Math.max(box.bottom, y);
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-          const nx = x + dx;
-          const ny = y + dy;
-          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-          const j = ny * width + nx;
-          if (!seen[j] && include(j)) {
-            seen[j] = 1;
-            stack[top++] = j;
-          }
+  for (let start = w; start < todo.length - w; start++) {
+    if (!todo[start]) continue;
+    todo[start] = 0;
+    let [left, top, right, bottom] = [w, height + 2, -1, -1];
+    let size = 0;
+    stack[size++] = start;
+    while (size) {
+      const i = stack[--size];
+      const x = i % w;
+      const y = (i - x) / w;
+      left = Math.min(left, x);
+      right = Math.max(right, x);
+      top = Math.min(top, y);
+      bottom = Math.max(bottom, y);
+      for (const d of neighbours) {
+        const j = i + d;
+        if (todo[j]) {
+          stack[size++] = j;
+          todo[j] = 0;
         }
       }
     }
-    if (box.right - box.left < MAX_ICON && box.bottom - box.top < MAX_ICON) boxes.push(box);
+    // Back out of the border's coordinates.
+    if (right - left < MAX_ICON && bottom - top < MAX_ICON) {
+      boxes.push({ left: left - 1, top: top - 1, right: right - 1, bottom: bottom - 1 });
+    }
   }
   return merge(boxes, gap);
 }
@@ -160,10 +180,16 @@ function merge(boxes: Box[], gap: number): Box[] {
  */
 export const BACKGROUND_TOLERANCE = 20;
 
-const near = (a: number, b: number, tolerance: number) =>
-  Math.abs((a >> 16) - (b >> 16)) <= tolerance &&
-  Math.abs(((a >> 8) & 255) - ((b >> 8) & 255)) <= tolerance &&
-  Math.abs((a & 255) - (b & 255)) <= tolerance;
+/** Which pixels might be icons: not count text, and a colour channel more than `tolerance` off the background. */
+function findForeground(pixels: Pixels, background: number, text: Uint8Array, tolerance: number): Uint8Array {
+  const n = pixels.width * pixels.height;
+  const { bytes, exports } = instantiate(n * 6);
+  bytes.set(pixels.data);
+  bytes.set(text, n * 4);
+  // Over 255 is the same as 255 (nothing's further off), and bank-scan.wat compares bytes.
+  exports.foreground(n, reversed(background), Math.min(tolerance, 255), n * 4, n * 5);
+  return bytes.subarray(n * 5, n * 6);
+}
 
 /**
  * The count text's words (each a box around one number) and the icons (each a box around one item),
@@ -171,9 +197,10 @@ const near = (a: number, b: number, tolerance: number) =>
  */
 export function findShapes(pixels: Pixels, background: number, text: Uint8Array, tolerance = BACKGROUND_TOLERANCE) {
   const { width, height } = pixels;
-  const words = groups(width, height, (i) => text[i] === 1, 3);
+  const words = groups(width, height, text, 3);
+  const foreground = findForeground(pixels, background, text, tolerance);
   // Icons touching the screenshot's edge may be cut off, so they're left out.
-  const icons = groups(width, height, (i) => !text[i] && !near(rgb(pixels, i), background, tolerance), 2).filter(
+  const icons = groups(width, height, foreground, 2).filter(
     (box) => box.left > 0 && box.top > 0 && box.right < width - 1 && box.bottom < height - 1,
   );
   return { words, icons };
@@ -275,41 +302,35 @@ const MATCH = 0.8;
  */
 const TIE = 0.02;
 
+/** A template copied into the WASM module's memory: where it starts, and how many pixels it weighs. */
+type Placed = Template & { at: number; total: number };
+
 /**
- * How well the screenshot matches `template` with the template's top-left at (left, top): the share of
- * its weighted pixels within their tolerance, and how far off in colour those are on average. Stops
- * early once it can't reach `MATCH` (share 0).
+ * A scorer for one screenshot (bank-scan.wat), with it and the templates copied into its memory: how well
+ * the screenshot matches a template with the template's top-left at (left, top), as the share of its
+ * weighted pixels within their tolerance and how far off in colour those are on average. Stops early
+ * once it can't reach `MATCH` (share 0).
  */
-function score(pixels: Pixels, template: Pixels, left: number, top: number) {
-  let total = 0;
-  for (let i = 3; i < template.data.length; i += 4) if (template.data[i]) total++;
-  let misses = 0;
-  let error = 0;
-  const allowed = total * (1 - MATCH);
-  for (let y = 0; y < template.height; y++) {
-    for (let x = 0; x < template.width; x++) {
-      const t = (y * template.width + x) * 4;
-      const alpha = template.data[t + 3];
-      if (!alpha) continue;
-      const sx = left + x;
-      const sy = top + y;
-      const tolerance = 255 - alpha;
-      let miss = sx < 0 || sy < 0 || sx >= pixels.width || sy >= pixels.height;
-      let off = 0;
-      if (!miss) {
-        const s = (sy * pixels.width + sx) * 4;
-        for (let c = 0; c < 3 && !miss; c++) {
-          const d = Math.abs(pixels.data[s + c] - template.data[t + c]);
-          miss = d > tolerance;
-          off += d;
-        }
-      }
-      if (miss) {
-        if (++misses > allowed) return { share: 0, error: Infinity };
-      } else error += off;
-    }
-  }
-  return { share: 1 - misses / total, error: error / (total - misses) };
+function scorer(pixels: Pixels, templates: Template[]) {
+  const size = templates.reduce((sum, { pixels }) => sum + pixels.data.length, pixels.data.length);
+  const { bytes, exports } = instantiate(size);
+  bytes.set(pixels.data);
+  let at = pixels.data.length;
+  const placed = templates.map((template): Placed => {
+    const { data } = template.pixels;
+    bytes.set(data, at);
+    let total = 0;
+    for (let i = 3; i < data.length; i += 4) if (data[i]) total++;
+    at += data.length;
+    return { ...template, at: at - data.length, total };
+  });
+  const score = ({ at, total, pixels: template }: Placed, left: number, top: number) => {
+    // Misses are whole, so more than `allowed` is more than its floor.
+    const allowed = Math.floor(total * (1 - MATCH));
+    const [misses, error] = exports.score(pixels.width, pixels.height, at, template.width, template.height, left, top, allowed);
+    return misses < 0 ? { share: 0, error: Infinity } : { share: 1 - misses / total, error: error / (total - misses) };
+  };
+  return { placed, score };
 }
 
 /**
@@ -317,15 +338,16 @@ function score(pixels: Pixels, template: Pixels, left: number, top: number) {
  * icon's top-left corner give or take a pixel (renders shift a little), at its best placement. A template
  * whose size differs from the icon's by more than a couple of pixels is a different item.
  */
-function identify(pixels: Pixels, icon: Box, templates: Template[]): number[] {
+function identify({ placed, score }: ReturnType<typeof scorer>, icon: Box): number[] {
   const matches: { id: number; share: number; error: number }[] = [];
-  for (const { id, pixels: template } of templates) {
+  for (const placement of placed) {
+    const { id, pixels: template } = placement;
     if (Math.abs(template.width - (icon.right - icon.left + 1)) > 2) continue;
     if (Math.abs(template.height - (icon.bottom - icon.top + 1)) > 2) continue;
     let best = { share: 0, error: Infinity };
     for (let dy = -1; dy <= 1; dy++) {
       for (let dx = -1; dx <= 1; dx++) {
-        const s = score(pixels, template, icon.left + dx, icon.top + dy);
+        const s = score(placement, icon.left + dx, icon.top + dy);
         if (s.share > best.share + TIE || (s.share > best.share - TIE && s.error < best.error)) best = s;
       }
     }
@@ -455,8 +477,9 @@ export function scanBank(
 ): Match[] {
   const found: Match[] = [];
   const icons = findIcons(pixels, key);
+  const scoring = scorer(pixels, templates);
   for (const [index, icon] of icons.entries()) {
-    const candidates = identify(pixels, icon.box, templates);
+    const candidates = identify(scoring, icon.box);
     found.push({ ...icon, id: candidates[0] ?? null, candidates });
     onProgress?.(index + 1, icons.length);
   }

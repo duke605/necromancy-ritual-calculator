@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "SERVER=1 STYLE_GUIDE=1 next build && SERVER=1 next start -p 3001",
+    "dev": "npm run wasm && next dev",
+    "build": "npm run wasm && next build",
+    "start": "npm run wasm && SERVER=1 STYLE_GUIDE=1 next build && SERVER=1 next start -p 3001",
     "lint": "eslint",
     "data": "node scripts/fetch-data.mts && node --no-warnings scripts/fetch-bank-icons.mts",
-    "test": "node --no-warnings --test"
+    "wasm": "node --no-warnings scripts/build-wasm.mts",
+    "test": "npm run wasm && node --no-warnings --test"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -34,6 +35,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.7",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wabt": "^1.0.39"
   }
 }
