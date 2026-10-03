@@ -715,9 +715,9 @@
     & [data-spot="light"] :is(img, .candle-flame) {
       position: relative;
     }
+    /* From its foot, on the wick's tip: 66.5 across and 1 down of the 128. */
     & .candle-flame-fire {
-      transform-box: fill-box;
-      transform-origin: bottom;
+      transform-origin: 51.95% 0.78%;
       animation: candle-flicker var(--flicker) ease-in-out infinite;
     }
     & .candle-flame-glow {
@@ -734,41 +734,67 @@
       filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.9)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.6));
     }
     /*
-     * A glyph or light on its spot: a 3px tie-dye border, swirling neon green and yellow-green, cut to a ring
-     * around the slate. Still where motion's reduced: SVG animations in images don't heed it themselves.
+     * A glyph or light on its spot: a 3px tie-dye border (<Ring>), swirling neon green and yellow-green, cut to
+     * a ring around the slate. The swirl is the still texture twice, the second's noise half as big again,
+     * overlaid, each orbiting in a circle without turning (60px round in 10s, and 90px round the other way in
+     * 14s): an orbit is a turn of the outer span, undone by the opposite turn of the inner one, offset by the
+     * radius. Turns, not an SVG animation in a background, so the GPU moves them without repainting. Each
+     * texture overhangs the ring by its radius, so its edges never show.
      */
     & [data-filled] {
-      --ring: var(--tie-dye-neon-spin) 0 0 / 100% 100%;
-      @media (prefers-reduced-motion: reduce) {
-        --ring: var(--tie-dye-neon);
-      }
+      --ring: var(--tie-dye-neon);
     }
     /* An alteration glyph, the player's choice: neon purple and magenta instead. */
     & [data-filled][data-alteration] {
-      --ring: var(--tie-dye-violet-spin) 0 0 / 100% 100%;
-      @media (prefers-reduced-motion: reduce) {
-        --ring: var(--tie-dye-violet);
-      }
+      --ring: var(--tie-dye-violet);
     }
     /* Around a glyph's slate: its rounded square, edge included (as Slate draws it, 1.25 of 40 in from the
        spot's sides, rounded 4.75), and 3px out from that. */
-    & [data-filled]::before {
-      content: "";
+    & .spot-ring {
+      position: relative;
       grid-area: 1 / 1;
       place-self: stretch;
       margin: calc(3.125% - 3px);
       border-radius: calc(12.5% + 2.5px);
       padding: 3px;
-      background: var(--ring);
+      overflow: clip;
       /* Its mask puts it over the glyph, which it would otherwise keep from being hovered. */
       pointer-events: none;
       mask:
         linear-gradient(#000 0 0) content-box exclude,
         linear-gradient(#000 0 0);
+
+      & > span {
+        position: absolute;
+        inset: 0;
+        animation: orbit 10s linear infinite;
+      }
+      & > span > span {
+        position: absolute;
+        inset: -60px;
+        translate: 60px 0;
+        background: var(--ring) 0 0 / 160px 160px;
+        animation: orbit 10s linear infinite reverse;
+      }
+      & > span + span {
+        mix-blend-mode: overlay;
+        animation: orbit 14s linear infinite reverse;
+      }
+      & > span + span > span {
+        inset: -90px;
+        translate: 90px 0;
+        background-size: 240px 240px;
+        animation: orbit 14s linear infinite;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        & span {
+          animation: none;
+        }
+      }
     }
     /* A light's follows its five-sided slate, corners rounded: a 3px stroke of the slate's outline, grown
        from its middle, 1 unit to a pixel at a 40px spot. */
-    & [data-spot="light"][data-filled]::before {
+    & [data-spot="light"] .spot-ring {
       margin: -3px;
       border-radius: 0;
       mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 46 46' preserveAspectRatio='none'><path d='M15.15 2.99Q20-.55 24.85 2.99L36.05 11.16Q40.9 14.7 39.09 20.42L34.81 33.88Q33 39.6 27 39.6L13 39.6Q7 39.6 5.19 33.88L.91 20.42Q-.9 14.7 3.95 11.16Z' fill='none' stroke='black' stroke-width='3'/></svg>")
@@ -1378,6 +1404,12 @@
     .item-search-results li[aria-selected="true"]::after {
       transition: none;
       animation: draw-check 0.15s ease-out;
+    }
+  }
+  /* A whole turn, for the filled spots' rings to orbit with. */
+  @keyframes orbit {
+    to {
+      rotate: 1turn;
     }
   }
   @keyframes candle-flicker {

@@ -133,6 +133,7 @@ export function RitualSite({
                   data-alteration={glyph && "alteration" in glyphData[glyph] ? "" : undefined}
                   style={{ gridColumn: x + 1, gridRow: y + 1 }}
                 >
+                  {(glyph || light) && <Ring />}
                   <Slate spot={spot} />
                   {glyph && <PlacedGlyph name={glyph} />}
                   {light && (
@@ -149,6 +150,20 @@ export function RitualSite({
           .toArray()}
       </div>
     </div>
+  );
+}
+
+/** The swirling tie-dye ring around a filled spot's slate: two textures, each orbiting in its own circle. */
+function Ring() {
+  return (
+    <span className="spot-ring" aria-hidden>
+      <span>
+        <span />
+      </span>
+      <span>
+        <span />
+      </span>
+    </span>
   );
 }
 
@@ -221,37 +236,40 @@ function PlacedFocus({
 /** How long lit candles' flames take to flicker, in seconds, taken in turn so they don't flicker together. */
 const FLICKERS = [1.3, 1.1, 1.45, 1.2, 1.35];
 
-/** A candle's flame and its glow, over the candle's picture (128 by 128), on its wick's tip. */
+/**
+ * A candle's flame and its glow, over the candle's picture (128 by 128), on its wick's tip. Each in a <span> of
+ * its own, which animates: the GPU moves an HTML element without repainting, but not an SVG one.
+ */
 function Flame({ flicker }: { flicker: number }) {
   const id = useId();
+  const style = { "--flicker": `${flicker}s` } as React.CSSProperties;
   return (
-    <svg
-      className="candle-flame"
-      viewBox="0 0 128 128"
-      aria-hidden
-      style={{ "--flicker": `${flicker}s` } as React.CSSProperties}
-    >
-      <defs>
-        <radialGradient id={`${id}-flame`} cx=".5" cy=".75" r=".7">
-          <stop offset="0" stopColor="#fff" />
-          <stop offset=".35" stopColor="#bff6ff" />
-          <stop offset=".75" stopColor="#3fd8ff" />
-          <stop offset="1" stopColor="#2a6cff" stopOpacity=".6" />
-        </radialGradient>
-        <radialGradient id={`${id}-glow`}>
-          <stop offset="0" stopColor="#3fd8ff" stopOpacity=".6" />
-          <stop offset="1" stopColor="#3fd8ff" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <g transform="translate(66.5 1) scale(3)">
-        <circle className="candle-flame-glow" r="7" cy="-4" fill={`url(#${id}-glow)`} />
-        <path
-          className="candle-flame-fire"
-          d="M0 0c-2.4 0-3.4-1.8-3.4-3.6 0-2.6 2.2-4.6 3.4-8.4 1.2 3.8 3.4 5.8 3.4 8.4 0 1.8-1 3.6-3.4 3.6z"
-          fill={`url(#${id}-flame)`}
-        />
-      </g>
-    </svg>
+    <>
+      <span className="candle-flame candle-flame-glow" style={style}>
+        <svg viewBox="0 0 128 128" aria-hidden>
+          <radialGradient id={`${id}-glow`}>
+            <stop offset="0" stopColor="#3fd8ff" stopOpacity=".6" />
+            <stop offset="1" stopColor="#3fd8ff" stopOpacity="0" />
+          </radialGradient>
+          <circle r="21" cx="66.5" cy="-11" fill={`url(#${id}-glow)`} />
+        </svg>
+      </span>
+      <span className="candle-flame candle-flame-fire" style={style}>
+        <svg viewBox="0 0 128 128" aria-hidden>
+          <radialGradient id={`${id}-flame`} cx=".5" cy=".75" r=".7">
+            <stop offset="0" stopColor="#fff" />
+            <stop offset=".35" stopColor="#bff6ff" />
+            <stop offset=".75" stopColor="#3fd8ff" />
+            <stop offset="1" stopColor="#2a6cff" stopOpacity=".6" />
+          </radialGradient>
+          <path
+            transform="translate(66.5 1) scale(3)"
+            d="M0 0c-2.4 0-3.4-1.8-3.4-3.6 0-2.6 2.2-4.6 3.4-8.4 1.2 3.8 3.4 5.8 3.4 8.4 0 1.8-1 3.6-3.4 3.6z"
+            fill={`url(#${id}-flame)`}
+          />
+        </svg>
+      </span>
+    </>
   );
 }
 
