@@ -155,7 +155,7 @@ export function AddedSetupControls({ main, shown, name }: { main: Ritual; shown:
     <>
       <Setting
         title="Same as main ritual"
-        description="Its alteration glyphs, as many as fit, and cape glyph."
+        description="Its cape glyph, and no alteration glyphs."
         on={setup.same}
         onChange={(same) =>
           setAdded(name, same ? { same } : { same, alterations: shown.alterations, cape: shown.capeGlyph })

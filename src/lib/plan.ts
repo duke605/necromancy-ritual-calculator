@@ -28,8 +28,8 @@ export type PlanOptions = {
 };
 
 /**
- * How an added ritual is set up: as the ritual (its alteration glyphs, as many as fit, and its cape glyph), or
- * with its own alteration glyphs and cape glyph (none without `cape`).
+ * How an added ritual is set up: as the ritual (its cape glyph, and no alteration glyphs), or with its own
+ * alteration glyphs and cape glyph (none without `cape`).
  */
 export type AddedSetup = { same: true } | { same: false; alterations: AlterationCounts; cape?: GlyphName };
 export type AddedSetups = Partial<Record<RitualName, AddedSetup>>;
@@ -57,8 +57,9 @@ for (const { materials } of INK_RECIPES.values()) {
 export const ADDED_RITUALS = [...MAKERS.values()].sort((a, b) => RITUALS[a.ritual].level - RITUALS[b.ritual].level);
 
 /**
- * The added ritual `choice`, set up as `setup` says, for `main`: in the Underworld, in the same gear. Without
- * `alterations`, its alteration glyphs are left off. Without a Necromancy cape on, there's no cape glyph to choose.
+ * The added ritual `choice`, set up as `setup` says, for `main`: in the Underworld, in the same gear. The same as
+ * `main` is its cape glyph and no alteration glyphs; otherwise its own of each. Without `alterations`, its
+ * alteration glyphs are left off. Without a Necromancy cape on, there's no cape glyph to choose.
  */
 export function addedRitual(
   main: Ritual,
@@ -67,7 +68,9 @@ export function addedRitual(
   alterations = true,
 ) {
   const ritual = main.with({ choice, site: "underworld" });
-  if (setup.same) return ritual.withAlterations(alterations ? fit(main.alterations, ritual.free) : {});
+  // Not the ritual's alteration glyphs: their inks can be of a tier this ritual makes the necroplasm for, or above
+  // (a Lesser necroplasm ritual can't take powerful ink, which takes Lesser necroplasm, through the tiers between).
+  if (setup.same) return ritual.withAlterations({});
   const { worn } = main.config;
   return ritual
     .with({ worn: main.wearsCape ? { ...worn, back: { ...worn.back!, glyph: setup.cape } } : worn })
@@ -87,10 +90,7 @@ export function plan(ritual: Ritual, rituals: number, options: PlanOptions = {})
   const { ironman = false, noWaste = false, inventory = {}, added: setups = {} } = options;
   const main: Step = { ritual, count: rituals };
 
-  if (!ironman) {
-    const needed = takeFrom(inventory, inputsOf([main]));
-    return { ...summarize([main], needed, sum(ritual.outputs(rituals)), ritual.souls(rituals)), glyphsLeftOff: false };
-  }
+  if (!ironman) return { ...summarize(walk([main], inventory, false), ritual.souls(rituals)), glyphsLeftOff: false };
 
   // With the added rituals' alteration glyphs, if that works out; otherwise without.
   const setup = { noWaste, inventory, setups };
@@ -98,19 +98,7 @@ export function plan(ritual: Ritual, rituals: number, options: PlanOptions = {})
   // Left off the added rituals: with them, the counts never settled.
   const glyphsLeftOff = !withGlyphs;
   const added = (withGlyphs ?? addRituals(main, { ...setup, alterations: false })!).filter(({ count }) => count > 0);
-  const steps = [...added, main];
-
-  const needed = ironmanNeeds(steps, inventory);
-  const made = sum(ritual.outputs(rituals));
-  for (const step of added) {
-    for (const output of step.ritual.outputs(step.count)) {
-      // What an added ritual makes for the ink covers what's needed of it; only the rest is left over.
-      const usedUp = output.id === step.makes ? Math.min(needed[output.id] ?? 0, output.amount) : 0;
-      needed[output.id] = (needed[output.id] ?? 0) - usedUp;
-      made[output.id] = (made[output.id] ?? 0) + output.amount - usedUp;
-    }
-  }
-  return { ...summarize(steps, needed, made, ritual.souls(rituals)), glyphsLeftOff };
+  return { ...summarize(walk([...added, main], inventory, true), ritual.souls(rituals)), glyphsLeftOff };
 }
 
 /**
@@ -206,10 +194,46 @@ function takeFrom(inventory: Amounts, amounts: Amounts) {
   return left;
 }
 
+// --- Step by step ---------------------------------------------------------------------------------------------
+
+/**
+ * What `steps` take and make, done in order from a stock that starts as the `inventory`: each takes what it can
+ * from the stock, crafts the inks still missing (in Ironman mode) from the stock's necroplasm, ashes and vials, and
+ * has the rest to get (`needed`). Then what it makes goes into the stock, so a necroplasm ritual's output covers the
+ * next ones' focus and inks, and its ectoplasm their glyphs'. So a ritual whose glyphs take ink made from its own
+ * necroplasm has that necroplasm to get, to start with. `made` is what's made and left at the end (the inventory's
+ * taken as used before anything made).
+ */
+function walk(steps: Step[], inventory: Amounts, ironman: boolean) {
+  const stock = { ...inventory };
+  const needed: Amounts = {};
+  const produced: Amounts = {};
+  for (const { ritual, count } of steps) {
+    for (const [id, amount] of entries(takeFrom(stock, sum(ritual.inputs(count))))) {
+      const recipe = ironman ? INK_RECIPES.get(id) : undefined;
+      if (!recipe || amount === 0) {
+        add(needed, [{ id, amount }]);
+        continue;
+      }
+      const batches = Math.ceil(amount / recipe.makes);
+      // What a batch makes over goes into the stock.
+      stock[id] = (stock[id] ?? 0) + batches * recipe.makes - amount;
+      const materials = sum(recipe.materials.map((material) => ({ id: material.id, amount: material.amount * batches })));
+      add(needed, list(takeFrom(stock, materials)));
+    }
+    add(stock, ritual.outputs(count));
+    add(produced, ritual.outputs(count));
+  }
+  const made = collect(produced)
+    .map(([id, amount]) => [id, Math.min(amount, stock[Number(id)] ?? 0)] as const)
+    .toObject();
+  return { steps, needed, made };
+}
+
 // --- Totals ---------------------------------------------------------------------------------------------------
 
 /** The steps, what they still need and make, the souls, and their totals: time, XP and disturbance chances. */
-function summarize(steps: Step[], needed: Amounts, made: Amounts, souls: number) {
+function summarize({ steps, needed, made }: ReturnType<typeof walk>, souls: number) {
   const total = (each: (ritual: Ritual) => number) =>
     steps.reduce((sum, { ritual, count }) => sum + each(ritual) * count, 0);
   return {
@@ -244,14 +268,3 @@ const list = (amounts: Amounts) =>
     .filter(([, amount]) => amount > 0)
     .map(([id, amount]) => ({ id, amount }))
     .toArray();
-
-/** As many of the alteration glyphs `counts` as fit in `free` spots, in order. */
-function fit(counts: AlterationCounts, free: number) {
-  const fitted: AlterationCounts = {};
-  for (const [name, count = 0] of Object.entries(counts) as [GlyphName, number][]) {
-    const taken = Math.min(count, free);
-    if (taken > 0) fitted[name] = taken;
-    free -= taken;
-  }
-  return fitted;
-}

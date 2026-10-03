@@ -48,6 +48,9 @@ describe("plan", () => {
       [BASIC]: 39,
       [WEAK]: 1600,
     });
+    // Done in order, each from what the ones before made: Lesser necroplasm ×8 makes 800, of which Greater
+    // necroplasm ×2 takes 400 as its focus and 200 for its 10 regular inks (20 each), and Greater communion 120 for
+    // its 6. Its 8 greater inks take 160 of the 200 Greater necroplasm. Each ink also takes a vial and ashes.
     assert.deepEqual(byId(result.outputs), { [ECTOPLASM]: 122, [LESSER]: 80, [GREATER]: 40 });
     assert.equal(result.souls, 120);
     assert.equal(result.experience, 22320);
@@ -55,12 +58,27 @@ describe("plan", () => {
     assert.equal(Math.round(result.seconds * 10) / 10, 1291.2);
   });
 
-  it("puts the ritual's alteration glyphs on the added rituals too", () => {
-    // Not in the live calculator, which always does them without (below).
+  it("leaves the ritual's alteration glyphs off the added rituals, set up the same as it", () => {
+    // Their inks can be of a tier the added rituals make the necroplasm for, or above: a Lesser necroplasm ritual
+    // can't take ink made from Greater necroplasm. So it's as the live calculator, and as with no glyphs of their own.
     const result = plan(greaterCommunion({ "Multiply II": 2 }), 12, { ironman: true });
+    assert.deepEqual(steps(result), ["Lesser necroplasm 9", "Greater necroplasm 2", "Greater communion 12"]);
+    const plain = plan(greaterCommunion({ "Multiply II": 2 }), 12, {
+      ironman: true,
+      added: allAdded({ same: false, alterations: {} }),
+    });
+    assert.deepEqual(result.inputs, plain.inputs);
+  });
+
+  it("does the added rituals with alteration glyphs of their own, starting with the necroplasm for their inks", () => {
+    const added = allAdded({ same: false, alterations: { "Multiply II": 2 } });
+    const result = plan(greaterCommunion({ "Multiply II": 2 }), 12, { ironman: true, added });
     assert.deepEqual(steps(result), ["Lesser necroplasm 5", "Greater necroplasm 1", "Greater communion 12"]);
-    // 4 for the ritual's two Multiply II, 2 for each added ritual's.
-    assert.equal(byId(result.inputs)[ECTOPLASM], 8);
+    // 8 ectoplasm for the glyphs: 4 for the ritual's two Multiply II, 2 for each added ritual's. Only Lesser
+    // necroplasm's 2 are to get: the rest are what it makes. As are the 4 regular inks for its glyphs: their 80
+    // Lesser necroplasm are to get, to start with.
+    assert.equal(byId(result.inputs)[ECTOPLASM], 2);
+    assert.equal(byId(result.inputs)[LESSER], 80);
     assert.equal(result.glyphsLeftOff, false);
   });
 
@@ -68,7 +86,8 @@ describe("plan", () => {
     const added = allAdded({ same: false, alterations: {} });
     const result = plan(greaterCommunion({ "Multiply II": 2 }), 12, { ironman: true, added });
     assert.deepEqual(steps(result), ["Lesser necroplasm 9", "Greater necroplasm 2", "Greater communion 12"]);
-    assert.deepEqual(byId(result.outputs), { [ECTOPLASM]: 185, [LESSER]: 20, [GREATER]: 40 });
+    // The live calculator says 185 ectoplasm: the ritual's Multiply II take 4 of what the added rituals make.
+    assert.deepEqual(byId(result.outputs), { [ECTOPLASM]: 181, [LESSER]: 20, [GREATER]: 40 });
   });
 
   it("rounds the added rituals up to their golden ratio, with No waste", () => {
@@ -79,6 +98,19 @@ describe("plan", () => {
 
   it("takes what's in the inventory first", () => {
     assert.equal(byId(plan(greaterCommunion(), 12, { inventory: { [DRAGON_BONES]: 5 } }).inputs)[DRAGON_BONES], 7);
+  });
+
+  it("leaves the inventory it's given alone", () => {
+    const inventory = { [DRAGON_BONES]: 5 };
+    plan(greaterCommunion(), 12, { inventory });
+    plan(greaterCommunion(), 12, { ironman: true, inventory });
+    assert.deepEqual(inventory, { [DRAGON_BONES]: 5 });
+  });
+
+  it("takes the inventory off what's to get, in Ironman mode", () => {
+    // 39 basic inks, less the 30 had.
+    const result = plan(greaterCommunion(), 12, { ironman: true, inventory: { [BASIC]: 30 } });
+    assert.equal(byId(result.inputs)[BASIC], 9);
   });
 
   it("makes fewer inks, and adds fewer rituals, for what's in the inventory, in Ironman mode", () => {
