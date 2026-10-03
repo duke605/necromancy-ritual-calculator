@@ -2,7 +2,7 @@
 
 The **Inventory** page holds the items you have. With **Take from inventory** on, the calculator uses those items before it lists anything as an input.
 
-In Ironman mode, the inventory covers the inputs first, then what the remaining ink is made from. Necroplasm you already have means fewer added rituals.
+In Ironman mode, the rituals use the inventory in the order you perform them, along with what the rituals before them make. Necroplasm you already have means fewer added rituals.
 
 ### Import from a bank screenshot
 
@@ -16,6 +16,7 @@ The calculator reads the items and amounts from the screenshot. Select an item i
 
 - To add an item, select the **+** button beside the search field on the **Inventory** page.
 - To change an amount, select the item and enter the new amount.
+- To remove every item, select the red bin button beside the search field, then **Clear**. Your prices are kept.
 
 ## Prices
 

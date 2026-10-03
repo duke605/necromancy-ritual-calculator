@@ -4,12 +4,14 @@ The **Results** panel covers every ritual you set in the **Rituals** field. The 
 
 | List               | Contents                                                                                        |
 | ------------------ | ----------------------------------------------------------------------------------------------- |
-| Rituals to perform | Each ritual and how many times to perform it.                                                   |
+| Rituals to perform | Each ritual and how many times to perform it. Select one to see more.                           |
 | Input              | The items the rituals use: focus items, ink, ectoplasm and, in Ironman mode, the ink materials. |
 | Output             | The items the rituals make, and the souls they send to the Well of Souls.                       |
 | Totals             | Costs, value, time, experience and disturbance chances, all added up.                           |
 
-Hover over an item, or tap it, to see its prices. Hover over a ritual to see how long each one takes.
+Hover over an item, or tap it, to see its prices.
+
+Select a ritual under **Rituals to perform** to see how long each one takes, how long they all take, and that ritual's own **Input** and **Output**. Its input is everything those rituals use, whatever you have already. Use it as the amount to have before you start, for example how much of each ink to make.
 
 ## Totals
 

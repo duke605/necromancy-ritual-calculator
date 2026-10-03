@@ -48,9 +48,12 @@ it automatically.
      shimmers gold on any multiple of it; the < and > arrows jump to the previous or next multiple. Empty the
      field to go back to the golden ratio.
    - **Options**: the settings **Take from inventory**, **Ironman Mode** and **No waste** (see below).
-   - **Rituals to perform**: each ritual and how many times. Hover one for its time each and in total.
+   - **Rituals to perform**: each ritual and how many times. Click one to open it: its time each and in
+     total, and its own **Input** (everything those rituals use, whatever is owned: how much of each ink to
+     have before starting it) and **Output**.
    - **Input**: the focus items, and the ink (and ectoplasm, for alteration glyphs) to draw the glyphs as
-     often as they wear out. In Ironman mode, what the ink is made from instead.
+     often as they wear out. In Ironman mode, what the ink is made from instead, less what the rituals make
+     for one another (below).
    - **Output**: everything the rituals make (products, ectoplasm and, for communion rituals, souls), with
      Multiply glyphs and gear counted. Hover an item in Input or Output for its prices; click it to set its
      price.
@@ -82,15 +85,23 @@ Disabled settings show what they need on hover.
 - The Lesser, Greater and Powerful necroplasm rituals are added as needed ("added rituals"). Each is done
   as few times as makes enough necroplasm for the ink, the added rituals' own ink and focus items included.
   Since more of one can mean more ink for another, the counts are worked out again until none changes.
-- Added rituals are done in the Underworld, whatever site is chosen, with the same gear. Necroplasm they
-  make for the ink is taken off the inputs; any left over is listed in Output.
+- Added rituals are done in the Underworld, whatever site is chosen, with the same gear.
+- The rituals are worked out in order, lowest level first and the chosen ritual last. Each takes what it
+  needs from a running stock: the inventory (with **Take from inventory** on) and what the rituals before it
+  made, necroplasm and ectoplasm included. Ink it still needs is made from the stock's necroplasm, ashes and
+  vials. Input is what's still needed after that; Output is what's made and left at the end.
 - Each added ritual is set up in **Alteration glyphs**: its **Ritual** dropdown (only in Ironman mode) lists
   the ritual and, under "Added rituals", the added ones. Choosing an added ritual shows it on the site, and
-  shows **Same as main ritual** (on to begin with): the added ritual uses the ritual's alteration glyphs, as
-  many as fit, and its Necromancy cape glyph. Turned off, the added ritual's alteration glyphs are set with
-  − and + as usual, starting from the ritual's, and **Cape glyph** (with a Necromancy cape worn) sets its
-  cape glyph: **None** or any alteration glyph. The reset button turns **Same as main ritual** back on. Each
-  added ritual's setup is saved.
+  shows **Same as main ritual** (on to begin with): the added ritual uses the ritual's Necromancy cape glyph
+  and no alteration glyphs (their ink could need necroplasm not made yet, e.g. powerful ink on a Lesser
+  necroplasm ritual). Turned off, the added ritual's alteration glyphs are set with − and + as usual,
+  starting from none, and **Cape glyph** (with a Necromancy cape worn) sets its cape glyph: **None** or any
+  alteration glyph. The reset button turns **Same as main ritual** back on. Each added ritual's setup is
+  saved.
+- For an added ritual, glyphs whose ink is made from necroplasm that ritual or a later one makes are listed
+  under **Needs necroplasm not made yet**, with a note to choose them only with that ink stocked or bought
+  from the GE. For Lesser necroplasm that's every alteration glyph (all need regular ink or higher). Chosen
+  anyway, Input lists the necroplasm needed to start.
 - If putting the alteration glyphs on the added rituals never settles (they'd cost more necroplasm than
   they make), they're left off and Results says "Not self-sustaining".
 
@@ -139,7 +150,7 @@ Disabled settings show what they need on hover.
   the button to import. **Cancel** discards the screenshot.
 - **Your items**: everything owned, by name, 200 to a page. Type in the search box to find an item (it
   tolerates typos). The + button adds an item by hand. The refresh button fetches live Grand Exchange prices
-  for everything.
+  for everything. The red bin button removes every item, after asking (prices are kept).
 - Hovering an item shows its amount, GE price and high alch value. Clicking it opens **Edit item**: change
   the amount, type a price (e.g. a cheaper source than the GE), lock the price with the padlock so price
   updates leave it alone, fetch the live GE price for just that item, or **Delete** it.

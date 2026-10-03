@@ -13,11 +13,11 @@ the numbers are worked out and what isn't supported yet, is [llms-full.txt](http
 - [Rituals](https://rituals.duke605.ca/): the calculator, on the home page. Choose the site from **Site**,
   then click **Focus** in **Results** (or the item on the plinth) to choose the ritual and its focus item. Add
   alteration glyphs in **Alteration glyphs** and gear in **Equipment**. **Results** lists the rituals to
-  perform, the input, the output and totals (cost, value, profit or loss, time, XP) for a number of rituals,
-  the golden ratio to begin with. In Ironman mode, **Ritual** in **Alteration glyphs** sets up each added
+  perform (each opens to its own input and output), the input, the output and totals (cost, value, profit or
+  loss, time, XP) for a number of rituals, the golden ratio to begin with. In Ironman mode, **Ritual** in **Alteration glyphs** sets up each added
   ritual's alteration glyphs and cape glyph.
 - [Inventory](https://rituals.duke605.ca/inventory): import ritual items from a bank screenshot (paste, drop
-  or choose it), add or edit items by hand, and fetch live GE prices.
+  or choose it), add or edit items by hand, clear them all, and fetch live GE prices.
 - [Help](https://rituals.duke605.ca/help): the site's own guide, in five pages: getting started, glyphs and
   gear, results, Ironman mode, and inventory and prices.
 
@@ -27,6 +27,7 @@ the numbers are worked out and what isn't supported yet, is [llms-full.txt](http
 - Output: Multiply glyphs add 20/40/60% each to every output, rounded down.
 - Soul attraction starts at 100%: Low to 100%, Medium to 200%, High to 300%, Extreme to 500%, then Dangerous.
 - Ironman mode makes regular, greater and powerful ink from necroplasm, ashes and vials of water, and adds
-  the necroplasm rituals needed. Basic ink and weak necroplasm are still bought. Each added ritual uses the
-  ritual's alteration glyphs (as many as fit) and cape glyph, or its own.
+  the necroplasm rituals needed. Basic ink and weak necroplasm are still bought. The rituals are worked out
+  in order, each using the inventory and what the ones before it made. Each added ritual uses the ritual's
+  cape glyph and no alteration glyphs, or its own.
 - Everything chosen, the inventory and prices are saved in the player's browser only.
