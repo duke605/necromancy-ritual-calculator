@@ -8,7 +8,7 @@ import { ItemTooltip } from "@/lib/components/item-tooltip";
 import { Coins, usePriceStats } from "@/lib/hooks/use-price-stats";
 import { useInventory } from "@/lib/inventory";
 import { usePrices } from "@/lib/prices";
-import type { Ritual } from "@/lib/ritual";
+import type { Step } from "@/lib/plan";
 import { formatDuration } from "@/lib/ritual-duration";
 import { EditItem } from "./inventory/edit-item";
 
@@ -82,21 +82,49 @@ function DetailedLine({
   );
 }
 
-/** A ritual, how many times, and on hover how long each and all of them take. */
-export function RitualLine({ ritual, count }: { ritual: Ritual; count: number }) {
+/**
+ * A ritual and how many times; opened, how long each and all of them take, and everything those take and make:
+ * how many of each ink to have before starting it, say, not counting what's had.
+ */
+export function RitualLine({ ritual, count }: Step) {
+  const souls = ritual.souls(count);
   return (
-    <DetailedLine
-      image="/icons/necromancy.png"
-      name={ritual.config.choice.ritual}
-      amount={count}
-      details={{
-        type: "Ritual",
-        stats: [
-          { label: "Time each", value: formatDuration(ritual.seconds) },
-          { label: "Total time", value: formatDuration(ritual.seconds * count) },
-        ],
-      }}
-    />
+    <li>
+      <details className="accordion">
+        <summary>
+          <span className="flex-1">
+            <Line image="/icons/necromancy.png" name={ritual.config.choice.ritual} amount={count} />
+          </span>
+        </summary>
+        <div className="flex flex-col gap-2 pt-1 pb-2 pl-7">
+          <dl className="flex flex-col gap-1">
+            <TotalRow icon="/icons/timer.png" label="Time each">{formatDuration(ritual.seconds)}</TotalRow>
+            <TotalRow icon="/icons/timer.png" label="Total time">{formatDuration(ritual.seconds * count)}</TotalRow>
+          </dl>
+          <SubLines title="Input">
+            {ritual.inputs(count).map((input) => (
+              <ItemLine key={input.id} {...input} />
+            ))}
+          </SubLines>
+          <SubLines title="Output">
+            {ritual.outputs(count).map((output) => (
+              <ItemLine key={output.id} {...output} />
+            ))}
+            {souls > 0 && <PlainLine name="Souls" image="/icons/soul-attraction.png" amount={souls} />}
+          </SubLines>
+        </div>
+      </details>
+    </li>
+  );
+}
+
+/** Lines (`children`, each an <li>) under a small `title`, inside an opened line. */
+function SubLines({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="subheading">{title}</p>
+      <ul className="flex flex-col gap-1">{children}</ul>
+    </div>
   );
 }
 
