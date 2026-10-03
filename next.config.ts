@@ -15,7 +15,8 @@ export default function config(phase: string): NextConfig {
     env: { SHOW_STYLE_GUIDE: styleGuide ? "1" : "" },
     images: { unoptimized: true },
     reactCompiler: true,
-    // For sharing the dev server through its tunnel, at the demo address.
-    allowedDevOrigins: ["*"],
+    // The dev server, from any host (its tunnel, the demo address, a phone on the network). Every hostname
+    // with a dot: Next refuses a lone "*" or "**", and a "*" is one label, so "**.*" is as wide as it goes.
+    allowedDevOrigins: ["**.*"],
   };
 }
