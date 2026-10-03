@@ -6,6 +6,7 @@ import { NoWasteIcon } from "@/lib/components/icons";
 import { Switch } from "@/lib/components/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/lib/components/ui/tooltip";
 import { useSettings } from "@/lib/settings";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * The settings for the results, each named and briefly explained: taking from the inventory, Ironman mode, and
@@ -13,7 +14,10 @@ import { useSettings } from "@/lib/settings";
  * what's under it. They fold away, as the results' lists do.
  */
 export function ResultSettings() {
-  const { fromInventory, ironman, noWaste, setFromInventory, setIronman, setNoWaste } = useSettings();
+  const { fromInventory, ironman, noWaste } = useSettings(
+    useShallow(({ fromInventory, ironman, noWaste }) => ({ fromInventory, ironman, noWaste })),
+  );
+  const { setFromInventory, setIronman, setNoWaste } = useSettings.getState();
   return (
     <Accordion title="Options" headingLevel={3} variant="naked" open>
       <div className="flex flex-col gap-3">

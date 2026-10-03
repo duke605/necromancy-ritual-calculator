@@ -16,6 +16,7 @@ import { ADDED_RITUALS, plan } from "@/lib/plan";
 import { formatDuration } from "@/lib/ritual-duration";
 import { useInventory } from "@/lib/inventory";
 import { useSettings } from "@/lib/settings";
+import { useShallow } from "zustand/react/shallow";
 import type { RitualName } from "./choose-ritual";
 import { FocusSelect } from "./focus-select";
 import { ResultSettings, Setting } from "./result-settings";
@@ -148,8 +149,8 @@ export function AddedRitualSelect({
  * from what it had.
  */
 export function AddedSetupControls({ main, shown, name }: { main: Ritual; shown: Ritual; name: RitualName }) {
-  const { added, setAdded } = useSettings();
-  const setup = added[name] ?? { same: true };
+  const setup = useSettings((state) => state.added[name]) ?? { same: true };
+  const { setAdded } = useSettings.getState();
   return (
     <>
       <Setting
@@ -249,7 +250,9 @@ export function Results({
  * attraction.
  */
 function Summary({ ritual, rituals }: { ritual: Ritual; rituals: number }) {
-  const { fromInventory, ironman, noWaste, added } = useSettings();
+  const { fromInventory, ironman, noWaste, added } = useSettings(
+    useShallow(({ fromInventory, ironman, noWaste, added }) => ({ fromInventory, ironman, noWaste, added })),
+  );
   const inventory = useInventory((state) => state.counts);
   const {
     steps,

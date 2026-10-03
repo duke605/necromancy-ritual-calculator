@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import items from "@/data/items.json";
 import { Accordion } from "@/lib/components/accordion";
 import { Equipment, type EquipmentSlot } from "@/lib/components/equipment";
@@ -49,11 +50,12 @@ function Loading() {
 }
 
 function LoadedCalculator() {
-  const { ritual, rituals: times } = useCalculator();
+  const { ritual, rituals: times } = useCalculator(useShallow(({ ritual, rituals }) => ({ ritual, rituals })));
   const { setRitual, setRituals, reset } = useCalculator.getState();
   const [choosing, setChoosing] = useState(false);
   const [choosingGear, setChoosingGear] = useState<EquipmentSlot | null>(null);
-  const { ironman, added, setAdded } = useSettings();
+  const { ironman, added } = useSettings(useShallow(({ ironman, added }) => ({ ironman, added })));
+  const { setAdded } = useSettings.getState();
   // The ritual Ironman mode adds whose alteration glyphs are shown, if one is, instead of the ritual's; on the
   // site too.
   const [editing, setEditing] = useState<RitualName>();
