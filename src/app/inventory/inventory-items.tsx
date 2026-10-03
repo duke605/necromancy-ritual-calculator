@@ -14,6 +14,7 @@ import { usePriceStats } from "@/lib/hooks/use-price-stats";
 import { usePrices } from "@/lib/prices";
 import { trigramSearch } from "@/lib/trigram";
 import { AddItem } from "./add-item";
+import { ClearInventory } from "./clear-inventory";
 import { EditItem, type Owned } from "./edit-item";
 import { RefreshPrices } from "./refresh-prices";
 /** Whether a change raised or lowered an item's count or price. */
@@ -24,8 +25,8 @@ const PAGE = 200;
 
 /**
  * What the user has, as slots: by name, a page at a time, or the best matches for a search in the title
- * bar (trigram search, so typos still find them), with buttons beside it to fetch live prices and to add
- * an item by hand. Clicking an item edits it.
+ * bar (trigram search, so typos still find them), with buttons beside it to fetch live prices, to clear
+ * every item and to add one by hand. Clicking an item edits it.
  */
 export function InventoryItems() {
   const counts = useInventory((state) => state.counts);
@@ -63,6 +64,7 @@ export function InventoryItems() {
             onChange={(event) => setQuery(event.target.value)}
           />
           <RefreshPrices />
+          <ClearInventory />
           <AddItem query={query} />
         </div>
       }

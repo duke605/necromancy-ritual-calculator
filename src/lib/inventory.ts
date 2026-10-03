@@ -27,6 +27,8 @@ export const useInventory = create(
                   .toObject(),
               },
             }));
+          /** Removes every item. */
+          clear = () => set({ counts: {} });
         })(),
     ),
     {
