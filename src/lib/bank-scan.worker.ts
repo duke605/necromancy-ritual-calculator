@@ -1,12 +1,15 @@
 // Reads a bank screenshot off the main thread, so the page stays responsive and can show progress.
-// Gets a File; posts { progress } (0 to 1) as it goes, then { width, height, found } or { error }.
+// Gets { id, file }; posts { progress } (0 to 1) as it goes, then { width, height, found } or { error }, each
+// with the id. Scans queue: one given mid-scan starts when it's done.
 import items from "@/data/items.json";
 import { scanBank, type Match, type Pixels, type Template } from "./bank-scan";
 
-export type ScanMessage =
+export type ScanRequest = { id: number; file: File };
+export type ScanMessage = { id: number } & (
   | { progress: number }
   | { width: number; height: number; found: Match[] }
-  | { error: string };
+  | { error: string }
+);
 
 /**
  * An image's pixels, as they're stored: no colour profile applied, so a screenshot's colours are the
@@ -21,7 +24,10 @@ async function pixelsOf(image: Blob): Promise<Pixels> {
   return context.getImageData(0, 0, width, height);
 }
 
-/** Every item's icon (public/bank-icons, from `npm run data`), fetched once per worker. */
+/**
+ * Every item's icon (public/bank-icons, from `npm run data`), fetched once per worker, from when it starts:
+ * that's most of a first scan's time (over a second), so the page starts the worker ahead of it.
+ */
 let templates: Promise<Template[]> | undefined;
 const loadTemplates = () =>
   (templates ??= Promise.all(
@@ -31,17 +37,19 @@ const loadTemplates = () =>
       return { id: Number(id), pixels: await pixelsOf(await res.blob()) };
     }),
   ));
+// Fetched again by the first scan if this fails, which reports why.
+loadTemplates().catch(() => (templates = undefined));
 
 const post = (message: ScanMessage) => postMessage(message);
 
-addEventListener("message", async ({ data: file }: MessageEvent<File>) => {
+addEventListener("message", async ({ data: { id, file } }: MessageEvent<ScanRequest>) => {
   try {
     const [pixels, icons] = await Promise.all([pixelsOf(file), loadTemplates()]);
-    const found = scanBank(pixels, icons, {}, (done, total) => post({ progress: done / total }));
-    post({ width: pixels.width, height: pixels.height, found });
+    const found = scanBank(pixels, icons, {}, (done, total) => post({ id, progress: done / total }));
+    post({ id, width: pixels.width, height: pixels.height, found });
   } catch (error) {
     // Fetched again next time, rather than failing every scan after one bad fetch.
     templates = undefined;
-    post({ error: error instanceof Error ? error.message : String(error) });
+    post({ id, error: error instanceof Error ? error.message : String(error) });
   }
 });

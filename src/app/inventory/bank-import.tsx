@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import items from "@/data/items.json";
 import type { Match } from "@/lib/bank-scan";
-import type { ScanMessage } from "@/lib/bank-scan.worker";
+import type { ScanMessage, ScanRequest } from "@/lib/bank-scan.worker";
 import { Dialog } from "@/lib/components/dialog";
 import { DropZone } from "@/lib/components/drop-zone";
 import { ItemTooltip } from "@/lib/components/item-tooltip";
@@ -80,33 +80,37 @@ export function BankImport() {
   const prices = usePrices((state) => state.prices);
   // Whether the screenshot's amounts are added to what's there, or replace it ("sync").
   const [adding, setAdding] = useState(false);
-  // The scan in progress, stopped if the image is replaced or removed first, or the page is left.
+  // One scanner for the page's visit, started with it so it's loaded the icons by the first scan (over a
+  // second's work), and quicker each scan after.
   const worker = useRef<Worker>(null);
-  useEffect(() => () => worker.current?.terminate(), []);
+  // Counts the images given: a scan's messages are dropped if another's been given (or it's been removed)
+  // since. Its scan isn't stopped; the next waits for it.
+  const scans = useRef(0);
+  useEffect(() => {
+    worker.current = new Worker(new URL("../../lib/bank-scan.worker.ts", import.meta.url));
+    return () => worker.current?.terminate();
+  }, []);
 
   const read = (file: File | null) => {
-    worker.current?.terminate();
+    const id = ++scans.current;
     setPicked(null);
     setNote(undefined);
     if (!file) return setScan(null);
     setScan(0);
-    // ponytail: a new worker each scan, so it fetches the icons again (from the HTTP cache); keep one
-    // alive if that shows.
-    const scanner = (worker.current = new Worker(new URL("../../lib/bank-scan.worker.ts", import.meta.url)));
+    const scanner = worker.current!;
     scanner.onmessage = ({ data }: MessageEvent<ScanMessage>) => {
+      if (data.id !== scans.current) return;
       if ("progress" in data) return setScan(data.progress);
-      scanner.terminate();
       if ("error" in data) {
         setScan(null);
         setNote(`Couldn't read that image: ${data.error}`);
       } else {
         trim(file, data).then((trimmed) => {
-          // Unless another image has been given since.
-          if (worker.current === scanner) setScan(trimmed);
+          if (scans.current === id) setScan(trimmed);
         });
       }
     };
-    scanner.postMessage(file);
+    scanner.postMessage({ id, file } satisfies ScanRequest);
   };
 
   const remove = () => {
