@@ -33,7 +33,6 @@ const RARE_TIE_DYES = ["trans", "bi", "pride"];
 function pickTieDye() {
   const name = Math.random() < 1 / 200 ? RARE_TIE_DYES[Math.floor(Math.random() * RARE_TIE_DYES.length)] : "eyes";
   document.documentElement.style.setProperty("--tie-dye-image", `var(--tie-dye-${name})`);
-  document.documentElement.style.setProperty("--tie-dye-spin", `var(--tie-dye-${name}-spin)`);
 }
 
 /** The logo/expand swap's motion: 150 ms, eased, none for reduced motion. */
