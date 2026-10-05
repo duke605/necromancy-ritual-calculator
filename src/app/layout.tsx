@@ -48,6 +48,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${cinzel.variable} ${notoSans.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="describedby" type="text/markdown" href="/llms.txt" />
+      </head>
       <body className="min-h-full">
         <PriceSync />
         <TooltipProvider>
